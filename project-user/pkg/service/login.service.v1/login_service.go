@@ -1,38 +1,33 @@
-package user
+package login_service_v1
 
 import (
 	"context"
+	"errors"
 	common "github.com/axzed/project-common"
 	"github.com/axzed/project-user/pkg/dao"
-	"github.com/axzed/project-user/pkg/model"
 	"github.com/axzed/project-user/pkg/repo"
-	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"log"
-	"net/http"
 	"time"
 )
 
-// HandlerUser Handler接口实现类
-type HandlerUser struct {
-	cache repo.Cache // 缓存
+type LoginService struct {
+	UnimplementedLoginServiceServer
+	cache repo.Cache
 }
 
-func NewHandlerUser() *HandlerUser {
-	return &HandlerUser{
-		cache: dao.Rc, // 缓存(给repo.Cache接口一个具体的dao.Rc实现) 要替换只需要换这里的接口实现
+func NewLoginService() *LoginService {
+	return &LoginService{
+		cache: dao.Rc,
 	}
 }
 
-// getCaptcha 获取验证码
-func (h *HandlerUser) getCaptcha(ctx *gin.Context) {
-	resp := &common.Result{}
+func (ls *LoginService) GetCaptcha(ctx context.Context, msg *CaptchaMessage) (*CaptchaResponse, error) {
 	// 1. 获取参数
-	mobile := ctx.PostForm("mobile")
+	mobile := msg.Mobile
 	// 2. 校验参数
 	if !common.VerifyMobile(mobile) {
-		ctx.JSON(http.StatusOK, resp.Fail(model.ErrNotMobile, "手机号格式错误"))
-		return
+		return nil, errors.New("手机号格式不正确")
 	}
 	// 3. 生成验证码 (随机4位1000-9999或者随机6位100000-999999)
 	varifyCode := "123456"
@@ -47,11 +42,11 @@ func (h *HandlerUser) getCaptcha(ctx *gin.Context) {
 		// 5. 将验证码存入redis (key:手机号 value:验证码 过期时间: 15分钟)log.Println("验证码发送成功: ")
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
-		err := h.cache.Put(ctx, "REGISTER_"+mobile, varifyCode, 15*time.Minute)
+		err := ls.cache.Put(ctx, "REGISTER_"+mobile, varifyCode, 15*time.Minute)
 		if err != nil {
 			log.Printf("验证码放入缓存失败, caused: %v\n", err)
 		}
 		log.Printf("将手机号和验证码存入redis成功: REGISTER_%s : %s\n", mobile, varifyCode)
 	}()
-	ctx.JSON(http.StatusOK, resp.Success(varifyCode))
+	return &CaptchaResponse{Code: varifyCode}, nil
 }

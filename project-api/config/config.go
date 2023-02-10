@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/axzed/project-common/logs"
-	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -13,7 +12,6 @@ var AppConf = NewConfig()
 type Config struct {
 	viper *viper.Viper
 	SC    *ServerConfig
-	GC    *GrpcConfig
 }
 
 // NewConfig 初始化配置
@@ -32,18 +30,11 @@ func NewConfig() *Config {
 	}
 	conf.InitServerConfig()
 	conf.InitZapLog()
-	conf.InitRedisOptions()
-	conf.InitGrpcConfig()
 
 	return conf
 }
 
 type ServerConfig struct {
-	Name string `mapstructure:"name"`
-	Addr string `mapstructure:"addr"`
-}
-
-type GrpcConfig struct {
 	Name string `mapstructure:"name"`
 	Addr string `mapstructure:"addr"`
 }
@@ -54,14 +45,6 @@ func (c *Config) InitServerConfig() {
 	sc.Name = c.viper.GetString("server.name")
 	sc.Addr = c.viper.GetString("server.addr")
 	c.SC = sc
-}
-
-// InitGrpcConfig 初始化grpc配置
-func (c *Config) InitGrpcConfig() {
-	gc := &GrpcConfig{}
-	gc.Name = c.viper.GetString("grpc.name")
-	gc.Addr = c.viper.GetString("grpc.addr")
-	c.GC = gc
 }
 
 // InitZapLog 初始化zap日志
@@ -78,14 +61,5 @@ func (c *Config) InitZapLog() {
 	err := logs.InitLogger(lc)
 	if err != nil {
 		log.Fatalln(err)
-	}
-}
-
-// InitRedisOptions 初始化redis配置
-func (c *Config) InitRedisOptions() *redis.Options {
-	return &redis.Options{
-		Addr:     c.viper.GetString("redis.host") + ":" + c.viper.GetString("redis.port"),
-		Password: c.viper.GetString("redis.password"), // no password set
-		DB:       c.viper.GetInt("redis.db"),          // use default DB
 	}
 }

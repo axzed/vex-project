@@ -1,6 +1,6 @@
 server:
-  name: "project-user"
-  addr: "127.0.0.1:8080"
+  name: "project-api"
+  addr: "127.0.0.1:80"
 zap:
   DebugFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-debug.log"
   InfoFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-info.log"
@@ -8,11 +8,3 @@ zap:
   MaxSize: 500
   MaxAge: 28
   MaxBackups: 3
-redis:
-  host: "localhost"
-  port: 6379
-  password: ""
-  db: 0
-grpc:
-  name: "user"
-  addr: "127.0.0.1:8881"

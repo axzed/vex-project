@@ -1,2 +1,4 @@
 {"level":"WARN","time":"2023-02-10T16:07:47.803+0800","caller":"user/user.go:43","msg":"短信平台调用成功，发送短信 WARN"}
 {"level":"WARN","time":"2023-02-10T16:34:09.961+0800","caller":"user/user.go:43","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"WARN","time":"2023-02-10T20:49:43.406+0800","caller":"user/user.go:45","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"WARN","time":"2023-02-10T21:57:59.471+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}

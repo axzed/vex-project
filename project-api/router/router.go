@@ -1,12 +1,8 @@
 package router
 
 import (
-	"github.com/axzed/project-user/config"
-	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 // Router 接口
@@ -53,26 +49,4 @@ func InitRouter(r *gin.Engine) {
 type gRPCConfig struct {
 	Addr         string
 	RegisterFunc func(*grpc.Server)
-}
-
-func RegisterGrpc() *grpc.Server {
-	c := gRPCConfig{
-		Addr: config.AppConf.GC.Addr,
-		RegisterFunc: func(g *grpc.Server) {
-			login_service_v1.RegisterLoginServiceServer(g, login_service_v1.NewLoginService())
-		}}
-	s := grpc.NewServer()
-	c.RegisterFunc(s)
-	lis, err := net.Listen("tcp", config.AppConf.GC.Addr)
-	if err != nil {
-		log.Println("cannot listen")
-	}
-	go func() {
-		err = s.Serve(lis)
-		if err != nil {
-			log.Println("server started error", err)
-			return
-		}
-	}()
-	return s
 }
