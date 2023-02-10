@@ -1,10 +1,14 @@
 package user
 
-import "github.com/gin-gonic/gin"
+import (
+	common "github.com/axzed/project-common"
+	"github.com/gin-gonic/gin"
+)
 
 type HandlerUser struct {
 }
 
 func (*HandlerUser) getCaptcha(ctx *gin.Context) {
-	ctx.JSON(200, "getCaptcha success")
+	resp := &common.Result{}
+	ctx.JSON(200, resp.Success("123456"))
 }
