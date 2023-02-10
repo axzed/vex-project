@@ -1,0 +1,6 @@
+{"level":"INFO","time":"2023-02-10T16:07:47.800+0800","caller":"user/user.go:41","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"DEBUG","time":"2023-02-10T16:07:47.803+0800","caller":"user/user.go:42","msg":"短信平台调用成功，发送短信 DEBUG"}
+{"level":"WARN","time":"2023-02-10T16:07:47.803+0800","caller":"user/user.go:43","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-10T16:34:09.960+0800","caller":"user/user.go:41","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"DEBUG","time":"2023-02-10T16:34:09.961+0800","caller":"user/user.go:42","msg":"短信平台调用成功，发送短信 DEBUG"}
+{"level":"WARN","time":"2023-02-10T16:34:09.961+0800","caller":"user/user.go:43","msg":"短信平台调用成功，发送短信 WARN"}

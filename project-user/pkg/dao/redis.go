@@ -2,17 +2,14 @@ package dao
 
 import (
 	"context"
+	"github.com/axzed/project-user/config"
 	"github.com/go-redis/redis/v8"
 	"time"
 )
 
 func init() {
 	// 初始化redis连接
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
+	rdb := redis.NewClient(config.AppConf.InitRedisOptions())
 	// 初始化redis缓存实例Rc
 	Rc = &RedisCache{rdb: rdb}
 }

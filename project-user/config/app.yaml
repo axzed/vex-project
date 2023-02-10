@@ -1,0 +1,16 @@
+server:
+  name: "project-user"
+  addr: "127.0.0.1:80"
+zap:
+  DebugFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-debug.log"
+  InfoFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-info.log"
+  WarnFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-warn.log"
+  MaxSize: 500
+  MaxAge: 28
+  MaxBackups: 3
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+

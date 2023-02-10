@@ -18,6 +18,6 @@ type RouterUser struct {
 
 // implement Router interface
 func (*RouterUser) Route(r *gin.Engine) {
-	h := New()
+	h := NewHandlerUser()
 	r.POST("/project/login/getCaptcha", h.getCaptcha)
 }
