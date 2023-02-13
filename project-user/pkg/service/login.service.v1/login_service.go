@@ -2,8 +2,9 @@ package login_service_v1
 
 import (
 	"context"
-	"errors"
+	"github.com/axzed/project-api/pkg/model"
 	common "github.com/axzed/project-common"
+	"github.com/axzed/project-common/errs"
 	"github.com/axzed/project-user/pkg/dao"
 	"github.com/axzed/project-user/pkg/repo"
 	"go.uber.org/zap"
@@ -27,7 +28,7 @@ func (ls *LoginService) GetCaptcha(ctx context.Context, msg *CaptchaMessage) (*C
 	mobile := msg.Mobile
 	// 2. 校验参数
 	if !common.VerifyMobile(mobile) {
-		return nil, errors.New("手机号格式不正确")
+		return nil, errs.ConvertToGrpcError(model.ErrNotMobile)
 	}
 	// 3. 生成验证码 (随机4位1000-9999或者随机6位100000-999999)
 	varifyCode := "123456"

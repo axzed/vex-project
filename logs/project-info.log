@@ -6,3 +6,17 @@
 {"level":"WARN","time":"2023-02-10T20:49:43.406+0800","caller":"user/user.go:45","msg":"短信平台调用成功，发送短信 WARN"}
 {"level":"INFO","time":"2023-02-10T21:57:59.470+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
 {"level":"WARN","time":"2023-02-10T21:57:59.471+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-13T18:50:10.948+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"WARN","time":"2023-02-13T18:50:10.950+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-13T18:56:44.847+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"WARN","time":"2023-02-13T18:56:44.848+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-13T19:00:56.683+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"WARN","time":"2023-02-13T19:00:56.683+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-13T19:02:55.598+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"WARN","time":"2023-02-13T19:02:55.599+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-13T19:03:26.888+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"WARN","time":"2023-02-13T19:03:26.889+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-13T19:11:51.991+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"WARN","time":"2023-02-13T19:11:51.991+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"INFO","time":"2023-02-13T19:15:42.663+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"WARN","time":"2023-02-13T19:15:42.663+0800","caller":"login.service.v1/login_service.go:40","msg":"短信平台调用成功，发送短信 WARN"}

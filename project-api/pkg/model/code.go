@@ -1,7 +1,9 @@
 package model
 
-import common "github.com/axzed/project-common"
+import (
+	"github.com/axzed/project-common/errs"
+)
 
-const (
-	ErrNotMobile common.BusinessCode = 2001 // 手机号格式错误
+var (
+	ErrNotMobile = errs.NewError(2001, "手机号码格式错误")
 )

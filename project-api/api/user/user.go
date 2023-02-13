@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	common "github.com/axzed/project-common"
+	"github.com/axzed/project-common/errs"
 	"github.com/axzed/project-user/pkg/dao"
 	"github.com/axzed/project-user/pkg/repo"
 	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
@@ -31,7 +32,8 @@ func (h *HandlerUser) getCaptcha(ctx *gin.Context) {
 	defer cancel()
 	captchaResponse, err := LoginServiceClient.GetCaptcha(c, &login_service_v1.CaptchaMessage{Mobile: mobile})
 	if err != nil {
-		ctx.JSON(http.StatusOK, resp.Fail(2001, err.Error()))
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, resp.Fail(code, msg))
 		return
 	}
 	ctx.JSON(http.StatusOK, resp.Success(captchaResponse.Code))
