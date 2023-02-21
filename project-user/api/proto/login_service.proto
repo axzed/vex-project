@@ -12,7 +12,21 @@ message CaptchaResponse{
   string code = 1;
 }
 
+// 定义Register服务参数
+message RegisterMessage {
+  string email = 1;
+  string name = 2;
+  string password = 3;
+  string mobile = 4;
+  string captcha = 5;
+}
+
+// 定义Register服务返回值
+message RegisterResponse {}
+
 // LoginService is the service for login.
+// 定义服务
 service LoginService {
   rpc GetCaptcha(CaptchaMessage) returns (CaptchaResponse) {}
+  rpc Register(RegisterMessage) returns (RegisterResponse) {}
 }

@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 	common "github.com/axzed/project-common"
-	"github.com/axzed/project-user/pkg/dao"
+	"github.com/axzed/project-user/internal/dao"
+	"github.com/axzed/project-user/internal/repo"
 	"github.com/axzed/project-user/pkg/model"
-	"github.com/axzed/project-user/pkg/repo"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"log"
@@ -26,13 +26,14 @@ func NewHandlerUser() *HandlerUser {
 }
 
 // getCaptcha 获取验证码
+// 直接业务 用了grpc后这里不用了
 func (h *HandlerUser) getCaptcha(ctx *gin.Context) {
 	resp := &common.Result{}
 	// 1. 获取参数
 	mobile := ctx.PostForm("mobile")
 	// 2. 校验参数
 	if !common.VerifyMobile(mobile) {
-		ctx.JSON(http.StatusOK, resp.Fail(model.ErrNotMobile, "手机号格式错误"))
+		ctx.JSON(http.StatusOK, resp.Fail(common.BusinessCode(model.ErrNotMobile.Code), "手机号格式错误"))
 		return
 	}
 	// 3. 生成验证码 (随机4位1000-9999或者随机6位100000-999999)

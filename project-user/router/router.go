@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/axzed/project-common/discovery"
 	"github.com/axzed/project-common/logs"
+	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-user/config"
 	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
 	"github.com/gin-gonic/gin"
@@ -63,7 +64,7 @@ func RegisterGrpc() *grpc.Server {
 	c := gRPCConfig{
 		Addr: config.AppConf.GC.Addr,
 		RegisterFunc: func(g *grpc.Server) {
-			login_service_v1.RegisterLoginServiceServer(g, login_service_v1.NewLoginService())
+			login.RegisterLoginServiceServer(g, login_service_v1.NewLoginService())
 		}}
 	s := grpc.NewServer()
 	c.RegisterFunc(s)

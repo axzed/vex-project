@@ -4,14 +4,14 @@ import (
 	"github.com/axzed/project-api/config"
 	"github.com/axzed/project-common/discovery"
 	"github.com/axzed/project-common/logs"
-	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
+	"github.com/axzed/project-grpc/user/login"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
 	"log"
 )
 
-var LoginServiceClient login_service_v1.LoginServiceClient
+var LoginServiceClient login.LoginServiceClient
 
 // InitUserRpcClient 初始化grpc的客户端连接
 func InitUserRpcClient() {
@@ -21,5 +21,5 @@ func InitUserRpcClient() {
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
-	LoginServiceClient = login_service_v1.NewLoginServiceClient(conn)
+	LoginServiceClient = login.NewLoginServiceClient(conn)
 }

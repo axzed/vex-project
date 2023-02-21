@@ -13,10 +13,11 @@ var AppConf = NewConfig()
 
 // Config 配置(全局配置)
 type Config struct {
-	viper      *viper.Viper
-	SC         *ServerConfig
-	GC         *GrpcConfig
-	EtcdConfig *EtcdConfig
+	viper       *viper.Viper
+	SC          *ServerConfig
+	GC          *GrpcConfig
+	EtcdConfig  *EtcdConfig
+	MysqlConfig *MysqlConfig
 }
 
 // NewConfig 初始化配置
@@ -39,6 +40,8 @@ func NewConfig() *Config {
 	conf.InitRedisOptions()
 	conf.InitGrpcConfig()
 	conf.InitEtcdConfig()
+	conf.InitMysqlConfig()
+	// 返回配置好的全局配置
 	return conf
 }
 
@@ -59,6 +62,15 @@ type GrpcConfig struct {
 // EtcdConfig etcd配置
 type EtcdConfig struct {
 	Addrs []string `mapstructure:"addrs"`
+}
+
+// MysqlConfig mysql配置
+type MysqlConfig struct {
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Db       string `mapstructure:"db"`
 }
 
 // InitServerConfig 初始化服务配置
@@ -115,4 +127,15 @@ func (c *Config) InitEtcdConfig() {
 	}
 	ec.Addrs = addrs
 	c.EtcdConfig = ec
+}
+
+// InitMysqlConfig 初始化mysql配置
+func (c *Config) InitMysqlConfig() {
+	mc := &MysqlConfig{}
+	mc.Username = c.viper.GetString("mysql.username")
+	mc.Password = c.viper.GetString("mysql.password")
+	mc.Host = c.viper.GetString("mysql.host")
+	mc.Port = c.viper.GetInt("mysql.port")
+	mc.Db = c.viper.GetString("mysql.db")
+	c.MysqlConfig = mc
 }

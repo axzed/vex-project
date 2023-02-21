@@ -21,5 +21,8 @@ func (*RouterUser) Route(r *gin.Engine) {
 	// 初始化grpc的客户端连接
 	InitUserRpcClient()
 	h := NewHandlerUser()
+	// 接口定义处
+	// 路由注册
 	r.POST("/project/login/getCaptcha", h.getCaptcha)
+	r.POST("/project/login/register", h.register)
 }

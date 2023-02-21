@@ -34,3 +34,16 @@
 {"level":"ERROR","time":"2023-02-20T18:40:41.671+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
 {"level":"WARN","time":"2023-02-20T18:46:06.476+0800","caller":"login.service.v1/login_service.go:41","msg":"短信平台调用成功，发送短信 WARN"}
 {"level":"WARN","time":"2023-02-20T18:46:30.250+0800","caller":"login.service.v1/login_service.go:41","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"ERROR","time":"2023-02-21T12:25:28.851+0800","caller":"discovery/resolver.go:104","msg":"sync failed","error":"context deadline exceeded"}
+{"level":"WARN","time":"2023-02-21T16:34:46.700+0800","caller":"login.service.v1/login_service.go:48","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"ERROR","time":"2023-02-21T16:35:33.058+0800","caller":"login.service.v1/login_service.go:70","msg":"Register redis get error","error":"redis: nil"}
+{"level":"WARN","time":"2023-02-21T16:36:42.852+0800","caller":"login.service.v1/login_service.go:48","msg":"短信平台调用成功，发送短信 WARN"}
+{"level":"ERROR","time":"2023-02-21T16:37:32.464+0800","caller":"login.service.v1/login_service.go:70","msg":"Register redis get error","error":"redis: nil"}
+{"level":"ERROR","time":"2023-02-21T16:39:04.919+0800","caller":"login.service.v1/login_service.go:70","msg":"Register redis get error","error":"redis: nil"}
+{"level":"ERROR","time":"2023-02-21T16:40:50.335+0800","caller":"login.service.v1/login_service.go:70","msg":"Register redis get error","error":"redis: nil"}
+{"level":"ERROR","time":"2023-02-21T16:40:52.116+0800","caller":"login.service.v1/login_service.go:70","msg":"Register redis get error","error":"redis: nil"}
+{"level":"ERROR","time":"2023-02-21T16:40:53.485+0800","caller":"login.service.v1/login_service.go:70","msg":"Register redis get error","error":"redis: nil"}
+{"level":"ERROR","time":"2023-02-21T16:46:11.565+0800","caller":"login.service.v1/login_service.go:68","msg":"Register redis get error","error":"redis: nil"}
+{"level":"ERROR","time":"2023-02-21T16:49:42.438+0800","caller":"login.service.v1/login_service.go:68","msg":"Register redis get error","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-02-21T16:49:42.439+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-02-21T16:50:39.739+0800","caller":"login.service.v1/login_service.go:67","msg":"Register redis get error","error":"redis: nil"}
