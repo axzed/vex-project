@@ -18,6 +18,7 @@ type HandlerUser struct {
 	cache repo.Cache // 缓存
 }
 
+// NewHandlerUser HandlerUser构造函数
 func NewHandlerUser() *HandlerUser {
 	return &HandlerUser{
 		cache: dao.Rc, // 缓存(给repo.Cache接口一个具体的dao.Rc实现) 要替换只需要换这里的接口实现

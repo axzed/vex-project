@@ -10,8 +10,23 @@ import (
 var AppConf = NewConfig()
 
 type Config struct {
-	viper *viper.Viper
-	SC    *ServerConfig
+	viper      *viper.Viper
+	SC         *ServerConfig
+	GC         *GrpcConfig
+	EtcdConfig *EtcdConfig
+}
+
+// GrpcConfig grpc配置
+type GrpcConfig struct {
+	Name    string `mapstructure:"name"`
+	Addr    string `mapstructure:"addr"`
+	Version string `mapstructure:"version"`
+	Weight  int64  `mapstructure:"weight"`
+}
+
+// EtcdConfig etcd配置
+type EtcdConfig struct {
+	Addrs []string `mapstructure:"addrs"`
 }
 
 // NewConfig 初始化配置
@@ -30,6 +45,7 @@ func NewConfig() *Config {
 	}
 	conf.InitServerConfig()
 	conf.InitZapLog()
+	conf.InitEtcdConfig()
 
 	return conf
 }
@@ -62,4 +78,26 @@ func (c *Config) InitZapLog() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+// InitGrpcConfig 初始化grpc配置
+func (c *Config) InitGrpcConfig() {
+	gc := &GrpcConfig{}
+	gc.Name = c.viper.GetString("grpc.name")
+	gc.Addr = c.viper.GetString("grpc.addr")
+	gc.Version = c.viper.GetString("grpc.version")
+	gc.Weight = c.viper.GetInt64("grpc.weight")
+	c.GC = gc
+}
+
+// InitEtcdConfig 初始化etcd配置
+func (c *Config) InitEtcdConfig() {
+	ec := &EtcdConfig{}
+	var addrs []string
+	err := c.viper.UnmarshalKey("etcd.addrs", &addrs)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	ec.Addrs = addrs
+	c.EtcdConfig = ec
 }

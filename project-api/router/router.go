@@ -14,11 +14,13 @@ type Router interface {
 type RegisterRouter struct {
 }
 
+// New 注册路由实例(构造)
 func New() *RegisterRouter {
 	return &RegisterRouter{}
 }
 
-// implement Router interface
+// Route 路由注册
+// 方式一才使用
 func (*RegisterRouter) Route(ro Router, r *gin.Engine) {
 	ro.Route(r)
 }
@@ -33,6 +35,7 @@ func Register(ro ...Router) {
 }
 
 // InitRouter 路由初始
+// 交由不同的路由接口实现类注册路由
 func InitRouter(r *gin.Engine) {
 	// 方式一需要在当前函数下注册路由
 	//rg := New()
@@ -46,6 +49,7 @@ func InitRouter(r *gin.Engine) {
 	}
 }
 
+// gRPCConfig grpc配置
 type gRPCConfig struct {
 	Addr         string
 	RegisterFunc func(*grpc.Server)

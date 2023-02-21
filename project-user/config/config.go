@@ -8,12 +8,15 @@ import (
 	"os"
 )
 
+// AppConf 全局配置实例
 var AppConf = NewConfig()
 
+// Config 配置(全局配置)
 type Config struct {
-	viper *viper.Viper
-	SC    *ServerConfig
-	GC    *GrpcConfig
+	viper      *viper.Viper
+	SC         *ServerConfig
+	GC         *GrpcConfig
+	EtcdConfig *EtcdConfig
 }
 
 // NewConfig 初始化配置
@@ -30,22 +33,32 @@ func NewConfig() *Config {
 		log.Fatalln(err)
 		return nil
 	}
+	// 初始化子配置
 	conf.InitServerConfig()
 	conf.InitZapLog()
 	conf.InitRedisOptions()
 	conf.InitGrpcConfig()
-
+	conf.InitEtcdConfig()
 	return conf
 }
 
+// ServerConfig 服务配置
 type ServerConfig struct {
 	Name string `mapstructure:"name"`
 	Addr string `mapstructure:"addr"`
 }
 
+// GrpcConfig grpc配置
 type GrpcConfig struct {
-	Name string `mapstructure:"name"`
-	Addr string `mapstructure:"addr"`
+	Name    string `mapstructure:"name"`
+	Addr    string `mapstructure:"addr"`
+	Version string `mapstructure:"version"`
+	Weight  int64  `mapstructure:"weight"`
+}
+
+// EtcdConfig etcd配置
+type EtcdConfig struct {
+	Addrs []string `mapstructure:"addrs"`
 }
 
 // InitServerConfig 初始化服务配置
@@ -61,6 +74,8 @@ func (c *Config) InitGrpcConfig() {
 	gc := &GrpcConfig{}
 	gc.Name = c.viper.GetString("grpc.name")
 	gc.Addr = c.viper.GetString("grpc.addr")
+	gc.Version = c.viper.GetString("grpc.version")
+	gc.Weight = c.viper.GetInt64("grpc.weight")
 	c.GC = gc
 }
 
@@ -88,4 +103,16 @@ func (c *Config) InitRedisOptions() *redis.Options {
 		Password: c.viper.GetString("redis.password"), // no password set
 		DB:       c.viper.GetInt("redis.db"),          // use default DB
 	}
+}
+
+// InitEtcdConfig 初始化etcd配置
+func (c *Config) InitEtcdConfig() {
+	ec := &EtcdConfig{}
+	var addrs []string
+	err := c.viper.UnmarshalKey("etcd.addrs", &addrs)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	ec.Addrs = addrs
+	c.EtcdConfig = ec
 }

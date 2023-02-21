@@ -12,7 +12,10 @@ func main() {
 	r := gin.Default()
 	// 路由初始化
 	router.InitRouter(r)
+	// grpc初始化
 	grpc := router.RegisterGrpc()
+	// grpc服务注册到etcd
+	router.RegisterEtcdServer()
 	stop := func() {
 		grpc.Stop()
 	}

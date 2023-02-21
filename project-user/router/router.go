@@ -1,10 +1,13 @@
 package router
 
 import (
+	"github.com/axzed/project-common/discovery"
+	"github.com/axzed/project-common/logs"
 	"github.com/axzed/project-user/config"
 	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/resolver"
 	"log"
 	"net"
 )
@@ -55,6 +58,7 @@ type gRPCConfig struct {
 	RegisterFunc func(*grpc.Server)
 }
 
+// RegisterGrpc 注册grpc服务
 func RegisterGrpc() *grpc.Server {
 	c := gRPCConfig{
 		Addr: config.AppConf.GC.Addr,
@@ -75,4 +79,24 @@ func RegisterGrpc() *grpc.Server {
 		}
 	}()
 	return s
+}
+
+// RegisterEtcdServer 注册etcd服务
+func RegisterEtcdServer() {
+	etcdRegister := discovery.NewResolver(config.AppConf.EtcdConfig.Addrs, logs.LG)
+	resolver.Register(etcdRegister)
+	// 注册服务
+	// 服务信息
+	info := discovery.Server{
+		Name:    config.AppConf.GC.Name,
+		Addr:    config.AppConf.GC.Addr,
+		Version: config.AppConf.GC.Version,
+		Weight:  config.AppConf.GC.Weight,
+	}
+	// 注册服务
+	r := discovery.NewRegister(config.AppConf.EtcdConfig.Addrs, logs.LG)
+	_, err := r.Register(info, 2)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

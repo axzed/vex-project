@@ -1,16 +1,23 @@
 package user
 
 import (
+	"github.com/axzed/project-api/config"
+	"github.com/axzed/project-common/discovery"
+	"github.com/axzed/project-common/logs"
 	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/resolver"
 	"log"
 )
 
 var LoginServiceClient login_service_v1.LoginServiceClient
 
+// InitUserRpcClient 初始化grpc的客户端连接
 func InitUserRpcClient() {
-	conn, err := grpc.Dial("127.0.0.1:8881", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	etcdRegister := discovery.NewResolver(config.AppConf.EtcdConfig.Addrs, logs.LG)
+	resolver.Register(etcdRegister)
+	conn, err := grpc.Dial("etcd:///user", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
