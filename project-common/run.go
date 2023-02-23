@@ -37,7 +37,7 @@ func Run(r *gin.Engine, srvName string, addr string, stop func()) {
 
 	// 优雅关闭服务
 	// 5秒内处理完请求
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	if stop != nil {
 		stop()
