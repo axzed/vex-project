@@ -37,6 +37,7 @@ func GetDB() *gorm.DB {
 // GormConn gorm连接
 type GormConn struct {
 	db *gorm.DB
+	tx *gorm.DB
 }
 
 // NewGormConn 创建gorm连接
@@ -44,7 +45,28 @@ func NewGormConn() *GormConn {
 	return &GormConn{db: GetDB()}
 }
 
+// NewTransaction 创建带事务的gorm连接
+func NewTransaction() *GormConn {
+	return &GormConn{db: GetDB(), tx: GetDB()}
+}
+
+func (g *GormConn) Begin() {
+	g.tx = g.db.Begin()
+}
+
+func (g *GormConn) Rollback() {
+	g.tx.Rollback()
+}
+
+func (g *GormConn) Commit() {
+	g.tx.Commit()
+}
+
 // Session 获取gorm session
 func (g *GormConn) Session(ctx context.Context) *gorm.DB {
 	return g.db.Session(&gorm.Session{Context: ctx})
+}
+
+func (g *GormConn) Tx(ctx context.Context) *gorm.DB {
+	return g.tx.WithContext(ctx)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/axzed/project-user/internal/data"
 	"github.com/axzed/project-user/internal/database/gorm"
+	"github.com/axzed/project-user/internal/database/interface/conn"
 )
 
 // OrganizationDao 组织dao
@@ -27,7 +28,7 @@ func (o *OrganizationDao) FindOrganizationByMemId(ctx context.Context, memId int
 }
 
 // SaveOrganization 保存组织
-func (o *OrganizationDao) SaveOrganization(ctx context.Context, org *data.Organization) error {
-	err := o.conn.Session(ctx).Create(org).Error
-	return err
+func (o *OrganizationDao) SaveOrganization(conn conn.DbConn, ctx context.Context, org *data.Organization) error {
+	o.conn = conn.(*gorm.GormConn)
+	return o.conn.Tx(ctx).Create(org).Error
 }

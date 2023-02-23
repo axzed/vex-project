@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/axzed/project-user/internal/data"
 	"github.com/axzed/project-user/internal/database/gorm"
+	"github.com/axzed/project-user/internal/database/interface/conn"
 )
 
 // MemberDao 成员dao
@@ -17,8 +18,10 @@ func NewMemberDao() *MemberDao {
 }
 
 // SaveMember 保存成员
-func (m MemberDao) SaveMember(ctx context.Context, mem *data.Member) error {
-	return m.conn.Session(ctx).Create(mem).Error
+func (m MemberDao) SaveMember(conn conn.DbConn, ctx context.Context, mem *data.Member) error {
+	// conn.(*gorm.GormConn) 外部事务conn转换为gorm conn
+	m.conn = conn.(*gorm.GormConn)
+	return m.conn.Tx(ctx).Create(mem).Error
 }
 
 // GetMemberByEmail 根据邮箱获取成员

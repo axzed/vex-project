@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"github.com/axzed/project-user/internal/data"
+	"github.com/axzed/project-user/internal/database/interface/conn"
 )
 
 // MemberRepo 会员仓库接口
@@ -14,5 +15,5 @@ type MemberRepo interface {
 	// GetMemberByMobile 根据手机号获取会员
 	GetMemberByMobile(ctx context.Context, mobile string) (bool, error)
 	// SaveMember 保存会员
-	SaveMember(ctx context.Context, mem *data.Member) error
+	SaveMember(conn conn.DbConn, ctx context.Context, mem *data.Member) error
 }
