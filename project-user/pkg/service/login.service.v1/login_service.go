@@ -10,6 +10,7 @@ import (
 	"github.com/axzed/project-user/internal/data"
 	"github.com/axzed/project-user/internal/repo"
 	"github.com/axzed/project-user/pkg/model"
+	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 	"log"
 	"time"
@@ -67,6 +68,11 @@ func (ls *LoginService) Register(ctx context.Context, msg *login.RegisterMessage
 	// 1.可以再次进行参数校验
 	// 2.校验验证码
 	value, err := ls.cache.Get(c, model.RegisterRedisKey+msg.Mobile)
+	// redis.Nil 代表key不存在
+	// 草了，这个bug简直难受
+	if err == redis.Nil {
+		return nil, errs.ConvertToGrpcError(model.ErrCaptchNotFound)
+	}
 	if err != nil {
 		zap.L().Error("Register redis get error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrRedisFail)
@@ -130,7 +136,7 @@ func (ls *LoginService) Register(ctx context.Context, msg *login.RegisterMessage
 	err = ls.organizationRepo.SaveOrganization(c, org)
 	if err != nil {
 		zap.L().Error("register SaveOrganization db err", zap.Error(err))
-		return nil, model.ErrDBFail
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
 
 	// 5.返回结果
