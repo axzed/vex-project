@@ -5,7 +5,9 @@ import (
 	common "github.com/axzed/project-common"
 	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/errs"
+	"github.com/axzed/project-common/jwts"
 	"github.com/axzed/project-grpc/user/login"
+	"github.com/axzed/project-user/config"
 	"github.com/axzed/project-user/internal/dao"
 	"github.com/axzed/project-user/internal/data"
 	"github.com/axzed/project-user/internal/database/interface/conn"
@@ -13,8 +15,10 @@ import (
 	"github.com/axzed/project-user/internal/repo"
 	"github.com/axzed/project-user/pkg/model"
 	"github.com/go-redis/redis/v8"
+	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -149,4 +153,46 @@ func (ls *LoginService) Register(ctx context.Context, msg *login.RegisterMessage
 
 	// 5.返回结果
 	return &login.RegisterResponse{}, nil
+}
+
+// Login 登录
+func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*login.LoginResponse, error) {
+	c := context.Background()
+	// 1. 去数据库查询账号密码 记得密码要先加密
+	pwd := encrypts.Md5(msg.Password)
+	mem, err := ls.memberRepo.FindMember(c, msg.Account, pwd)
+	if err != nil {
+		zap.L().Error("Login db error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if mem == nil {
+		return nil, errs.ConvertToGrpcError(model.ErrAccountOrPwd)
+	}
+	memMessage := &login.MemberMessage{}
+	err = copier.Copy(memMessage, mem)
+	// 2. 根据用户ID去查询对应的组织
+	orgs, err := ls.organizationRepo.FindOrganizationByMemberId(c, mem.Id)
+	if err != nil {
+		zap.L().Error("Login db error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	var orgsMessage []*login.OrganizationMessage
+	err = copier.Copy(&orgsMessage, orgs)
+	// 3. 用jwt生成token
+	memIdStr := strconv.FormatInt(mem.Id, 10)
+	exp := 3600 * 24 * time.Second
+	rExp := 14 * 3600 * 24 * time.Second
+	token := jwts.CreateToken(memIdStr, exp, config.AppConf.JwtConfig.AccessSecret, rExp, config.AppConf.JwtConfig.RefreshSecret)
+	tokenList := &login.TokenMessage{
+		AccessToken:    token.AccessToken,
+		RefreshToken:   token.RefreshToken,
+		AccessTokenExp: token.AccessExp,
+		TokenType:      "bearer",
+	}
+	// 4. 返回结果
+	return &login.LoginResponse{
+		Member:           memMessage,
+		OrganizationList: orgsMessage,
+		TokenList:        tokenList,
+	}, nil
 }

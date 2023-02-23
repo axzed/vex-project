@@ -5,11 +5,20 @@ import (
 	"github.com/axzed/project-user/internal/data"
 	"github.com/axzed/project-user/internal/database/gorm"
 	"github.com/axzed/project-user/internal/database/interface/conn"
+	gorm2 "gorm.io/gorm"
 )
 
 // MemberDao 成员dao
 type MemberDao struct {
 	conn *gorm.GormConn
+}
+
+func (m MemberDao) FindMember(ctx context.Context, account string, pwd string) (mem *data.Member, err error) {
+	err = m.conn.Session(ctx).Where("account = ? and password = ?", account, pwd).First(&mem).Error
+	if err == gorm2.ErrRecordNotFound {
+		return nil, nil
+	}
+	return mem, err
 }
 
 // NewMemberDao 创建成员dao实例

@@ -13,6 +13,12 @@ type OrganizationDao struct {
 	conn *gorm.GormConn
 }
 
+func (o *OrganizationDao) FindOrganizationByMemberId(ctx context.Context, id int64) ([]*data.Organization, error) {
+	var orgs []*data.Organization
+	err := o.conn.Session(ctx).Where("member_id=?", id).Find(&orgs).Error
+	return orgs, err
+}
+
 // NewOrganizationDao 创建组织dao实例
 func NewOrganizationDao() *OrganizationDao {
 	return &OrganizationDao{

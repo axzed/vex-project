@@ -27,3 +27,8 @@ mysql:
   host: 127.0.0.1
   port: 3309
   db: vexproject
+jwt:
+  accessExp: 7
+  refreshExp: 14
+  accessSecret: access_secret
+  refreshSecret: refresh_secret

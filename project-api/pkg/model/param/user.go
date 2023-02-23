@@ -33,3 +33,47 @@ func (r RegisterReq) Verify() error {
 	}
 	return nil
 }
+
+// LoginReq 登录请求参数
+type LoginReq struct {
+	Account  string `json:"account" form:"account"`
+	Password string `json:"password" form:"password"`
+}
+
+// LoginResp 登录响应参数
+type LoginResp struct {
+	Member           Member             `json:"member"`
+	TokenList        TokenList          `json:"tokenList"`
+	OrganizationList []OrganizationList `json:"organizationList"`
+}
+
+// Member 用户信息
+type Member struct {
+	Id     int64  `json:"id"`
+	Name   string `json:"name"`
+	Mobile string `json:"mobile"`
+	Status int    `json:"status"`
+}
+
+// TokenList token信息
+type TokenList struct {
+	AccessToken    string `json:"accessToken"`
+	RefreshToken   string `json:"refreshToken"`
+	TokenType      string `json:"tokenType"`
+	AccessTokenExp int64  `json:"accessTokenExp"`
+}
+
+// OrganizationList 组织信息
+type OrganizationList struct {
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+	Avatar      string `json:"avatar"`
+	Description string `json:"description"`
+	MemberId    int64  `json:"memberId"`
+	CreateTime  int64  `json:"createTime"`
+	Personal    int32  `json:"personal"`
+	Address     string `json:"address"`
+	Province    int32  `json:"province"`
+	City        int32  `json:"city"`
+	Area        int32  `json:"area"`
+}

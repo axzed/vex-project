@@ -18,6 +18,7 @@ type Config struct {
 	GC          *GrpcConfig
 	EtcdConfig  *EtcdConfig
 	MysqlConfig *MysqlConfig
+	JwtConfig   *JwtConfig
 }
 
 // NewConfig 初始化配置
@@ -41,6 +42,7 @@ func NewConfig() *Config {
 	conf.InitGrpcConfig()
 	conf.InitEtcdConfig()
 	conf.InitMysqlConfig()
+	conf.InitJwtConfig()
 	// 返回配置好的全局配置
 	return conf
 }
@@ -71,6 +73,25 @@ type MysqlConfig struct {
 	Host     string `mapstructure:"host"`
 	Port     int    `mapstructure:"port"`
 	Db       string `mapstructure:"db"`
+}
+
+// JwtConfig jwt配置
+type JwtConfig struct {
+	AccessExp     int    `mapstructure:"accessExp"`
+	RefreshExp    int    `mapstructure:"refreshExp"`
+	AccessSecret  string `mapstructure:"accessSecret"`
+	RefreshSecret string `mapstructure:"refreshSecret"`
+}
+
+// InitJwtConfig 初始化jwt配置
+func (c *Config) InitJwtConfig() {
+	jc := &JwtConfig{
+		AccessExp:     c.viper.GetInt("jwt.accessExp"),
+		RefreshExp:    c.viper.GetInt("jwt.refreshExp"),
+		AccessSecret:  c.viper.GetString("jwt.accessSecret"),
+		RefreshSecret: c.viper.GetString("jwt.refreshSecret"),
+	}
+	c.JwtConfig = jc
 }
 
 // InitServerConfig 初始化服务配置

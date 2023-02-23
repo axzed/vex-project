@@ -69,3 +69,38 @@ func (h *HandlerUser) register(ctx *gin.Context) {
 	// 4. 返回响应
 	ctx.JSON(http.StatusOK, resp.Success(""))
 }
+
+// login 登录
+func (h *HandlerUser) login(ctx *gin.Context) {
+	resp := &common.Result{}
+	// 1. 获取参数
+	var req param.LoginReq
+	err := ctx.ShouldBind(&req)
+	if err != nil {
+		ctx.JSON(http.StatusOK, resp.Fail(http.StatusBadRequest, "参数格式有误"))
+	}
+	// 2. 调用user的grpc 完成登录
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	msg := &login.LoginMessage{}
+	err = copier.Copy(msg, req)
+	if err != nil {
+		ctx.JSON(http.StatusOK, resp.Fail(http.StatusBadRequest, "copy参数失败"))
+		return
+	}
+	loginResp, err := LoginServiceClient.Login(c, msg)
+	if err != nil {
+		// 解析grpc中的status错误
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, resp.Fail(code, msg))
+		return
+	}
+	respData := &param.LoginResp{}
+	err = copier.Copy(respData, loginResp)
+	if err != nil {
+		ctx.JSON(http.StatusOK, resp.Fail(http.StatusBadRequest, "copy参数失败"))
+		return
+	}
+	// 3. 返回响应
+	ctx.JSON(http.StatusOK, resp.Success(respData))
+}
