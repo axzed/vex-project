@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 	common "github.com/axzed/project-common"
-	"github.com/axzed/project-user/internal/dao"
-	"github.com/axzed/project-user/internal/repo"
-	"github.com/axzed/project-user/pkg/model"
+	"github.com/axzed/project-project/internal/dao"
+	"github.com/axzed/project-project/internal/repo"
+	"github.com/axzed/project-project/pkg/model"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"log"

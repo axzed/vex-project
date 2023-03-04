@@ -26,6 +26,7 @@ func NewProjectService() *ProjectService {
 	}
 }
 
+// Index 项目列表 具体rpc服务实现
 func (p *ProjectService) Index(context.Context, *project.IndexMessage) (*project.IndexResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Index not implemented")
 }
