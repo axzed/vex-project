@@ -49,10 +49,10 @@ type LoginResp struct {
 
 // Member 用户信息
 type Member struct {
-	Id     int64  `json:"id"`
 	Name   string `json:"name"`
 	Mobile string `json:"mobile"`
 	Status int    `json:"status"`
+	Code   string `json:"code"`
 }
 
 // TokenList token信息
@@ -65,7 +65,6 @@ type TokenList struct {
 
 // OrganizationList 组织信息
 type OrganizationList struct {
-	Id          int64  `json:"id"`
 	Name        string `json:"name"`
 	Avatar      string `json:"avatar"`
 	Description string `json:"description"`
@@ -76,4 +75,5 @@ type OrganizationList struct {
 	Province    int32  `json:"province"`
 	City        int32  `json:"city"`
 	Area        int32  `json:"area"`
+	Code        string `json:"code"`
 }

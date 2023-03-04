@@ -1,0 +1,34 @@
+server:
+  name: "project-project"
+  addr: "127.0.0.1:8081"
+zap:
+  DebugFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-debug.log"
+  InfoFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-info.log"
+  WarnFileName: "G:\\vex-project\\back-end\\vex-project\\logs\\project-warn.log"
+  MaxSize: 500
+  MaxAge: 28
+  MaxBackups: 3
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+grpc:
+  name: "project"
+  addr: "127.0.0.1:8882"
+  version: "1.0.0"
+  weight: 2
+etcd:
+  addrs:
+    - "127.0.0.1:2379"
+mysql:
+  username: root
+  password: root
+  host: 127.0.0.1
+  port: 3309
+  db: vexproject
+jwt:
+  accessExp: 7
+  refreshExp: 14
+  accessSecret: access_secret
+  refreshSecret: refresh_secret

@@ -73,3 +73,5 @@
 {"level":"INFO","time":"2023-02-23T21:50:30.910+0800","caller":"login.service.v1/login_service.go:56","msg":"短信平台调用成功，发送短信 INFO"}
 {"level":"INFO","time":"2023-02-23T22:55:55.380+0800","caller":"login.service.v1/login_service.go:59","msg":"短信平台调用成功，发送短信 INFO"}
 {"level":"INFO","time":"2023-02-23T22:58:26.016+0800","caller":"login.service.v1/login_service.go:59","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"INFO","time":"2023-02-24T16:32:27.707+0800","caller":"login.service.v1/login_service.go:59","msg":"短信平台调用成功，发送短信 INFO"}
+{"level":"INFO","time":"2023-02-24T16:33:29.549+0800","caller":"login.service.v1/login_service.go:59","msg":"短信平台调用成功，发送短信 INFO"}

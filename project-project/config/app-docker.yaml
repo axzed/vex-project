@@ -1,0 +1,29 @@
+server:
+  name: "project-user"
+  addr: "0.0.0.0:8080"
+zap:
+  DebugFileName: "/logs/debug.log/project-debug.log"
+  InfoFileName: "/logs/info.log/project-info.log"
+  WarnFileName: "/logs/error.log/project-error.log"
+  MaxSize: 500
+  MaxAge: 28
+  MaxBackups: 3
+redis:
+  host: "redis6"
+  port: 6379
+  password: ""
+  db: 0
+grpc:
+  name: "user"
+  addr: "0.0.0.0:8881"
+  version: "1.0.0"
+  weight: 2
+etcd:
+  addrs:
+    - "etcd3:2379"
+mysql:
+  username: root
+  password: root
+  host: 127.0.0.1
+  port: 3309
+  db: vexproject

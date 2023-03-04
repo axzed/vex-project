@@ -1,0 +1,17 @@
+syntax = "proto3";
+package project.service.v1;
+option go_package = "project-project/pkg/service/project.service.v1";
+
+message IndexMessage {
+
+}
+
+message IndexResponse {
+
+}
+
+// LoginService is the service for login.
+// 定义服务
+service ProjectService {
+  rpc Index(IndexMessage) returns (IndexResponse) {}
+}
