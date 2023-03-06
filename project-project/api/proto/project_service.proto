@@ -24,6 +24,34 @@ message MenuMessage {
   repeated MenuMessage children = 15;
 }
 
+message ProjectMessage {
+  int64 Id = 1;
+  string Cover = 2;
+  string Name = 3;
+  string Description = 4;
+  int32 AccessControlType = 5;
+  string WhiteList = 6;
+  int32 Order = 7;
+  int32 Deleted = 8;
+  string TemplateCode = 9;
+  double Schedule = 10;
+  string CreateTime = 11;
+  int64 OrganizationCode = 12;
+  string DeletedTime = 13;
+  int32 Private = 14;
+  string Prefix = 15;
+  int32 OpenPrefix = 16;
+  int32 Archive = 17;
+  int64 ArchiveTime = 18;
+  int32 OpenBeginTime = 19;
+  int32 OpenTaskPrivate = 20;
+  string TaskBoardTheme = 21;
+  int64 BeginTime = 22;
+  int64 EndTime = 23;
+  int32 AutoUpdateSchedule = 24;
+}
+
+
 message IndexResponse{
   repeated MenuMessage menus = 1;
 }
