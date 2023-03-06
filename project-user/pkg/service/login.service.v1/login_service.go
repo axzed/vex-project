@@ -19,6 +19,7 @@ import (
 	"go.uber.org/zap"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -203,14 +204,19 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 	}, nil
 }
 
+// TokenVerify 验证token
 func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage) (*login.LoginResponse, error) {
 	token := msg.Token
+	if strings.Contains(token, "bearer") {
+		// 去掉bearer
+		token = strings.ReplaceAll(token, "bearer ", "")
+	}
 	parseToken, err := jwts.ParseToken(token, config.AppConf.JwtConfig.AccessSecret)
 	if err != nil {
 		zap.L().Error("Login TokenVerify ParseToken error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
 	}
-	// 数据查询 优化点: 登录之后 应该吧用户信息缓存起来
+	// 数据查询 优化点: 登录之后 应该把用户信息缓存起来
 	id, _ := strconv.ParseInt(parseToken, 10, 64)
 	memberById, err := ls.memberRepo.FindMemberById(context.Background(), id)
 	if err != nil {
