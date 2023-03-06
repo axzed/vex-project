@@ -14,7 +14,7 @@ import (
 var ProjectServiceClient project.ProjectServiceClient
 
 // InitUserRpcClient 初始化grpc的客户端连接
-func InitUserRpcClient() {
+func InitProjectRpcClient() {
 	etcdRegister := discovery.NewResolver(config.AppConf.EtcdConfig.Addrs, logs.LG)
 	resolver.Register(etcdRegister)
 	conn, err := grpc.Dial("etcd:///project", grpc.WithTransportCredentials(insecure.NewCredentials()))

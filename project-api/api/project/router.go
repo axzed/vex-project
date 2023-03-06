@@ -1,6 +1,7 @@
 package project
 
 import (
+	"github.com/axzed/project-api/middleware"
 	"github.com/axzed/project-api/router"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -12,16 +13,19 @@ func init() {
 	router.Register(&RouterProject{})
 }
 
-// RouterUser Router路由接口实现类
+// RouterProject Router路由接口实现类
 type RouterProject struct {
 }
 
-// implement Router interface
+// Route implement Router interface
 func (*RouterProject) Route(r *gin.Engine) {
 	// 初始化grpc的客户端连接
-	InitUserRpcClient()
+	InitProjectRpcClient()
 	h := NewHandlerProject()
+	group := r.Group("/project/index")
 	// 接口定义处
 	// 路由注册
-	r.POST("/project/index", h.index)
+	// TokenVerify()中间件 用于验证token
+	group.Use(middleware.TokenVerify())
+	group.POST("", h.index)
 }

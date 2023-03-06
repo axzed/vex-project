@@ -202,3 +202,26 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 		TokenList:        tokenList,
 	}, nil
 }
+
+func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage) (*login.LoginResponse, error) {
+	token := msg.Token
+	parseToken, err := jwts.ParseToken(token, config.AppConf.JwtConfig.AccessSecret)
+	if err != nil {
+		zap.L().Error("Login TokenVerify ParseToken error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
+	}
+	// 数据查询 优化点: 登录之后 应该吧用户信息缓存起来
+	id, _ := strconv.ParseInt(parseToken, 10, 64)
+	memberById, err := ls.memberRepo.FindMemberById(context.Background(), id)
+	if err != nil {
+		zap.L().Error("Login TokenVerify FindMemberById error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	memMessage := &login.MemberMessage{}
+	err = copier.Copy(memMessage, memberById)
+	// 将用户ID加密
+	memMessage.Code, _ = encrypts.EncryptInt64(memberById.Id, model.AESKey)
+	return &login.LoginResponse{
+		Member: memMessage,
+	}, nil
+}

@@ -17,4 +17,6 @@ type MemberRepo interface {
 	// SaveMember 保存会员
 	SaveMember(conn conn.DbConn, ctx context.Context, mem *data.Member) error
 	FindMember(ctx context.Context, account string, pwd string) (mem *data.Member, err error)
+	// FindMemberById 根据id获取会员
+	FindMemberById(background context.Context, id int64) (mem *data.Member, err error)
 }
