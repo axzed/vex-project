@@ -6,6 +6,7 @@ import (
 	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/errs"
 	"github.com/axzed/project-common/jwts"
+	"github.com/axzed/project-common/tms"
 	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-user/config"
 	"github.com/axzed/project-user/internal/dao"
@@ -173,6 +174,11 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 	err = copier.Copy(memMessage, mem)
 	// 将用户ID加密
 	memMessage.Code, _ = encrypts.EncryptInt64(mem.Id, model.AESKey)
+	// 转换数据类型 mem中的LastLoginTime是int64类型 而memMessage中的LastLoginTime是string类型
+	// 通过tms.FormatByMill()方法将int64类型转换为string类型
+	// CreateTime也是一样
+	memMessage.LastLoginTime = tms.FormatByMill(mem.LastLoginTime)
+	memMessage.CreateTime = tms.FormatByMill(mem.CreateTime)
 	// 2. 根据用户ID去查询对应的组织
 	orgs, err := ls.organizationRepo.FindOrganizationByMemberId(c, mem.Id)
 	if err != nil {
@@ -184,6 +190,8 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 	// 将用户ID加密
 	for _, v := range orgsMessage {
 		v.Code, _ = encrypts.EncryptInt64(v.Id, model.AESKey)
+		v.OwnerCode = memMessage.Code
+		v.CreateTime = tms.FormatByMill(data.ToMap(orgs)[v.Id].CreateTime)
 	}
 	// 3. 用jwt生成token
 	memIdStr := strconv.FormatInt(mem.Id, 10)
