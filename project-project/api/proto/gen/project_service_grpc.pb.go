@@ -4,7 +4,7 @@
 // - protoc             v3.20.1
 // source: project_service.proto
 
-package project_service_v1
+package project
 
 import (
 	context "context"
@@ -36,7 +36,7 @@ func NewProjectServiceClient(cc grpc.ClientConnInterface) ProjectServiceClient {
 
 func (c *projectServiceClient) Index(ctx context.Context, in *IndexMessage, opts ...grpc.CallOption) (*IndexResponse, error) {
 	out := new(IndexResponse)
-	err := c.cc.Invoke(ctx, "/project.service.v1.ProjectService/Index", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/project.ProjectService/Index", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *projectServiceClient) Index(ctx context.Context, in *IndexMessage, opts
 
 func (c *projectServiceClient) FindProjectByMemId(ctx context.Context, in *ProjectRpcMessage, opts ...grpc.CallOption) (*MyProjectResponse, error) {
 	out := new(MyProjectResponse)
-	err := c.cc.Invoke(ctx, "/project.service.v1.ProjectService/FindProjectByMemId", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/project.ProjectService/FindProjectByMemId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func _ProjectService_Index_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/project.service.v1.ProjectService/Index",
+		FullMethod: "/project.ProjectService/Index",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectServiceServer).Index(ctx, req.(*IndexMessage))
@@ -112,7 +112,7 @@ func _ProjectService_FindProjectByMemId_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/project.service.v1.ProjectService/FindProjectByMemId",
+		FullMethod: "/project.ProjectService/FindProjectByMemId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProjectServiceServer).FindProjectByMemId(ctx, req.(*ProjectRpcMessage))
@@ -124,7 +124,7 @@ func _ProjectService_FindProjectByMemId_Handler(srv interface{}, ctx context.Con
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProjectService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "project.service.v1.ProjectService",
+	ServiceName: "project.ProjectService",
 	HandlerType: (*ProjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

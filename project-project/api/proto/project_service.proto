@@ -21,7 +21,10 @@ message MenuMessage {
   int32 isInner = 12;
   string values = 13;
   int32 showSlider = 14;
-  repeated MenuMessage children = 15;
+  string statusText = 15;
+  string innerText  = 16;
+  string fullUrl    = 17;
+  repeated MenuMessage children = 18;
 }
 
 message ProjectMessage {

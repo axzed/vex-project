@@ -34,7 +34,10 @@ func (p *HandlerProject) index(ctx *gin.Context) {
 		code, msg := errs.ParseGrpcError(err)
 		ctx.JSON(http.StatusOK, result.Fail(code, msg))
 	}
-	ctx.JSON(http.StatusOK, result.Success(indexResponse.Menus))
+	menus := indexResponse.Menus
+	var ms []*param.Menu
+	copier.Copy(&ms, menus)
+	ctx.JSON(http.StatusOK, result.Success(ms))
 }
 
 // myProjectList 我的项目列表
