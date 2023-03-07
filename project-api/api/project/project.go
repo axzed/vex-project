@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"github.com/axzed/project-api/api/rpc"
 	"github.com/axzed/project-api/pkg/model"
 	"github.com/axzed/project-api/pkg/model/param"
 	common "github.com/axzed/project-common"
@@ -28,7 +29,7 @@ func (p *HandlerProject) index(ctx *gin.Context) {
 	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	msg := &project.IndexMessage{}
-	indexResponse, err := ProjectServiceClient.Index(c, msg)
+	indexResponse, err := rpc.ProjectServiceClient.Index(c, msg)
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
 		ctx.JSON(http.StatusOK, result.Fail(code, msg))
@@ -48,7 +49,7 @@ func (p *HandlerProject) myProjectList(ctx *gin.Context) {
 	page := &model.Page{}
 	page.Bind(ctx)
 	msg := &project.ProjectRpcMessage{MemberId: memberId.(int64), Page: page.Page, PageSize: page.PageSize}
-	myProjectResponse, err := ProjectServiceClient.FindProjectByMemId(c, msg)
+	myProjectResponse, err := rpc.ProjectServiceClient.FindProjectByMemId(c, msg)
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
 		ctx.JSON(http.StatusOK, result.Fail(code, msg))

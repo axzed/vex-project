@@ -2,6 +2,7 @@ package project
 
 import (
 	"github.com/axzed/project-api/api/middleware"
+	"github.com/axzed/project-api/api/rpc"
 	"github.com/axzed/project-api/router"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -20,7 +21,7 @@ type RouterProject struct {
 // Route implement Router interface
 func (*RouterProject) Route(r *gin.Engine) {
 	// 初始化grpc的客户端连接
-	InitProjectRpcClient()
+	rpc.InitProjectRpcClient()
 	h := NewHandlerProject()
 	// 路由组
 	// 接口定义处
