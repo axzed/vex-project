@@ -1,4 +1,4 @@
-package user
+package rpc
 
 import (
 	"github.com/axzed/project-api/config"

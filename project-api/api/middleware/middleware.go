@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"github.com/axzed/project-api/api/user"
+	"github.com/axzed/project-api/api/rpc"
 	common "github.com/axzed/project-common"
 	"github.com/axzed/project-common/errs"
 	"github.com/axzed/project-grpc/user/login"
@@ -20,7 +20,7 @@ func TokenVerify() func(*gin.Context) {
 		// 2. 调用user服务进行Token认证
 		ctx, cancelFunc := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancelFunc()
-		response, err := user.LoginServiceClient.TokenVerify(ctx, &login.LoginMessage{
+		response, err := rpc.LoginServiceClient.TokenVerify(ctx, &login.LoginMessage{
 			Token: token,
 		})
 		if err != nil {

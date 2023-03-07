@@ -71,6 +71,14 @@ message TokenMessage{
   int64 accessTokenExp = 4;
 }
 
+// 我的组织列表rpc message
+message UserMessage{
+  int64 memId = 1;
+}
+message OrgListResponse{
+  repeated OrganizationMessage organizationList = 1;
+}
+
 // LoginService is the service for login.
 // 定义服务
 service LoginService {
@@ -78,4 +86,5 @@ service LoginService {
   rpc Register(RegisterMessage) returns (RegisterResponse) {}
   rpc Login(LoginMessage) returns (LoginResponse) {}
   rpc TokenVerify(LoginMessage) returns (LoginResponse) {}
+  rpc MyOrgList(UserMessage) returns (OrgListResponse) {}
 }

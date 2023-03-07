@@ -231,3 +231,19 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 		Member: memMessage,
 	}, nil
 }
+
+// MyOrgList 我的组织列表
+func (ls *LoginService) MyOrgList(ctx context.Context, msg *login.UserMessage) (*login.OrgListResponse, error) {
+	memId := msg.MemId
+	orgs, err := ls.organizationRepo.FindOrganizationByMemId(ctx, memId)
+	if err != nil {
+		zap.L().Error("MyOrgList FindOrganizationByMemId err", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	var orgsMessage []*login.OrganizationMessage
+	err = copier.Copy(&orgsMessage, orgs)
+	for _, org := range orgsMessage {
+		org.Code, _ = encrypts.EncryptInt64(org.Id, model.AESKey)
+	}
+	return &login.OrgListResponse{OrganizationList: orgsMessage}, nil
+}

@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"github.com/axzed/project-api/api/rpc"
 	"github.com/axzed/project-api/pkg/model/param"
 	common "github.com/axzed/project-common"
 	"github.com/axzed/project-common/errs"
@@ -27,7 +28,7 @@ func (h *HandlerUser) getCaptcha(ctx *gin.Context) {
 	mobile := ctx.PostForm("mobile")
 	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	captchaResponse, err := LoginServiceClient.GetCaptcha(c, &login.CaptchaMessage{Mobile: mobile})
+	captchaResponse, err := rpc.LoginServiceClient.GetCaptcha(c, &login.CaptchaMessage{Mobile: mobile})
 	if err != nil {
 		// 解析grpc中的status错误
 		code, msg := errs.ParseGrpcError(err)
@@ -59,7 +60,7 @@ func (h *HandlerUser) register(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusOK, resp.Fail(http.StatusBadRequest, "copy参数失败"))
 	}
-	_, err = LoginServiceClient.Register(c, msg)
+	_, err = rpc.LoginServiceClient.Register(c, msg)
 	if err != nil {
 		// 解析grpc中的status错误
 		code, msg := errs.ParseGrpcError(err)
@@ -88,7 +89,7 @@ func (h *HandlerUser) login(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, resp.Fail(http.StatusBadRequest, "copy参数失败"))
 		return
 	}
-	loginResp, err := LoginServiceClient.Login(c, msg)
+	loginResp, err := rpc.LoginServiceClient.Login(c, msg)
 	if err != nil {
 		// 解析grpc中的status错误
 		code, msg := errs.ParseGrpcError(err)
@@ -103,4 +104,24 @@ func (h *HandlerUser) login(ctx *gin.Context) {
 	}
 	// 3. 返回响应
 	ctx.JSON(http.StatusOK, resp.Success(respData))
+}
+
+// myOrgList 获取我的组织列表
+func (h *HandlerUser) myOrgList(c *gin.Context) {
+	result := &common.Result{}
+	memberStr, _ := c.Get("memberId")
+	memberId := memberStr.(int64)
+	list, err2 := rpc.LoginServiceClient.MyOrgList(context.Background(), &login.UserMessage{MemId: memberId})
+	if err2 != nil {
+		code, msg := errs.ParseGrpcError(err2)
+		c.JSON(http.StatusOK, result.Fail(code, msg))
+		return
+	}
+	if list.OrganizationList == nil {
+		c.JSON(http.StatusOK, result.Success([]*param.OrganizationList{}))
+		return
+	}
+	var orgs []*param.OrganizationList
+	copier.Copy(&orgs, list.OrganizationList)
+	c.JSON(http.StatusOK, result.Success(orgs))
 }

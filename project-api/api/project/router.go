@@ -1,7 +1,7 @@
 package project
 
 import (
-	"github.com/axzed/project-api/middleware"
+	"github.com/axzed/project-api/api/middleware"
 	"github.com/axzed/project-api/router"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -22,10 +22,11 @@ func (*RouterProject) Route(r *gin.Engine) {
 	// 初始化grpc的客户端连接
 	InitProjectRpcClient()
 	h := NewHandlerProject()
-	group := r.Group("/project")
+	// 路由组
 	// 接口定义处
 	// 路由注册
 	// TokenVerify()中间件 用于验证token
+	group := r.Group("/project")
 	group.Use(middleware.TokenVerify())
 	group.POST("/index", h.index)
 	group.POST("/project/selfList", h.myProjectList)

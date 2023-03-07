@@ -1,6 +1,8 @@
 package user
 
 import (
+	"github.com/axzed/project-api/api/middleware"
+	"github.com/axzed/project-api/api/rpc"
 	"github.com/axzed/project-api/router"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -19,11 +21,14 @@ type RouterUser struct {
 // implement Router interface
 func (*RouterUser) Route(r *gin.Engine) {
 	// 初始化grpc的客户端连接
-	InitUserRpcClient()
+	rpc.InitUserRpcClient()
 	h := NewHandlerUser()
 	// 接口定义处
 	// 路由注册
 	r.POST("/project/login/getCaptcha", h.getCaptcha)
 	r.POST("/project/login/register", h.register)
 	r.POST("/project/login", h.login)
+	org := r.Group("/project/organization")
+	org.Use(middleware.TokenVerify())
+	org.POST("/_getOrgList", h.myOrgList)
 }

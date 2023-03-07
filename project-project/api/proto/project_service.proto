@@ -1,6 +1,6 @@
 syntax = "proto3";
-package project.service.v1;
-option go_package = "project-project/pkg/service/project.service.v1";
+package project;
+option go_package = "project-project/pkg/service/project";
 
 
 message IndexMessage{

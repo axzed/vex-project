@@ -711,6 +711,101 @@ func (x *TokenMessage) GetAccessTokenExp() int64 {
 	return 0
 }
 
+// 我的组织列表rpc message
+type UserMessage struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	MemId int64 `protobuf:"varint,1,opt,name=memId,proto3" json:"memId,omitempty"`
+}
+
+func (x *UserMessage) Reset() {
+	*x = UserMessage{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_login_service_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserMessage) ProtoMessage() {}
+
+func (x *UserMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_login_service_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserMessage.ProtoReflect.Descriptor instead.
+func (*UserMessage) Descriptor() ([]byte, []int) {
+	return file_login_service_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UserMessage) GetMemId() int64 {
+	if x != nil {
+		return x.MemId
+	}
+	return 0
+}
+
+type OrgListResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	OrganizationList []*OrganizationMessage `protobuf:"bytes,1,rep,name=organizationList,proto3" json:"organizationList,omitempty"`
+}
+
+func (x *OrgListResponse) Reset() {
+	*x = OrgListResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_login_service_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *OrgListResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrgListResponse) ProtoMessage() {}
+
+func (x *OrgListResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_login_service_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrgListResponse.ProtoReflect.Descriptor instead.
+func (*OrgListResponse) Descriptor() ([]byte, []int) {
+	return file_login_service_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *OrgListResponse) GetOrganizationList() []*OrganizationMessage {
+	if x != nil {
+		return x.OrganizationList
+	}
+	return nil
+}
+
 var File_login_service_proto protoreflect.FileDescriptor
 
 var file_login_service_proto_rawDesc = []byte{
@@ -798,7 +893,15 @@ var file_login_service_proto_rawDesc = []byte{
 	0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x54,
 	0x79, 0x70, 0x65, 0x12, 0x26, 0x0a, 0x0e, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b,
 	0x65, 0x6e, 0x45, 0x78, 0x70, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0e, 0x61, 0x63, 0x63,
-	0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x45, 0x78, 0x70, 0x32, 0xfe, 0x01, 0x0a, 0x0c,
+	0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x45, 0x78, 0x70, 0x22, 0x23, 0x0a, 0x0b, 0x55,
+	0x73, 0x65, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x6d, 0x65,
+	0x6d, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x6d, 0x65, 0x6d, 0x49, 0x64,
+	0x22, 0x59, 0x0a, 0x0f, 0x4f, 0x72, 0x67, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x46, 0x0a, 0x10, 0x6f, 0x72, 0x67, 0x61, 0x6e, 0x69, 0x7a, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x4c, 0x69, 0x73, 0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1a, 0x2e,
+	0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x2e, 0x4f, 0x72, 0x67, 0x61, 0x6e, 0x69, 0x7a, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x52, 0x10, 0x6f, 0x72, 0x67, 0x61, 0x6e,
+	0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4c, 0x69, 0x73, 0x74, 0x32, 0xb9, 0x02, 0x0a, 0x0c,
 	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3d, 0x0a, 0x0a,
 	0x47, 0x65, 0x74, 0x43, 0x61, 0x70, 0x74, 0x63, 0x68, 0x61, 0x12, 0x15, 0x2e, 0x6c, 0x6f, 0x67,
 	0x69, 0x6e, 0x2e, 0x43, 0x61, 0x70, 0x74, 0x63, 0x68, 0x61, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
@@ -814,10 +917,14 @@ var file_login_service_proto_rawDesc = []byte{
 	0x12, 0x3a, 0x0a, 0x0b, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x12,
 	0x13, 0x2e, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x4d, 0x65, 0x73,
 	0x73, 0x61, 0x67, 0x65, 0x1a, 0x14, 0x2e, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x2e, 0x4c, 0x6f, 0x67,
-	0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x20, 0x5a, 0x1e,
-	0x70, 0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x2d, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x70, 0x6b, 0x67,
-	0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x39, 0x0a, 0x09,
+	0x4d, 0x79, 0x4f, 0x72, 0x67, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x12, 0x2e, 0x6c, 0x6f, 0x67, 0x69,
+	0x6e, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x16, 0x2e,
+	0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x2e, 0x4f, 0x72, 0x67, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x20, 0x5a, 0x1e, 0x70, 0x72, 0x6f, 0x6a, 0x65,
+	0x63, 0x74, 0x2d, 0x75, 0x73, 0x65, 0x72, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2f, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -832,7 +939,7 @@ func file_login_service_proto_rawDescGZIP() []byte {
 	return file_login_service_proto_rawDescData
 }
 
-var file_login_service_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_login_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_login_service_proto_goTypes = []interface{}{
 	(*CaptchaMessage)(nil),      // 0: login.CaptchaMessage
 	(*CaptchaResponse)(nil),     // 1: login.CaptchaResponse
@@ -843,24 +950,29 @@ var file_login_service_proto_goTypes = []interface{}{
 	(*MemberMessage)(nil),       // 6: login.MemberMessage
 	(*OrganizationMessage)(nil), // 7: login.OrganizationMessage
 	(*TokenMessage)(nil),        // 8: login.TokenMessage
+	(*UserMessage)(nil),         // 9: login.UserMessage
+	(*OrgListResponse)(nil),     // 10: login.OrgListResponse
 }
 var file_login_service_proto_depIdxs = []int32{
-	6, // 0: login.LoginResponse.member:type_name -> login.MemberMessage
-	7, // 1: login.LoginResponse.organizationList:type_name -> login.OrganizationMessage
-	8, // 2: login.LoginResponse.tokenList:type_name -> login.TokenMessage
-	0, // 3: login.LoginService.GetCaptcha:input_type -> login.CaptchaMessage
-	2, // 4: login.LoginService.Register:input_type -> login.RegisterMessage
-	4, // 5: login.LoginService.Login:input_type -> login.LoginMessage
-	4, // 6: login.LoginService.TokenVerify:input_type -> login.LoginMessage
-	1, // 7: login.LoginService.GetCaptcha:output_type -> login.CaptchaResponse
-	3, // 8: login.LoginService.Register:output_type -> login.RegisterResponse
-	5, // 9: login.LoginService.Login:output_type -> login.LoginResponse
-	5, // 10: login.LoginService.TokenVerify:output_type -> login.LoginResponse
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	6,  // 0: login.LoginResponse.member:type_name -> login.MemberMessage
+	7,  // 1: login.LoginResponse.organizationList:type_name -> login.OrganizationMessage
+	8,  // 2: login.LoginResponse.tokenList:type_name -> login.TokenMessage
+	7,  // 3: login.OrgListResponse.organizationList:type_name -> login.OrganizationMessage
+	0,  // 4: login.LoginService.GetCaptcha:input_type -> login.CaptchaMessage
+	2,  // 5: login.LoginService.Register:input_type -> login.RegisterMessage
+	4,  // 6: login.LoginService.Login:input_type -> login.LoginMessage
+	4,  // 7: login.LoginService.TokenVerify:input_type -> login.LoginMessage
+	9,  // 8: login.LoginService.MyOrgList:input_type -> login.UserMessage
+	1,  // 9: login.LoginService.GetCaptcha:output_type -> login.CaptchaResponse
+	3,  // 10: login.LoginService.Register:output_type -> login.RegisterResponse
+	5,  // 11: login.LoginService.Login:output_type -> login.LoginResponse
+	5,  // 12: login.LoginService.TokenVerify:output_type -> login.LoginResponse
+	10, // 13: login.LoginService.MyOrgList:output_type -> login.OrgListResponse
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_login_service_proto_init() }
@@ -977,6 +1089,30 @@ func file_login_service_proto_init() {
 				return nil
 			}
 		}
+		file_login_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserMessage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_login_service_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*OrgListResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -984,7 +1120,7 @@ func file_login_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_login_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
