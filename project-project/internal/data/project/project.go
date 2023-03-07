@@ -36,20 +36,20 @@ type ProjectMember struct {
 	ProjectCode int64
 	MemberCode  int64
 	JoinTime    int64
-	isOwner     int64
-	authorize   string
+	IsOwner     int64
+	Authorize   string
 }
 
 func (*ProjectMember) TableName() string {
 	return "vex_project_member"
 }
 
-// ProjectMemberUnion is a union of project and project member
-type ProjectMemberUnion struct {
+// ProAndMember is a union of project and project member
+type ProAndMember struct {
 	Project
 	ProjectCode int64
 	MemberCode  int64
 	JoinTime    int64
-	isOwner     int64
-	authorize   string
+	IsOwner     int64
+	Authorize   string
 }

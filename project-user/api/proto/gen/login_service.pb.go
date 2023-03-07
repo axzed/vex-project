@@ -26,7 +26,7 @@ type CaptchaMessage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,omitempty"`
+	Mobile string `protobuf:"bytes,1,opt,name=mobile,proto3" json:"mobile,"`
 }
 
 func (x *CaptchaMessage) Reset() {
@@ -74,7 +74,7 @@ type CaptchaResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	Code string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,"`
 }
 
 func (x *CaptchaResponse) Reset() {
@@ -122,11 +122,11 @@ type RegisterMessage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	Mobile   string `protobuf:"bytes,4,opt,name=mobile,proto3" json:"mobile,omitempty"`
-	Captcha  string `protobuf:"bytes,5,opt,name=captcha,proto3" json:"captcha,omitempty"`
+	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,"`
+	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,"`
+	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,"`
+	Mobile   string `protobuf:"bytes,4,opt,name=mobile,proto3" json:"mobile,"`
+	Captcha  string `protobuf:"bytes,5,opt,name=captcha,proto3" json:"captcha,"`
 }
 
 func (x *RegisterMessage) Reset() {

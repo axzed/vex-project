@@ -48,3 +48,7 @@
 {"level":"ERROR","time":"2023-02-21T16:49:42.439+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
 {"level":"ERROR","time":"2023-02-21T16:50:39.739+0800","caller":"login.service.v1/login_service.go:67","msg":"Register redis get error","error":"redis: nil"}
 {"level":"ERROR","time":"2023-03-06T09:35:11.927+0800","caller":"login.service.v1/login_service.go:210","msg":"Login TokenVerify ParseToken error","error":"token is malformed: token contains an invalid number of segments"}
+{"level":"ERROR","time":"2023-03-07T11:51:06.654+0800","caller":"login.service.v1/login_service.go:216","msg":"Login TokenVerify ParseToken error","error":"token is malformed: token contains an invalid number of segments"}
+{"level":"ERROR","time":"2023-03-07T12:04:34.690+0800","caller":"project.service.v1/project_service.go:58","msg":"menu FindProjectByMember error","error":"Error 1054 (42S22): Unknown column 'member_code' in 'where clause'"}
+{"level":"ERROR","time":"2023-03-07T12:08:49.549+0800","caller":"project.service.v1/project_service.go:58","msg":"menu FindProjectByMember error","error":"Error 1054 (42S22): Unknown column 'member_code' in 'where clause'"}
+{"level":"ERROR","time":"2023-03-07T12:09:05.852+0800","caller":"project.service.v1/project_service.go:58","msg":"menu FindProjectByMember error","error":"Error 1054 (42S22): Unknown column 'member_code' in 'where clause'"}

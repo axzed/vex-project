@@ -22,10 +22,11 @@ func (*RouterProject) Route(r *gin.Engine) {
 	// 初始化grpc的客户端连接
 	InitProjectRpcClient()
 	h := NewHandlerProject()
-	group := r.Group("/project/index")
+	group := r.Group("/project")
 	// 接口定义处
 	// 路由注册
 	// TokenVerify()中间件 用于验证token
 	group.Use(middleware.TokenVerify())
-	group.POST("", h.index)
+	group.POST("/index", h.index)
+	group.POST("/project/selfList", h.myProjectList)
 }

@@ -96,3 +96,7 @@
 {"level":"INFO","time":"2023-03-04T14:10:20.748+0800","caller":"login.service.v1/login_service.go:59","msg":"短信平台调用成功，发送短信 INFO"}
 {"level":"INFO","time":"2023-03-04T14:11:27.932+0800","caller":"login.service.v1/login_service.go:59","msg":"短信平台调用成功，发送短信 INFO"}
 {"level":"ERROR","time":"2023-03-06T09:35:11.927+0800","caller":"login.service.v1/login_service.go:210","msg":"Login TokenVerify ParseToken error","error":"token is malformed: token contains an invalid number of segments"}
+{"level":"ERROR","time":"2023-03-07T11:51:06.654+0800","caller":"login.service.v1/login_service.go:216","msg":"Login TokenVerify ParseToken error","error":"token is malformed: token contains an invalid number of segments"}
+{"level":"ERROR","time":"2023-03-07T12:04:34.690+0800","caller":"project.service.v1/project_service.go:58","msg":"menu FindProjectByMember error","error":"Error 1054 (42S22): Unknown column 'member_code' in 'where clause'"}
+{"level":"ERROR","time":"2023-03-07T12:08:49.549+0800","caller":"project.service.v1/project_service.go:58","msg":"menu FindProjectByMember error","error":"Error 1054 (42S22): Unknown column 'member_code' in 'where clause'"}
+{"level":"ERROR","time":"2023-03-07T12:09:05.852+0800","caller":"project.service.v1/project_service.go:58","msg":"menu FindProjectByMember error","error":"Error 1054 (42S22): Unknown column 'member_code' in 'where clause'"}
