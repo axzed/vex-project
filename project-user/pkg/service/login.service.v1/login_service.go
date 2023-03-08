@@ -193,6 +193,10 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 		v.OwnerCode = memMessage.Code
 		v.CreateTime = tms.FormatByMill(data.ToMap(orgs)[v.Id].CreateTime)
 	}
+	if len(orgs) > 0 {
+		// 获取第一个组织的ID
+		memMessage.OrganizationCode, _ = encrypts.EncryptInt64(orgs[0].Id, model.AESKey)
+	}
 	// 3. 用jwt生成token
 	memIdStr := strconv.FormatInt(mem.Id, 10)
 	exp := time.Duration(config.AppConf.JwtConfig.AccessExp*3600*24) * time.Second
@@ -204,6 +208,7 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 		AccessTokenExp: token.AccessExp,
 		TokenType:      "bearer",
 	}
+	// TODO 待优化点: 将 member 和 organization 信息存入redis
 	// 4. 返回结果
 	return &login.LoginResponse{
 		Member:           memMessage,
@@ -224,7 +229,8 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 		zap.L().Error("Login TokenVerify ParseToken error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
 	}
-	// 数据查询 优化点: 登录之后 应该把用户信息缓存起来
+	// 从缓存中查询
+	// TODO 数据查询 优化点: 登录之后 应该把用户信息缓存起来
 	id, _ := strconv.ParseInt(parseToken, 10, 64)
 	memberById, err := ls.memberRepo.FindMemberById(context.Background(), id)
 	if err != nil {
@@ -235,6 +241,15 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 	err = copier.Copy(memMessage, memberById)
 	// 将用户ID加密
 	memMessage.Code, _ = encrypts.EncryptInt64(memberById.Id, model.AESKey)
+	orgs, err := ls.organizationRepo.FindOrganizationByMemberId(context.Background(), memberById.Id)
+	if err != nil {
+		zap.L().Error("Login db error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if len(orgs) > 0 {
+		// 获取第一个组织的ID
+		memMessage.OrganizationCode, _ = encrypts.EncryptInt64(orgs[0].Id, model.AESKey)
+	}
 	return &login.LoginResponse{
 		Member: memMessage,
 	}, nil

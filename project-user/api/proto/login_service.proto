@@ -50,6 +50,7 @@ message MemberMessage {
   string email = 12;
   string code = 13;
   string createTime = 14;
+  string organizationCode = 15;
 }
 message OrganizationMessage {
   int64 id = 1;

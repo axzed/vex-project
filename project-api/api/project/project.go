@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -78,5 +79,53 @@ func (p *HandlerProject) myProjectList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result.Success(gin.H{
 		"list":  pms, // 不能返回null nil 前端无法解析 -> []
 		"total": myProjectResponse.Total,
+	}))
+}
+
+func (p *HandlerProject) projectTemplate(ctx *gin.Context) {
+	// 返回结果的结构体
+	result := &common.Result{}
+	// 1. 获取参数
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	memberId, _ := ctx.Get("memberId")
+	memberName := ctx.GetString("memberName")
+	// 分页
+	page := &model.Page{}
+	page.Bind(ctx)
+	viewTypeStr := ctx.PostForm("viewType")
+	viewType, _ := strconv.ParseInt(viewTypeStr, 10, 64)
+	msg := &project.ProjectRpcMessage{
+		MemberId: memberId.(int64),
+		MemberName: memberName,
+		ViewType: int32(viewType),
+		Page: page.Page,
+		PageSize: page.PageSize,
+		OrganizationCode: ctx.GetString("organizationCode"),
+	}
+	templateResponse, err := rpc.ProjectServiceClient.FindProjectTemplate(c, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+
+	var pts []*param.ProjectTemplate
+	err = copier.Copy(&pts, templateResponse.Ptm)
+	// 若为空 设置默认值
+	if pts == nil {
+		pts = []*param.ProjectTemplate{}
+	}
+	if err != nil {
+		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "copy参数失败"))
+	}
+	for _, v := range pts {
+		// 若为空 设置默认值
+		if v.TaskStages == nil {
+			v.TaskStages = []*param.TaskStagesOnlyName{}
+		}
+	}
+	ctx.JSON(http.StatusOK, result.Success(gin.H{
+		"list":  pts, // 不能返回null nil 前端无法解析 -> []
+		"total": templateResponse.Total,
 	}))
 }

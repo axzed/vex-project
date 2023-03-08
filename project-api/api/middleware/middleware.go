@@ -32,6 +32,7 @@ func TokenVerify() func(*gin.Context) {
 		// 3. 认证通过则继续执行 放入gin的上下文，否则返回错误
 		c.Set("memberId", response.Member.Id)
 		c.Set("memberName", response.Member.Name)
+		c.Set("organizationCode", response.Member.OrganizationCode)
 		c.Next()
 	}
 }
