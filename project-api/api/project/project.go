@@ -52,23 +52,31 @@ func (p *HandlerProject) myProjectList(ctx *gin.Context) {
 	// 分页
 	page := &model.Page{}
 	page.Bind(ctx)
-	msg := &project.ProjectRpcMessage{MemberId: memberId.(int64), MemberName: memberName, Page: page.Page, PageSize: page.PageSize}
+	selectBy := ctx.PostForm("selectBy")
+	msg := &project.ProjectRpcMessage{
+		MemberId: memberId.(int64),
+		MemberName: memberName,
+		SelectBy: selectBy,
+		Page: page.Page,
+		PageSize: page.PageSize,
+	}
 	myProjectResponse, err := rpc.ProjectServiceClient.FindProjectByMemId(c, msg)
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
 		ctx.JSON(http.StatusOK, result.Fail(code, msg))
 	}
-	// 若为空 设置默认值
-	if myProjectResponse.Pm == nil {
-		myProjectResponse.Pm = []*project.ProjectMessage{}
-	}
+
 	var pms []*param.ProjectAndMember
 	err = copier.Copy(&pms, myProjectResponse.Pm)
+	// 若为空 设置默认值
+	if pms == nil {
+		pms = []*param.ProjectAndMember{}
+	}
 	if err != nil {
 		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "copy参数失败"))
 	}
 	ctx.JSON(http.StatusOK, result.Success(gin.H{
-		"list":  pms,
+		"list":  pms, // 不能返回null nil 前端无法解析 -> []
 		"total": myProjectResponse.Total,
 	}))
 }

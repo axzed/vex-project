@@ -54,6 +54,19 @@ type ProAndMember struct {
 	Authorize   string
 }
 
+// CollectionProject 项目收藏表
+type CollectionProject struct {
+	Id          int64
+	ProjectCode int64
+	MemberCode  int64
+	CreateTime  int64
+}
+
+// TableName get table name
+func (*CollectionProject) TableName() string {
+	return "vex_project_collection"
+}
+
 // GetAccessControlType get access control type
 func (m *ProAndMember) GetAccessControlType() string {
 	if m.AccessControlType == 0 {

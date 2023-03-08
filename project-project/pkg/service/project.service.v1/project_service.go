@@ -54,8 +54,23 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 	memberId := msg.MemberId
 	page := msg.Page
 	pageSize := msg.PageSize
+	var pms []*mproject.ProAndMember
+	var total int64
+	var err error
+	// 通过SelectBy参数判断调用哪个服务
+	if msg.SelectBy == "" || msg.SelectBy == "my" {
+		pms, total, err = p.projectRepo.FindProjectByMemId(ctx, memberId, "", page, pageSize)
+	}
+	if msg.SelectBy == "archived" {
+		pms, total, err = p.projectRepo.FindProjectByMemId(ctx, memberId, "and archived = 1", page, pageSize)
+	}
+	if msg.SelectBy == "deleted" {
+		pms, total, err = p.projectRepo.FindProjectByMemId(ctx, memberId, "and deleted = 1", page, pageSize)
+	}
+	if msg.SelectBy == "collect" {
+		pms, total, err = p.projectRepo.FindCollectProjectByMemId(ctx, memberId, page, pageSize)
+	}
 	// 调用服务
-	pms, total, err := p.projectRepo.FindProjectByMemId(ctx, memberId, page, pageSize)
 	if err != nil {
 		zap.L().Error("menu FindProjectByMember error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)

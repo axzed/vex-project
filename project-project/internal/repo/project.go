@@ -6,5 +6,6 @@ import (
 )
 
 type ProjectRepo interface {
-	FindProjectByMemId(ctx context.Context, memId int64, page int64, size int64) ([]*mproject.ProAndMember, int64, error)
+	FindProjectByMemId(ctx context.Context, memId int64, condition string, page int64, size int64) ([]*mproject.ProAndMember, int64, error)
+	FindCollectProjectByMemId(ctx context.Context, id int64, page int64, size int64) ([]*mproject.ProAndMember, int64, error)
 }
