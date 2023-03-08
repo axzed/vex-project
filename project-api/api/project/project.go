@@ -129,3 +129,32 @@ func (p *HandlerProject) projectTemplate(ctx *gin.Context) {
 		"total": templateResponse.Total,
 	}))
 }
+
+// projectSave 项目保存(新建项目)
+func (p *HandlerProject) projectSave(ctx *gin.Context) {
+	// 返回结果的结构体
+	result := &common.Result{}
+	// 1. 获取参数
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	memberId, _ := ctx.Get("memberId")
+	organizationCodeStr := ctx.GetString("organizationCode")
+	var req *param.SaveProjectRequest
+	ctx.ShouldBind(&req)
+	msg := &project.ProjectRpcMessage{
+		MemberId:         memberId.(int64),
+		OrganizationCode: organizationCodeStr,
+		TemplateCode:     req.TemplateCode,
+		Name:             req.Name,
+		Id: 			  int64(req.Id),
+		Description:      req.Description,
+	}
+	saveProject, err := rpc.ProjectServiceClient.SaveProject(c, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	var rsp *param.SaveProject
+	copier.Copy(&rsp, saveProject)
+	ctx.JSON(http.StatusOK, result.Success(rsp))
+}

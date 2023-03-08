@@ -10,12 +10,14 @@ import (
 	"github.com/axzed/project-project/internal/data/menu"
 	"github.com/axzed/project-project/internal/data/mproject"
 	"github.com/axzed/project-project/internal/data/mtask"
+	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
 	"github.com/axzed/project-project/pkg/model"
 	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
 	"strconv"
+	"time"
 )
 
 // ProjectService 项目服务
@@ -138,4 +140,61 @@ func (p *ProjectService) FindProjectTemplate(ctx context.Context, msg *project.P
 	var pmMsgs []*project.ProjectTemplateMessage
 	copier.Copy(&pmMsgs, ptas)
 	return &project.ProjectTemplateResponse{Ptm: pmMsgs, Total: total}, nil
+}
+
+// SaveProject 保存项目
+func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRpcMessage) (*project.SaveProjectMessage, error) {
+	// 获取参数
+	organizationCodeStr, _ := encrypts.Decrypt(msg.OrganizationCode, model.AESKey)
+	organizationCode, _ := strconv.ParseInt(organizationCodeStr, 10, 64)
+	templateCodeStr, _ := encrypts.Decrypt(msg.TemplateCode, model.AESKey)
+	templateCode, _ := strconv.ParseInt(templateCodeStr, 10, 64)
+
+	pr := &mproject.Project{
+		Name:              msg.Name,
+		Description:       msg.Description,
+		TemplateCode:      int(templateCode),
+		CreateTime:        time.Now().UnixMilli(),
+		Cover:             "https://img2.baidu.com/it/u=792555388,2449797505&fm=253&fmt=auto&app=138&f=JPEG?w=667&h=500",
+		Deleted:           model.NoDeleted,
+		Archive:           model.NoArchive,
+		OrganizationCode:  organizationCode,
+		AccessControlType: model.Open,
+		TaskBoardTheme:    model.Simple,
+	}
+	err := p.transaction.Action(func(conn conn.DbConn) error {
+		err := p.projectRepo.SaveProject(conn, ctx, pr)
+		if err != nil {
+			zap.L().Error("SaveProject SaveProject error", zap.Error(err))
+			return errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+		pm := &mproject.ProjectMember{
+			ProjectCode: pr.Id,
+			MemberCode:  msg.MemberId,
+			JoinTime:    time.Now().UnixMilli(),
+			IsOwner:     msg.MemberId,
+			Authorize:   "",
+		}
+		err = p.projectRepo.SaveProjectMember(conn, ctx, pm)
+		if err != nil {
+			zap.L().Error("SaveProject SaveProjectMember error", zap.Error(err))
+			return errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	// 生成项目code
+	code, _ := encrypts.EncryptInt64(pr.Id, model.AESKey)
+	rsp := &project.SaveProjectMessage{
+		Id:               pr.Id,
+		Code:             code,
+		OrganizationCode: organizationCodeStr,
+		Name:             pr.Name,
+		Cover:            pr.Cover,
+		CreateTime:       tms.FormatByMill(pr.CreateTime),
+		TaskBoardTheme:   pr.TaskBoardTheme,
+	}
+	return rsp, nil
 }

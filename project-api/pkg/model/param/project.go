@@ -64,6 +64,28 @@ type ProjectTemplate struct {
 	Code             string                `json:"code"`
 }
 
+// SaveProjectRequest is a request of save project
+type SaveProjectRequest struct {
+	Name         string `json:"name" form:"name"`
+	TemplateCode string `json:"templateCode" form:"templateCode"`
+	Description  string `json:"description" form:"description"`
+	Id           int    `json:"id" form:"id"`
+}
+
+// SaveProject is a response of save project
+type SaveProject struct {
+	Id               int64  `json:"id"`
+	Cover            string `json:"cover"`
+	Name             string `json:"name"`
+	Description      string `json:"description"`
+	Code             string `json:"code"`
+	CreateTime       string `json:"create_time"`
+	TaskBoardTheme   string `json:"task_board_theme"`
+	OrganizationCode string `json:"organization_code"`
+}
+
+
+// TaskStagesOnlyName is a task stage with only name
 type TaskStagesOnlyName struct {
 	Name string `json:"name"`
 }

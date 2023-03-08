@@ -5,10 +5,23 @@ import (
 	"fmt"
 	"github.com/axzed/project-project/internal/data/mproject"
 	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/interface/conn"
 )
 
 type ProjectDao struct {
 	conn *gorm.GormConn
+}
+
+// SaveProject 保存项目
+func (p *ProjectDao) SaveProject(conn conn.DbConn, ctx context.Context, pr *mproject.Project) error {
+	p.conn = conn.(*gorm.GormConn)
+	return p.conn.Tx(ctx).Save(&pr).Error
+}
+
+// SaveProjectMember 保存项目成员
+func (p *ProjectDao) SaveProjectMember(conn conn.DbConn, ctx context.Context, pm *mproject.ProjectMember) error {
+	p.conn = conn.(*gorm.GormConn)
+	return p.conn.Tx(ctx).Save(&pm).Error
 }
 
 // FindCollectProjectByMemId 查询收藏项目 分页

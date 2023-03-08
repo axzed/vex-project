@@ -3,11 +3,14 @@ package repo
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data/mproject"
+	"github.com/axzed/project-project/internal/database/interface/conn"
 )
 
 type ProjectRepo interface {
 	FindProjectByMemId(ctx context.Context, memId int64, condition string, page int64, size int64) ([]*mproject.ProAndMember, int64, error)
 	FindCollectProjectByMemId(ctx context.Context, id int64, page int64, size int64) ([]*mproject.ProAndMember, int64, error)
+	SaveProject(conn conn.DbConn, ctx context.Context, pr *mproject.Project) error
+	SaveProjectMember(conn conn.DbConn, ctx context.Context, pm *mproject.ProjectMember) error
 }
 
 type ProjectTemplateRepo interface {
