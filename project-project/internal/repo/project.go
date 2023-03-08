@@ -2,9 +2,9 @@ package repo
 
 import (
 	"context"
-	"github.com/axzed/project-project/internal/data/project"
+	"github.com/axzed/project-project/internal/data/mproject"
 )
 
 type ProjectRepo interface {
-	FindProjectByMemId(ctx context.Context, memId int64, page int64, size int64) ([]*project.ProAndMember, int64, error)
+	FindProjectByMemId(ctx context.Context, memId int64, page int64, size int64) ([]*mproject.ProAndMember, int64, error)
 }

@@ -32,14 +32,14 @@ message ProjectMessage {
   string Cover = 2;
   string Name = 3;
   string Description = 4;
-  int32 AccessControlType = 5;
+  string AccessControlType = 5;
   string WhiteList = 6;
   int32 Order = 7;
   int32 Deleted = 8;
   string TemplateCode = 9;
   double Schedule = 10;
   string CreateTime = 11;
-  int64 OrganizationCode = 12;
+  string OrganizationCode = 12;
   string DeletedTime = 13;
   int32 Private = 14;
   string Prefix = 15;
@@ -49,21 +49,24 @@ message ProjectMessage {
   int32 OpenBeginTime = 19;
   int32 OpenTaskPrivate = 20;
   string TaskBoardTheme = 21;
-  int64 BeginTime = 22;
-  int64 EndTime = 23;
+  string BeginTime = 22;
+  string EndTime = 23;
   int32 AutoUpdateSchedule = 24;
   int64 ProjectCode = 25;
   int64 MemberCode = 26;
-  int64 JoinTime = 27;
+  string JoinTime  = 27;
   int64 IsOwner = 28;
   string Authorize = 29;
-  string Code = 30;
+  string code = 30;
+  string ownerName = 31;
+  int32 collected = 32;
 }
 
 message ProjectRpcMessage{
   int64 memberId = 1;
-  int64 page = 2;
-  int64 pageSize = 3;
+  string memberName = 2;
+  int64 page = 3;
+  int64 pageSize = 4;
 }
 
 message MyProjectResponse{

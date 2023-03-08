@@ -1,4 +1,4 @@
-package project
+package mproject
 
 type Project struct {
 	Id                 int64
@@ -7,11 +7,11 @@ type Project struct {
 	Description        string
 	AccessControlType  int
 	WhiteList          string
-	Order              int
+	Sort              int
 	Deleted            int
 	TemplateCode       string
 	Schedule           float64
-	CreateTime         string
+	CreateTime         int64
 	OrganizationCode   int64
 	DeletedTime        string
 	Private            int
@@ -52,4 +52,27 @@ type ProAndMember struct {
 	JoinTime    int64
 	IsOwner     int64
 	Authorize   string
+}
+
+// GetAccessControlType get access control type
+func (m *ProAndMember) GetAccessControlType() string {
+	if m.AccessControlType == 0 {
+		return "open"
+	}
+	if m.AccessControlType == 1 {
+		return "private"
+	}
+	if m.AccessControlType == 2 {
+		return "custom"
+	}
+	return ""
+}
+
+// ToMap convert slice to map
+func ToMap(orgs []*ProAndMember) map[int64]*ProAndMember {
+	m := make(map[int64]*ProAndMember)
+	for _, v := range orgs {
+		m[v.Id] = v
+	}
+	return m
 }

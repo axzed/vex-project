@@ -4,9 +4,11 @@ import (
 	"context"
 	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/errs"
+	"github.com/axzed/project-common/tms"
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-project/internal/dao"
 	"github.com/axzed/project-project/internal/data/menu"
+	"github.com/axzed/project-project/internal/data/mproject"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
 	"github.com/axzed/project-project/pkg/model"
@@ -65,7 +67,15 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 	var pmm []*project.ProjectMessage
 	copier.Copy(&pmm, pms)
 	for _, v := range pmm {
+		// 加密
 		v.Code, _ = encrypts.EncryptInt64(v.Id, model.AESKey)
+		pam := mproject.ToMap(pms)[v.Id]
+		v.AccessControlType = pam.GetAccessControlType()
+		v.OrganizationCode, _ = encrypts.EncryptInt64(pam.OrganizationCode, model.AESKey)
+		v.JoinTime = tms.FormatByMill(pam.JoinTime)
+		v.OwnerName = msg.MemberName
+		v.Order = int32(pam.Sort)
+		v.CreateTime = tms.FormatByMill(pam.CreateTime)
 	}
 	return &project.MyProjectResponse{Pm: pmm, Total: total}, nil
 }
