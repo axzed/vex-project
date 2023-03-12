@@ -90,3 +90,10 @@ type TaskStagesOnlyName struct {
 	Name string `json:"name"`
 }
 
+// ProjectDetail is a project detail
+type ProjectDetail struct {
+	Project
+	OwnerName string `json:"owner_name"`
+	Collected int    `json:"collected"`
+	OwnerAvatar string `json:"owner_avatar"`
+}

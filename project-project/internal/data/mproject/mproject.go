@@ -59,6 +59,8 @@ type ProAndMember struct {
 	JoinTime    int64
 	IsOwner     int64
 	Authorize   string
+	OwnerName   string
+	Collected   int
 }
 
 // CollectionProject 项目收藏表

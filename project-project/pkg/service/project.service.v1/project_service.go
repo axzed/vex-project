@@ -6,6 +6,7 @@ import (
 	"github.com/axzed/project-common/errs"
 	"github.com/axzed/project-common/tms"
 	"github.com/axzed/project-grpc/project"
+	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-project/internal/dao"
 	"github.com/axzed/project-project/internal/data/menu"
 	"github.com/axzed/project-project/internal/data/mproject"
@@ -13,9 +14,11 @@ import (
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
+	"github.com/axzed/project-project/internal/rpc"
 	"github.com/axzed/project-project/pkg/model"
 	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
+	"log"
 	"strconv"
 	"time"
 )
@@ -23,11 +26,11 @@ import (
 // ProjectService 项目服务
 type ProjectService struct {
 	project.UnimplementedProjectServiceServer
-	cache       repo.Cache              // 缓存
-	transaction transaction.Transaction // 事务
-	menuRepo    repo.MenuRepo
-	projectRepo repo.ProjectRepo
-	projectTemplateRepo repo.ProjectTemplateRepo
+	cache                  repo.Cache              // 缓存
+	transaction            transaction.Transaction // 事务
+	menuRepo               repo.MenuRepo
+	projectRepo            repo.ProjectRepo
+	projectTemplateRepo    repo.ProjectTemplateRepo
 	taskStagesTemplateRepo repo.TaskStagesTemplateRepo
 }
 
@@ -35,11 +38,11 @@ type ProjectService struct {
 func NewProjectService() *ProjectService {
 	return &ProjectService{
 		// 为定义的接口赋上实现类
-		cache:       dao.Rc,
-		transaction: dao.NewTransactionImpl(),
-		menuRepo:    dao.NewMenuDao(),
-		projectRepo: dao.NewProjectDao(),
-		projectTemplateRepo: dao.NewProjectTemplateDao(),
+		cache:                  dao.Rc,
+		transaction:            dao.NewTransactionImpl(),
+		menuRepo:               dao.NewMenuDao(),
+		projectRepo:            dao.NewProjectDao(),
+		projectTemplateRepo:    dao.NewProjectTemplateDao(),
 		taskStagesTemplateRepo: dao.NewTaskStagesTemplateDao(),
 	}
 }
@@ -57,6 +60,7 @@ func (p *ProjectService) Index(context.Context, *project.IndexMessage) (*project
 	return &project.IndexResponse{Menus: menuMessages}, nil
 }
 
+// FindProjectByMemId 通过用户id获取项目列表
 func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.ProjectRpcMessage) (*project.MyProjectResponse, error) {
 	// 获取参数
 	memberId := msg.MemberId
@@ -197,4 +201,52 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 		TaskBoardTheme:   pr.TaskBoardTheme,
 	}
 	return rsp, nil
+}
+
+// FindProjectDetail 查看项目详情
+func (p *ProjectService) FindProjectDetail(ctx context.Context, msg *project.ProjectRpcMessage) (*project.ProjectDetailMessage, error) {
+	//1. 查项目表
+	//2. 项目和成员的关联表 查到项目的拥有者 去member表查名字
+	//3. 查收藏表 判断收藏状态
+	projectCodeStr, _ := encrypts.Decrypt(msg.ProjectCode, model.AESKey)
+	projectCode, _ := strconv.ParseInt(projectCodeStr, 10, 64)
+	memberId := msg.MemberId
+	c, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	projectAndMember, err := p.projectRepo.FindProjectByPIdAndMemId(c, projectCode, memberId)
+	if err != nil {
+		zap.L().Error("FindProjectDetail FindProjectByPIdAndMemId error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	ownerId := projectAndMember.IsOwner
+	// 从user rpc 中通过id获取用户信息
+	member, err := rpc.LoginServiceClient.FindMemberInfoById(c, &login.UserMessage{MemId: ownerId})
+	if err != nil {
+		zap.L().Error("FindProjectDetail FindMemberInfoById error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	log.Println(ownerId)
+	// TODO 优化 收藏的时候 可以放入redis
+	isCollected, err := p.projectRepo.FindCollectByPIdAndMemId(c, projectCode, memberId)
+	if err != nil {
+		zap.L().Error("FindProjectDetail FindCollectByPIdAndMemId error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if isCollected {
+		projectAndMember.Collected = model.Collected
+	}
+	// ProjectDetailMessage 项目详情
+	var detailMsg = &project.ProjectDetailMessage{}
+	copier.Copy(&detailMsg, projectAndMember) // 复制属性
+	// 将当前项目的owner的信息放入要返回的detailMsg中
+	detailMsg.OwnerAvatar = member.Avatar
+	detailMsg.OwnerName = member.Name
+	// 将ProjectAndMember的信息放入要返回的detailMsg中
+	detailMsg.Code, _ = encrypts.EncryptInt64(projectAndMember.Id, model.AESKey)
+	detailMsg.AccessControlType = projectAndMember.GetAccessControlType()
+	detailMsg.OrganizationCode, _ = encrypts.EncryptInt64(projectAndMember.OrganizationCode, model.AESKey)
+	detailMsg.Order = int32(projectAndMember.Sort)
+	detailMsg.CreateTime = tms.FormatByMill(projectAndMember.CreateTime)
+	// 返回项目详情
+	return detailMsg, nil
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/axzed/project-common/logs"
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-project/config"
+	"github.com/axzed/project-project/internal/rpc"
 	project_service_v1 "github.com/axzed/project-project/pkg/service/project.service.v1"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -100,4 +101,8 @@ func RegisterEtcdServer() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func InitUserRpc() {
+	rpc.InitUserRpcClient()
 }

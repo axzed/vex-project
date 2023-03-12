@@ -2,10 +2,12 @@ package project
 
 import (
 	"context"
+	"fmt"
 	"github.com/axzed/project-api/api/rpc"
 	"github.com/axzed/project-api/pkg/model"
 	"github.com/axzed/project-api/pkg/model/param"
 	common "github.com/axzed/project-common"
+	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/errs"
 	"github.com/axzed/project-grpc/project"
 	"github.com/gin-gonic/gin"
@@ -55,11 +57,11 @@ func (p *HandlerProject) myProjectList(ctx *gin.Context) {
 	page.Bind(ctx)
 	selectBy := ctx.PostForm("selectBy")
 	msg := &project.ProjectRpcMessage{
-		MemberId: memberId.(int64),
+		MemberId:   memberId.(int64),
 		MemberName: memberName,
-		SelectBy: selectBy,
-		Page: page.Page,
-		PageSize: page.PageSize,
+		SelectBy:   selectBy,
+		Page:       page.Page,
+		PageSize:   page.PageSize,
 	}
 	myProjectResponse, err := rpc.ProjectServiceClient.FindProjectByMemId(c, msg)
 	if err != nil {
@@ -96,11 +98,11 @@ func (p *HandlerProject) projectTemplate(ctx *gin.Context) {
 	viewTypeStr := ctx.PostForm("viewType")
 	viewType, _ := strconv.ParseInt(viewTypeStr, 10, 64)
 	msg := &project.ProjectRpcMessage{
-		MemberId: memberId.(int64),
-		MemberName: memberName,
-		ViewType: int32(viewType),
-		Page: page.Page,
-		PageSize: page.PageSize,
+		MemberId:         memberId.(int64),
+		MemberName:       memberName,
+		ViewType:         int32(viewType),
+		Page:             page.Page,
+		PageSize:         page.PageSize,
 		OrganizationCode: ctx.GetString("organizationCode"),
 	}
 	templateResponse, err := rpc.ProjectServiceClient.FindProjectTemplate(c, msg)
@@ -146,7 +148,7 @@ func (p *HandlerProject) projectSave(ctx *gin.Context) {
 		OrganizationCode: organizationCodeStr,
 		TemplateCode:     req.TemplateCode,
 		Name:             req.Name,
-		Id: 			  int64(req.Id),
+		Id:               int64(req.Id),
 		Description:      req.Description,
 	}
 	saveProject, err := rpc.ProjectServiceClient.SaveProject(c, msg)
@@ -157,4 +159,26 @@ func (p *HandlerProject) projectSave(ctx *gin.Context) {
 	var rsp *param.SaveProject
 	copier.Copy(&rsp, saveProject)
 	ctx.JSON(http.StatusOK, result.Success(rsp))
+}
+
+// readProject 项目详情
+func (p *HandlerProject) readProject(ctx *gin.Context) {
+	result := &common.Result{}
+	projectCode := ctx.PostForm("projectCode")
+	memberId := ctx.GetInt64("memberId")
+	projectCodeStr, _ := encrypts.Decrypt(projectCode, "sdfgyrhgbxcdgryfhgywertd")
+	fmt.Println(projectCodeStr)
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	detail, err := rpc.ProjectServiceClient.FindProjectDetail(c, &project.ProjectRpcMessage{
+		ProjectCode: projectCode,
+		MemberId:    memberId,
+	})
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	pd := &param.ProjectDetail{}
+	copier.Copy(&pd, detail)
+	ctx.JSON(http.StatusOK, result.Success(pd))
 }

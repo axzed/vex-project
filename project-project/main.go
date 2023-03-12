@@ -19,6 +19,8 @@ func main() {
 	stop := func() {
 		grpc.Stop()
 	}
+	// 初始化rpc调用
+	router.InitUserRpc()
 	// 将优雅启停抽取到common的Run中
 	common.Run(r, config.AppConf.SC.Name, config.AppConf.SC.Addr, stop)
 }

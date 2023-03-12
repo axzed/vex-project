@@ -250,6 +250,7 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 		// 获取第一个组织的ID
 		memMessage.OrganizationCode, _ = encrypts.EncryptInt64(orgs[0].Id, model.AESKey)
 	}
+	memMessage.CreateTime = tms.FormatByMill(memberById.CreateTime)
 	return &login.LoginResponse{
 		Member: memMessage,
 	}, nil
@@ -269,4 +270,29 @@ func (ls *LoginService) MyOrgList(ctx context.Context, msg *login.UserMessage) (
 		org.Code, _ = encrypts.EncryptInt64(org.Id, model.AESKey)
 	}
 	return &login.OrgListResponse{OrganizationList: orgsMessage}, nil
+}
+
+// FindMemberInfoById 根据用户ID查询用户信息
+func (ls *LoginService) FindMemberInfoById(ctx context.Context, msg *login.UserMessage) (*login.MemberMessage, error) {
+	// 通过userID查询用户信息
+	memberById, err := ls.memberRepo.FindMemberById(context.Background(), msg.MemId)
+	if err != nil {
+		zap.L().Error("Login TokenVerify FindMemberById error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	memMessage := &login.MemberMessage{}
+	err = copier.Copy(memMessage, memberById)
+	// 将用户ID加密
+	memMessage.Code, _ = encrypts.EncryptInt64(memberById.Id, model.AESKey)
+	orgs, err := ls.organizationRepo.FindOrganizationByMemberId(context.Background(), memberById.Id)
+	if err != nil {
+		zap.L().Error("Login db error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if len(orgs) > 0 {
+		// 获取第一个组织的ID
+		memMessage.OrganizationCode, _ = encrypts.EncryptInt64(orgs[0].Id, model.AESKey) // 给用户的组织ID加密
+	}
+	memMessage.CreateTime = tms.FormatByMill(memberById.CreateTime) // 将用户的创建时间格式化
+	return memMessage, nil
 }

@@ -51,6 +51,7 @@ message MemberMessage {
   string code = 13;
   string createTime = 14;
   string organizationCode = 15;
+  string avatar = 16;
 }
 message OrganizationMessage {
   int64 id = 1;
@@ -90,4 +91,5 @@ service LoginService {
   rpc Login(LoginMessage) returns (LoginResponse) {}
   rpc TokenVerify(LoginMessage) returns (LoginResponse) {}
   rpc MyOrgList(UserMessage) returns (OrgListResponse) {}
+  rpc FindMemberInfoById(UserMessage) returns (MemberMessage) {}
 }
