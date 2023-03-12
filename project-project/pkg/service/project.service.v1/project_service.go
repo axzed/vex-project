@@ -71,7 +71,7 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 	var err error
 	// 通过SelectBy参数判断调用哪个服务
 	if msg.SelectBy == "" || msg.SelectBy == "my" {
-		pms, total, err = p.projectRepo.FindProjectByMemId(ctx, memberId, "", page, pageSize)
+		pms, total, err = p.projectRepo.FindProjectByMemId(ctx, memberId, "and deleted = 0", page, pageSize)
 	}
 	if msg.SelectBy == "archived" {
 		pms, total, err = p.projectRepo.FindProjectByMemId(ctx, memberId, "and archived = 1", page, pageSize)
@@ -249,4 +249,18 @@ func (p *ProjectService) FindProjectDetail(ctx context.Context, msg *project.Pro
 	detailMsg.CreateTime = tms.FormatByMill(projectAndMember.CreateTime)
 	// 返回项目详情
 	return detailMsg, nil
+}
+
+// UpdateDeletedProject 更新项目的是否被删除状态
+func (p *ProjectService) UpdateDeletedProject(ctx context.Context, msg *project.ProjectRpcMessage) (*project.DeletedProjectResponse, error) {
+	projectCodeStr, _ := encrypts.Decrypt(msg.ProjectCode, model.AESKey)
+	projectCode, _ := strconv.ParseInt(projectCodeStr, 10, 64)
+	c, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	err := p.projectRepo.UpdateDeleteProject(c, projectCode, msg.Deleted)
+	if err != nil {
+		zap.L().Error("RecycleProject DeleteProject error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	return &project.DeletedProjectResponse{}, nil
 }

@@ -2,12 +2,10 @@ package project
 
 import (
 	"context"
-	"fmt"
 	"github.com/axzed/project-api/api/rpc"
 	"github.com/axzed/project-api/pkg/model"
 	"github.com/axzed/project-api/pkg/model/param"
 	common "github.com/axzed/project-common"
-	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/errs"
 	"github.com/axzed/project-grpc/project"
 	"github.com/gin-gonic/gin"
@@ -166,8 +164,6 @@ func (p *HandlerProject) readProject(ctx *gin.Context) {
 	result := &common.Result{}
 	projectCode := ctx.PostForm("projectCode")
 	memberId := ctx.GetInt64("memberId")
-	projectCodeStr, _ := encrypts.Decrypt(projectCode, "sdfgyrhgbxcdgryfhgywertd")
-	fmt.Println(projectCodeStr)
 	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	detail, err := rpc.ProjectServiceClient.FindProjectDetail(c, &project.ProjectRpcMessage{
@@ -181,4 +177,40 @@ func (p *HandlerProject) readProject(ctx *gin.Context) {
 	pd := &param.ProjectDetail{}
 	copier.Copy(&pd, detail)
 	ctx.JSON(http.StatusOK, result.Success(pd))
+}
+
+// recycleProject 项目回收
+func (p *HandlerProject) recycleProject(ctx *gin.Context) {
+	result := &common.Result{}
+	projectCode := ctx.PostForm("projectCode")
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	// 调用 rpc 的回收项目服务
+	_, err := rpc.ProjectServiceClient.UpdateDeletedProject(c, &project.ProjectRpcMessage{
+		ProjectCode: projectCode,
+		Deleted:     true, // 逻辑删除
+	})
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	ctx.JSON(http.StatusOK, result.Success([]int{}))
+}
+
+// recoveryProject 项目恢复(从回收站恢复)
+func (p *HandlerProject) recoveryProject(ctx *gin.Context) {
+	result := &common.Result{}
+	projectCode := ctx.PostForm("projectCode")
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	// 调用 rpc 的回收项目服务
+	_, err := rpc.ProjectServiceClient.UpdateDeletedProject(c, &project.ProjectRpcMessage{
+		ProjectCode: projectCode,
+		Deleted:     false, // 不删除
+	})
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	ctx.JSON(http.StatusOK, result.Success([]int{}))
 }

@@ -13,6 +13,8 @@ type ProjectRepo interface {
 	SaveProjectMember(conn conn.DbConn, ctx context.Context, pm *mproject.ProjectMember) error
 	FindProjectByPIdAndMemId(ctx context.Context, projectCode int64, memberId int64) (*mproject.ProAndMember, error)
 	FindCollectByPIdAndMemId(ctx context.Context, projectCode int64, memberId int64) (bool, error)
+	DeleteProject(ctx context.Context, id int64) error
+	UpdateDeleteProject(ctx context.Context, id int64, deleted bool) error
 }
 
 type ProjectTemplateRepo interface {

@@ -12,6 +12,26 @@ type ProjectDao struct {
 	conn *gorm.GormConn
 }
 
+// UpdateDeleteProject 更新项目deleted状态 (保证了delete 和 recovery 操作复用)
+func (p *ProjectDao) UpdateDeleteProject(ctx context.Context, id int64, deleted bool) error {
+	var err error
+	session := p.conn.Session(ctx)
+	if deleted {
+		// 删除
+		err = session.Model(&mproject.Project{}).Where("id = ?", id).Update("deleted", 1).Error
+	} else {
+		// 恢复
+		err = session.Model(&mproject.Project{}).Where("id = ?", id).Update("deleted", 0).Error
+	}
+	return err
+}
+
+// DeleteProject 删除项目
+func (p *ProjectDao) DeleteProject(ctx context.Context, id int64) error {
+	err := p.conn.Session(ctx).Model(&mproject.Project{}).Where("id = ?", id).Update("deleted", 1).Error
+	return err
+}
+
 // FindCollectByPIdAndMemId 查询项目是否收藏
 func (p *ProjectDao) FindCollectByPIdAndMemId(ctx context.Context, projectCode int64, memberId int64) (bool, error) {
 	var count int64
