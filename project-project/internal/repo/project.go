@@ -15,6 +15,8 @@ type ProjectRepo interface {
 	FindCollectByPIdAndMemId(ctx context.Context, projectCode int64, memberId int64) (bool, error)
 	DeleteProject(ctx context.Context, id int64) error
 	UpdateDeleteProject(ctx context.Context, id int64, deleted bool) error
+	SaveProjectCollect(ctx context.Context, pc *mproject.CollectionProject) error
+	DeleteProjectCollect(ctx context.Context, memberId int64, projectCode int64) error
 }
 
 type ProjectTemplateRepo interface {

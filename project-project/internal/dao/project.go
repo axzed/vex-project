@@ -12,6 +12,19 @@ type ProjectDao struct {
 	conn *gorm.GormConn
 }
 
+// DeleteProjectCollect 删除项目收藏
+func (p *ProjectDao) DeleteProjectCollect(ctx context.Context, memberId int64, projectCode int64) error {
+	return p.conn.Session(ctx).
+		Where("member_code = ? and project_code = ?", memberId, projectCode).
+		Delete(&mproject.CollectionProject{}).
+		Error
+}
+
+// SaveProjectCollect 保存项目收藏
+func (p *ProjectDao) SaveProjectCollect(ctx context.Context, pc *mproject.CollectionProject) error {
+	return p.conn.Session(ctx).Save(&pc).Error
+}
+
 // UpdateDeleteProject 更新项目deleted状态 (保证了delete 和 recovery 操作复用)
 func (p *ProjectDao) UpdateDeleteProject(ctx context.Context, id int64, deleted bool) error {
 	var err error

@@ -216,3 +216,23 @@ func (p *HandlerProject) recoveryProject(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, result.Success([]int{}))
 }
+
+func (p *HandlerProject) collectProject(ctx *gin.Context) {
+	result := &common.Result{}
+	projectCode := ctx.PostForm("projectCode")
+	collectType := ctx.PostForm("type")
+	memberId := ctx.GetInt64("memberId")
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	// 调用 rpc 的服务
+	_, err := rpc.ProjectServiceClient.UpdateCollectProject(c, &project.ProjectRpcMessage{
+		ProjectCode: projectCode,
+		CollectType: collectType,
+		MemberId:    memberId,
+	})
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	ctx.JSON(http.StatusOK, result.Success([]int{}))
+}
