@@ -46,7 +46,7 @@ func (p *ProjectDao) FindCollectByPIdAndMemId(ctx context.Context, projectCode i
 func (p *ProjectDao) FindProjectByPIdAndMemId(ctx context.Context, projectCode int64, memberId int64) (*mproject.ProAndMember, error) {
 	var pm *mproject.ProAndMember
 	session := p.conn.Session(ctx)
-	sql := fmt.Sprintf("select * from vex_project a, vex_project_member b where a.id = b.project_code and b.member_code = ? and b.id = ? limit 1")
+	sql := fmt.Sprintf("select * from vex_project a, vex_project_member b where a.id = b.project_code and b.member_code = ? and b.project_code = ? limit 1")
 	raw := session.Raw(sql, memberId, projectCode)
 	err := raw.Scan(&pm).Error
 	return pm, err

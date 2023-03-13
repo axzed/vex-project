@@ -8,8 +8,8 @@ const (
 const AESKey = "sdfgyrhgbxcdgryfhgywertd"
 
 const (
-	NoDelete = iota
-	NoDeleted
+	NoDeleted = iota
+	Deleted
 )
 
 const (
@@ -28,7 +28,7 @@ const (
 	Simple  = "simple"
 )
 
-const(
+const (
 	NoCollect = iota
 	Collected
 )

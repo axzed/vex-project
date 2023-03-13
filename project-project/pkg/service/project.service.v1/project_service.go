@@ -95,7 +95,7 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 	copier.Copy(&pmm, pms)
 	for _, v := range pmm {
 		// 加密
-		v.Code, _ = encrypts.EncryptInt64(v.Id, model.AESKey)
+		v.Code, _ = encrypts.EncryptInt64(v.ProjectCode, model.AESKey)
 		pam := mproject.ToMap(pms)[v.Id]
 		v.AccessControlType = pam.GetAccessControlType()
 		v.OrganizationCode, _ = encrypts.EncryptInt64(pam.OrganizationCode, model.AESKey)
