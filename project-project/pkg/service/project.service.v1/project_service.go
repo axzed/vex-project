@@ -122,7 +122,11 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 	copier.Copy(&pmm, pms)
 	for _, v := range pmm {
 		// 加密
-		v.Code, _ = encrypts.EncryptInt64(v.ProjectCode, model.AESKey)
+		if msg.SelectBy == "collect" {
+			v.Code, _ = encrypts.EncryptInt64(v.Id, model.AESKey)
+		} else {
+			v.Code, _ = encrypts.EncryptInt64(v.ProjectCode, model.AESKey)
+		}
 		pam := mproject.ToMap(pms)[v.Id]
 		v.AccessControlType = pam.GetAccessControlType()
 		v.OrganizationCode, _ = encrypts.EncryptInt64(pam.OrganizationCode, model.AESKey)
@@ -294,7 +298,6 @@ func (p *ProjectService) UpdateDeletedProject(ctx context.Context, msg *project.
 
 // UpdateCollectProject 更新项目的是否被收藏状态
 func (p *ProjectService) UpdateCollectProject(ctx context.Context, msg *project.ProjectRpcMessage) (*project.CollectProjectResponse, error) {
-	// FIXME: 项目在项目收藏页面的时候取消收藏无法将项目收藏取消
 	projectCodeStr, _ := encrypts.Decrypt(msg.ProjectCode, model.AESKey)
 	projectCode, _ := strconv.ParseInt(projectCodeStr, 10, 64)
 	c, cancel := context.WithTimeout(context.Background(), 20*time.Second)

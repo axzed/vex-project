@@ -54,7 +54,7 @@ func (p *ProjectDao) DeleteProject(ctx context.Context, id int64) error {
 func (p *ProjectDao) FindCollectByPIdAndMemId(ctx context.Context, projectCode int64, memberId int64) (bool, error) {
 	var count int64
 	session := p.conn.Session(ctx)
-	sql := fmt.Sprintf("select count(*) from vex_project_collection where project_code = ? and member_code = ?")
+	sql := fmt.Sprintf("select * from vex_project a, vex_project_member b where a.id = b.project_code and b.member_code = ? and b.project_code = ? limit 1")
 	raw := session.Raw(sql, projectCode, memberId)
 	err := raw.Scan(&count).Error
 	return count > 0, err

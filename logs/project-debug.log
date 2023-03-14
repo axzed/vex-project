@@ -137,3 +137,4 @@
 {"level":"ERROR","time":"2023-03-14T16:20:49.652+0800","caller":"project.service.v1/project_service.go:245","msg":"FindProjectDetail FindProjectByPIdAndMemId error","error":"Error 1054 (42S22): Unknown column 'b.is_ownwer' in 'field list'"}
 {"level":"ERROR","time":"2023-03-14T16:21:01.614+0800","caller":"project.service.v1/project_service.go:245","msg":"FindProjectDetail FindProjectByPIdAndMemId error","error":"Error 1054 (42S22): Unknown column 'b.is_ownwer' in 'field list'"}
 {"level":"ERROR","time":"2023-03-14T16:21:22.926+0800","caller":"project.service.v1/project_service.go:245","msg":"FindProjectDetail FindProjectByPIdAndMemId error","error":"Error 1054 (42S22): Unknown column 'b.is_ownwer' in 'field list'"}
+{"level":"ERROR","time":"2023-03-14T17:29:43.182+0800","caller":"project.service.v1/project_service.go:157","msg":"FindProjectTemplate FindProjectTemplate error","error":"context deadline exceeded"}
