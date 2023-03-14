@@ -291,3 +291,59 @@ func (p *ProjectService) UpdateDeletedProject(ctx context.Context, msg *project.
 	}
 	return &project.DeletedProjectResponse{}, nil
 }
+
+// UpdateCollectProject 更新项目的是否被收藏状态
+func (p *ProjectService) UpdateCollectProject(ctx context.Context, msg *project.ProjectRpcMessage) (*project.CollectProjectResponse, error) {
+	projectCodeStr, _ := encrypts.Decrypt(msg.ProjectCode, model.AESKey)
+	projectCode, _ := strconv.ParseInt(projectCodeStr, 10, 64)
+	c, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	var err error
+	if "collect" == msg.CollectType {
+		pc := &mproject.CollectionProject{
+			ProjectCode: projectCode,
+			MemberCode:  msg.MemberId,
+			CreateTime:  time.Now().UnixMilli(),
+		}
+		err = p.projectRepo.SaveProjectCollect(c, pc)
+	}
+	if "cancel" == msg.CollectType {
+		err = p.projectRepo.DeleteProjectCollect(c, msg.MemberId, projectCode)
+	}
+	if err != nil {
+		zap.L().Error("UpdateCollectProject", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	return &project.CollectProjectResponse{}, nil
+}
+
+// UpdateProject 更新项目rpc服务实现
+func (p *ProjectService) UpdateProject(ctx context.Context, msg *project.UpdateProjectMessage) (*project.UpdateProjectResponse, error) {
+	// 获取rpc传递过来的项目code
+	projectCodeStr, _ := encrypts.Decrypt(msg.ProjectCode, model.AESKey)
+	projectCode, _ := strconv.ParseInt(projectCodeStr, 10, 64)
+	c, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	// 构造update项目实体用于和dao打交道
+	proj := &mproject.Project{
+		Id:                 projectCode,
+		Name:               msg.Name,
+		Description:        msg.Description,
+		Cover:              msg.Cover,
+		TaskBoardTheme:     msg.TaskBoardTheme,
+		Prefix:             msg.Prefix,
+		Private:            int(msg.Private),
+		OpenPrefix:         int(msg.OpenPrefix),
+		OpenBeginTime:      int(msg.OpenBeginTime),
+		OpenTaskPrivate:    int(msg.OpenTaskPrivate),
+		Schedule:           msg.Schedule,
+		AutoUpdateSchedule: int(msg.AutoUpdateSchedule),
+	}
+	// 调用接口更新项目
+	err := p.projectRepo.UpdateProject(c, proj)
+	if err != nil {
+		zap.L().Error("UpdateProject", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	return &project.UpdateProjectResponse{}, nil
+}

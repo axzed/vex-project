@@ -236,3 +236,27 @@ func (p *HandlerProject) collectProject(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, result.Success([]int{}))
 }
+
+// editProject 编辑项目API
+func (p *HandlerProject) editProject(ctx *gin.Context) {
+	// 获取请求参数
+	result := &common.Result{}
+	var req *param.ProjectReq
+	_ = ctx.ShouldBind(&req)
+	memberId := ctx.GetInt64("memberId")
+	// 设置rpc服务超时时间
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	// 构造rpc请求参数
+	msg := &project.UpdateProjectMessage{}
+	copier.Copy(msg, req)
+	msg.MemberId = memberId
+	// 调用rpc服务
+	_, err := rpc.ProjectServiceClient.UpdateProject(c, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	// 返回响应
+	ctx.JSON(http.StatusOK, result.Success([]int{}))
+}

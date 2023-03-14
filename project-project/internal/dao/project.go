@@ -12,6 +12,11 @@ type ProjectDao struct {
 	conn *gorm.GormConn
 }
 
+// UpdateProject 更新项目具体信息
+func (p *ProjectDao) UpdateProject(ctx context.Context, proj *mproject.Project) error {
+	return p.conn.Session(ctx).Updates(&proj).Error
+}
+
 // DeleteProjectCollect 删除项目收藏
 func (p *ProjectDao) DeleteProjectCollect(ctx context.Context, memberId int64, projectCode int64) error {
 	return p.conn.Session(ctx).
@@ -59,7 +64,7 @@ func (p *ProjectDao) FindCollectByPIdAndMemId(ctx context.Context, projectCode i
 func (p *ProjectDao) FindProjectByPIdAndMemId(ctx context.Context, projectCode int64, memberId int64) (*mproject.ProAndMember, error) {
 	var pm *mproject.ProAndMember
 	session := p.conn.Session(ctx)
-	sql := fmt.Sprintf("select * from vex_project a, vex_project_member b where a.id = b.project_code and b.member_code = ? and b.project_code = ? limit 1")
+	sql := fmt.Sprintf("select a.*, b.project_code, b.member_code, b.join_time, b.is_owner, b.authorize from vex_project a, vex_project_member b where a.id = b.project_code and b.member_code = ? and b.project_code = ? limit 1")
 	raw := session.Raw(sql, memberId, projectCode)
 	err := raw.Scan(&pm).Error
 	return pm, err
