@@ -294,6 +294,7 @@ func (p *ProjectService) UpdateDeletedProject(ctx context.Context, msg *project.
 
 // UpdateCollectProject 更新项目的是否被收藏状态
 func (p *ProjectService) UpdateCollectProject(ctx context.Context, msg *project.ProjectRpcMessage) (*project.CollectProjectResponse, error) {
+	// FIXME: 项目在项目收藏页面的时候取消收藏无法将项目收藏取消
 	projectCodeStr, _ := encrypts.Decrypt(msg.ProjectCode, model.AESKey)
 	projectCode, _ := strconv.ParseInt(projectCodeStr, 10, 64)
 	c, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -319,6 +320,7 @@ func (p *ProjectService) UpdateCollectProject(ctx context.Context, msg *project.
 
 // UpdateProject 更新项目rpc服务实现
 func (p *ProjectService) UpdateProject(ctx context.Context, msg *project.UpdateProjectMessage) (*project.UpdateProjectResponse, error) {
+	// FIXME: 项目的图片无法修改
 	// 获取rpc传递过来的项目code
 	projectCodeStr, _ := encrypts.Decrypt(msg.ProjectCode, model.AESKey)
 	projectCode, _ := strconv.ParseInt(projectCodeStr, 10, 64)
