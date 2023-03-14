@@ -80,23 +80,28 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 		pms, total, err = p.projectRepo.FindProjectByMemId(ctx, memberId, "and deleted = 1", page, pageSize)
 	}
 	// 显示收藏项目
+	// 用户点击收藏 将该项目设为收藏
 	if msg.SelectBy == "collect" {
 		pms, total, err = p.projectRepo.FindCollectProjectByMemId(ctx, memberId, page, pageSize)
 		// 将收藏的项目标记为已收藏
 		for _, v := range pms {
 			v.Collected = model.Collected
 		}
-	} else { // 将未收藏的项目标记为未收藏 不显示到收藏页面
+	} else {
+		// 查询全部的收藏项目
 		collectPms, _, err := p.projectRepo.FindCollectProjectByMemId(ctx, memberId, page, pageSize)
 		if err != nil {
 			zap.L().Error("project FindProjectByMember error", zap.Error(err))
 			return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 		}
+		// 将收藏的项目放入map中 cmap[项目id] = 项目
 		var cMap = make(map[int64]*mproject.ProAndMember)
+		// 遍历收藏的项目
 		for _, v := range collectPms {
 			// v.Id 为项目id (collectPms)
 			cMap[v.Id] = v
 		}
+		// 将查出来的项目集在cmap中查找 如果存在则标记为已收藏
 		for _, v := range pms {
 			if cMap[v.ProjectCode] != nil {
 				// v.ProjectCode 为项目code (pms)
