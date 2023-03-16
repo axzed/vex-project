@@ -3,6 +3,7 @@ package login_service_v1
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	common "github.com/axzed/project-common"
 	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/errs"
@@ -280,6 +281,7 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 
 // MyOrgList 我的组织列表
 func (ls *LoginService) MyOrgList(ctx context.Context, msg *login.UserMessage) (*login.OrgListResponse, error) {
+	fmt.Println("MyOrgList")
 	memId := msg.MemId
 	orgs, err := ls.organizationRepo.FindOrganizationByMemId(ctx, memId)
 	if err != nil {

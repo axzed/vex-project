@@ -5,6 +5,7 @@ import (
 	"github.com/axzed/project-common/logs"
 	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-user/config"
+	"github.com/axzed/project-user/internal/interceptor"
 	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -66,12 +67,16 @@ func RegisterGrpc() *grpc.Server {
 		RegisterFunc: func(g *grpc.Server) {
 			login.RegisterLoginServiceServer(g, login_service_v1.NewLoginService())
 		}}
-	s := grpc.NewServer()
+	// 注册拦截器
+	cacheInterceptor := interceptor.New()
+	// 注册服务 cacheInterceptor.Cache() 为grpc.ServerOption类型 用来作为grpc.NewServer的参数
+	s := grpc.NewServer(cacheInterceptor.Cache())
 	c.RegisterFunc(s)
 	lis, err := net.Listen("tcp", config.AppConf.GC.Addr)
 	if err != nil {
 		log.Println("cannot listen")
 	}
+	// 启动服务 用协程 否则会阻塞
 	go func() {
 		err = s.Serve(lis)
 		if err != nil {
