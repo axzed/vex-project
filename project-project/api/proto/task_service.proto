@@ -1,0 +1,27 @@
+syntax = "proto3";
+package task;
+option go_package = "project-project/pkg/service/task";
+
+message TaskReqMessage{
+  string projectCode = 1;
+  int64 page = 2;
+  int64 pageSize = 3;
+}
+message TaskStagesMessage{
+  string code = 1;
+  string name = 2;
+  string projectCode = 3;
+  int32 sort = 4;
+  string description = 5;
+  string createTime = 6;
+  int32 deleted = 7;
+  int32 id = 8;
+}
+message TaskStagesResponse{
+  int64 total = 1;
+  repeated TaskStagesMessage list = 2;
+}
+
+service TaskService {
+  rpc TaskStages(TaskReqMessage) returns (TaskStagesResponse){}
+}

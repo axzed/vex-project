@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/axzed/project-common/encrypts"
-	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-project/internal/dao"
 	"github.com/axzed/project-project/internal/repo"
 	"go.uber.org/zap"
@@ -27,7 +26,7 @@ func New() *CacheInterceptor {
 	// 初始化缓存map
 	cacheMap := make(map[string]any)
 	// 赋值
-	cacheMap["/project.ProjectService/FindProjectByMemId"] = &project.MyProjectResponse{}
+	//cacheMap["/project.ProjectService/FindProjectByMemId"] = &project.MyProjectResponse{}
 	return &CacheInterceptor{
 		cache:    dao.Rc,
 		cacheMap: cacheMap,

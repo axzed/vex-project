@@ -32,6 +32,7 @@ type ProjectService struct {
 	projectRepo            repo.ProjectRepo
 	projectTemplateRepo    repo.ProjectTemplateRepo
 	taskStagesTemplateRepo repo.TaskStagesTemplateRepo
+	taskStagesRepo         repo.TaskStagesRepo
 }
 
 // NewProjectService 初始化页面展示服务
@@ -44,6 +45,7 @@ func NewProjectService() *ProjectService {
 		projectRepo:            dao.NewProjectDao(),
 		projectTemplateRepo:    dao.NewProjectTemplateDao(),
 		taskStagesTemplateRepo: dao.NewTaskStagesTemplateDao(),
+		taskStagesRepo:         dao.NewTaskStagesDao(),
 	}
 }
 
@@ -185,6 +187,15 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 	templateCodeStr, _ := encrypts.Decrypt(msg.TemplateCode, model.AESKey)
 	templateCode, _ := strconv.ParseInt(templateCodeStr, 10, 64)
 
+	// 通过项目模板获取对应的任务流程模板信息
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	stageTemplateList, err := p.taskStagesTemplateRepo.FindByProjectTemplateId(c, int(templateCode))
+	if err != nil {
+		zap.L().Error("SaveProject taskStagesTemplateRepo.FindByProjectTemplateId error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+
 	pr := &mproject.Project{
 		Name:              msg.Name,
 		Description:       msg.Description,
@@ -197,7 +208,10 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 		AccessControlType: model.Open,
 		TaskBoardTheme:    model.Simple,
 	}
-	err := p.transaction.Action(func(conn conn.DbConn) error {
+
+	// 通过事务控制保存项目相关的写入操作
+	err = p.transaction.Action(func(conn conn.DbConn) error {
+		// 1.保存项目表
 		err := p.projectRepo.SaveProject(conn, ctx, pr)
 		if err != nil {
 			zap.L().Error("SaveProject SaveProject error", zap.Error(err))
@@ -210,16 +224,38 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 			IsOwner:     msg.MemberId,
 			Authorize:   "",
 		}
+
+		// 2.保存项目成员关系表
 		err = p.projectRepo.SaveProjectMember(conn, ctx, pm)
 		if err != nil {
 			zap.L().Error("SaveProject SaveProjectMember error", zap.Error(err))
 			return errs.ConvertToGrpcError(model.ErrDBFail)
 		}
+
+		// 3.生成任务的步骤并存入表中
+		for index, v := range stageTemplateList {
+			taskStage := &mtask.TaskStages{
+				Name:        v.Name,
+				ProjectCode: pr.Id,
+				Sort:        index + 1,
+				Description: "",
+				CreateTime:  time.Now().UnixMilli(),
+				Deleted:     model.NoDeleted,
+			}
+			// 操作db
+			err := p.taskStagesRepo.SaveTaskStages(c, conn, taskStage)
+			if err != nil {
+				zap.L().Error("SaveProject taskStagesRepo.SaveTaskStages error", zap.Error(err))
+				return errs.ConvertToGrpcError(model.ErrDBFail)
+			}
+		}
+
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
+
 	// 生成项目code
 	code, _ := encrypts.EncryptInt64(pr.Id, model.AESKey)
 	rsp := &project.SaveProjectMessage{
@@ -231,6 +267,7 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 		CreateTime:       tms.FormatByMill(pr.CreateTime),
 		TaskBoardTheme:   pr.TaskBoardTheme,
 	}
+
 	return rsp, nil
 }
 

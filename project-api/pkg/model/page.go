@@ -2,6 +2,7 @@ package model
 
 import "github.com/gin-gonic/gin"
 
+// Page 分页主要的两个参数构造成结构体 到时候可以直接用context的bind来绑定
 type Page struct {
 	Page     int64 `json:"page" form:"page"`
 	PageSize int64 `json:"pageSize" form:"pageSize"`
