@@ -171,3 +171,5 @@
 {"level":"INFO","time":"2023-03-16T19:17:45.966+0800","caller":"interceptor/cache.go:57","msg":"/project.ProjectService/FindProjectByMemId 从缓存中获取"}
 {"level":"INFO","time":"2023-03-16T19:17:46.484+0800","caller":"interceptor/cache.go:64","msg":"/project.ProjectService/FindProjectByMemId 放入缓存"}
 {"level":"INFO","time":"2023-03-16T19:17:46.940+0800","caller":"interceptor/cache.go:57","msg":"/project.ProjectService/FindProjectByMemId 从缓存中获取"}
+{"level":"INFO","time":"2023-03-16T19:18:38.237+0800","caller":"interceptor/cache.go:63","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-16T19:20:05.354+0800","caller":"interceptor/cache.go:56","msg":"/login.LoginService/MyOrgList 从缓存中获取"}

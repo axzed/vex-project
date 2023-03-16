@@ -25,7 +25,6 @@ type CacheRespOption struct {
 func New() *CacheInterceptor {
 	// 初始化缓存map
 	cacheMap := make(map[string]any)
-	// 赋值
 	//cacheMap["/project.ProjectService/FindProjectByMemId"] = &project.MyProjectResponse{}
 	return &CacheInterceptor{
 		cache:    dao.Rc,
