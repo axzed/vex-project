@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/axzed/project-common/encrypts"
-	"github.com/axzed/project-grpc/user/login"
-	"github.com/axzed/project-user/internal/dao"
-	"github.com/axzed/project-user/internal/repo"
+	"github.com/axzed/project-grpc/project"
+	"github.com/axzed/project-project/internal/dao"
+	"github.com/axzed/project-project/internal/repo"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"time"
@@ -27,8 +27,7 @@ func New() *CacheInterceptor {
 	// 初始化缓存map
 	cacheMap := make(map[string]any)
 	// 赋值
-	cacheMap["/login.LoginService/MyOrgList"] = &login.OrgListResponse{}
-	cacheMap["/login.LoginService/FindMemInfoById"] = &login.MemberMessage{}
+	cacheMap["/project.ProjectService/FindProjectByMemId"] = &project.MyProjectResponse{}
 	return &CacheInterceptor{
 		cache:    dao.Rc,
 		cacheMap: cacheMap,

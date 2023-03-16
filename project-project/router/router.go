@@ -5,6 +5,7 @@ import (
 	"github.com/axzed/project-common/logs"
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-project/config"
+	"github.com/axzed/project-project/internal/interceptor"
 	"github.com/axzed/project-project/internal/rpc"
 	project_service_v1 "github.com/axzed/project-project/pkg/service/project.service.v1"
 	"github.com/gin-gonic/gin"
@@ -67,7 +68,7 @@ func RegisterGrpc() *grpc.Server {
 		RegisterFunc: func(g *grpc.Server) {
 			project.RegisterProjectServiceServer(g, project_service_v1.NewProjectService())
 		}}
-	s := grpc.NewServer()
+	s := grpc.NewServer(interceptor.New().Cache())
 	c.RegisterFunc(s)
 	lis, err := net.Listen("tcp", config.AppConf.GC.Addr)
 	if err != nil {

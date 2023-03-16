@@ -138,3 +138,5 @@
 {"level":"ERROR","time":"2023-03-14T16:21:01.614+0800","caller":"project.service.v1/project_service.go:245","msg":"FindProjectDetail FindProjectByPIdAndMemId error","error":"Error 1054 (42S22): Unknown column 'b.is_ownwer' in 'field list'"}
 {"level":"ERROR","time":"2023-03-14T16:21:22.926+0800","caller":"project.service.v1/project_service.go:245","msg":"FindProjectDetail FindProjectByPIdAndMemId error","error":"Error 1054 (42S22): Unknown column 'b.is_ownwer' in 'field list'"}
 {"level":"ERROR","time":"2023-03-14T17:29:43.182+0800","caller":"project.service.v1/project_service.go:157","msg":"FindProjectTemplate FindProjectTemplate error","error":"context deadline exceeded"}
+{"level":"INFO","time":"2023-03-16T16:08:22.766+0800","caller":"interceptor/cache.go:63","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-16T16:08:28.056+0800","caller":"interceptor/cache.go:56","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
