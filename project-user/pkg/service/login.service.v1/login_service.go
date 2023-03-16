@@ -2,6 +2,7 @@ package login_service_v1
 
 import (
 	"context"
+	"encoding/json"
 	common "github.com/axzed/project-common"
 	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/errs"
@@ -208,7 +209,13 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 		AccessTokenExp: token.AccessExp,
 		TokenType:      "bearer",
 	}
-	// TODO 待优化点: 将 member 和 organization 信息存入redis
+	// 优化: 将 member 和 organization 信息存入redis
+	go func() {
+		memJson, _ := json.Marshal(mem)                                               // 将member信息转换为json格式
+		ls.cache.Put(c, model.Member+"::"+memIdStr, string(memJson), exp)             // 将member信息存入redis exp为过期时间与token.AccessExp一致
+		orgJson, _ := json.Marshal(orgs)                                              // 将organization信息转换为json格式
+		ls.cache.Put(c, model.MemberOrganization+"::"+memIdStr, string(orgJson), exp) // 将organization信息存入redis exp为过期时间与token.AccessExp一致
+	}()
 	// 4. 返回结果
 	return &login.LoginResponse{
 		Member:           memMessage,
@@ -230,22 +237,37 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
 	}
 	// 从缓存中查询
-	// TODO 数据查询 优化点: 登录之后 应该把用户信息缓存起来
-	id, _ := strconv.ParseInt(parseToken, 10, 64)
-	memberById, err := ls.memberRepo.FindMemberById(context.Background(), id)
+	memJson, err := ls.cache.Get(context.Background(), model.Member+"::"+parseToken)
 	if err != nil {
-		zap.L().Error("Login TokenVerify FindMemberById error", zap.Error(err))
-		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+		zap.L().Error("TokenVerify cache get member error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
 	}
+	// memJson 为空 说明缓存中没有数据 数据登录过期
+	if memJson == "" {
+		zap.L().Error("TokenVerify cache get member expire", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
+	}
+	memberById := &data.Member{}
+	json.Unmarshal([]byte(memJson), memberById)
 	memMessage := &login.MemberMessage{}
 	err = copier.Copy(memMessage, memberById)
 	// 将用户ID加密
 	memMessage.Code, _ = encrypts.EncryptInt64(memberById.Id, model.AESKey)
-	orgs, err := ls.organizationRepo.FindOrganizationByMemberId(context.Background(), memberById.Id)
+
+	// 从缓存中查询 organization
+	orgsJson, err := ls.cache.Get(context.Background(), model.MemberOrganization+"::"+parseToken)
 	if err != nil {
-		zap.L().Error("Login db error", zap.Error(err))
-		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+		zap.L().Error("TokenVerify cache get organization error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
 	}
+	// memJson 为空 说明缓存中没有数据 数据登录过期
+	if orgsJson == "" {
+		zap.L().Error("TokenVerify cache get organization expire", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
+	}
+	var orgs []*data.Organization
+	json.Unmarshal([]byte(orgsJson), &orgs)
+
 	if len(orgs) > 0 {
 		// 获取第一个组织的ID
 		memMessage.OrganizationCode, _ = encrypts.EncryptInt64(orgs[0].Id, model.AESKey)

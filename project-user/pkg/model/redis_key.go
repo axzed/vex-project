@@ -1,5 +1,7 @@
 package model
 
-var (
-	RegisterRedisKey = "REGISTER_"
+const (
+	RegisterRedisKey   = "REGISTER_"
+	Member             = "MEMBER"
+	MemberOrganization = "MEMBER_ORGANIZATION"
 )
