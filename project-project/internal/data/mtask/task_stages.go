@@ -14,3 +14,12 @@ type TaskStages struct {
 func (*TaskStages) TableName() string {
 	return "vex_task_stages"
 }
+
+// ToTaskStagesMap 转换为map
+func ToTaskStagesMap(tsList []*TaskStages) map[int]*TaskStages {
+	m := make(map[int]*TaskStages)
+	for _, v := range tsList {
+		m[v.Id] = v
+	}
+	return m
+}

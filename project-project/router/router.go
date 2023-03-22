@@ -4,10 +4,12 @@ import (
 	"github.com/axzed/project-common/discovery"
 	"github.com/axzed/project-common/logs"
 	"github.com/axzed/project-grpc/project"
+	"github.com/axzed/project-grpc/task"
 	"github.com/axzed/project-project/config"
 	"github.com/axzed/project-project/internal/interceptor"
 	"github.com/axzed/project-project/internal/rpc"
 	project_service_v1 "github.com/axzed/project-project/pkg/service/project.service.v1"
+	task_service_v1 "github.com/axzed/project-project/pkg/service/task.service.v1"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
@@ -66,7 +68,8 @@ func RegisterGrpc() *grpc.Server {
 	c := gRPCConfig{
 		Addr: config.AppConf.GC.Addr,
 		RegisterFunc: func(g *grpc.Server) {
-			project.RegisterProjectServiceServer(g, project_service_v1.NewProjectService())
+			project.RegisterProjectServiceServer(g, project_service_v1.NewProjectService()) // 注册项目服务
+			task.RegisterTaskServiceServer(g, task_service_v1.NewTaskService())             // 注册任务服务
 		}}
 	s := grpc.NewServer(interceptor.New().Cache())
 	c.RegisterFunc(s)
