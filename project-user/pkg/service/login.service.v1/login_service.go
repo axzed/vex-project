@@ -328,6 +328,8 @@ func (ls *LoginService) FindMemInfoByIds(ctx context.Context, msg *login.UserMes
 		zap.L().Error("FindMemInfoByIds db memberRepo.FindMemberByIds error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
+	// list 为空 直接返回
+	// 没有list也直接返回空
 	if memberList == nil || len(memberList) <= 0 {
 		return &login.MemberMessageList{List: nil}, nil
 	}

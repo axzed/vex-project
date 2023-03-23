@@ -24,6 +24,10 @@ const _ = grpc.SupportPackageIsVersion7
 type TaskServiceClient interface {
 	TaskStages(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*TaskStagesResponse, error)
 	MemberProjectList(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*MemberProjectResponse, error)
+	TaskList(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*TaskListResponse, error)
+	SaveTask(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*TaskMessage, error)
+	TaskSort(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*TaskSortResponse, error)
+	MyTaskList(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*MyTaskListResponse, error)
 }
 
 type taskServiceClient struct {
@@ -52,12 +56,52 @@ func (c *taskServiceClient) MemberProjectList(ctx context.Context, in *TaskReqMe
 	return out, nil
 }
 
+func (c *taskServiceClient) TaskList(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*TaskListResponse, error) {
+	out := new(TaskListResponse)
+	err := c.cc.Invoke(ctx, "/task.TaskService/TaskList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *taskServiceClient) SaveTask(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*TaskMessage, error) {
+	out := new(TaskMessage)
+	err := c.cc.Invoke(ctx, "/task.TaskService/SaveTask", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *taskServiceClient) TaskSort(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*TaskSortResponse, error) {
+	out := new(TaskSortResponse)
+	err := c.cc.Invoke(ctx, "/task.TaskService/TaskSort", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *taskServiceClient) MyTaskList(ctx context.Context, in *TaskReqMessage, opts ...grpc.CallOption) (*MyTaskListResponse, error) {
+	out := new(MyTaskListResponse)
+	err := c.cc.Invoke(ctx, "/task.TaskService/MyTaskList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServiceServer is the server API for TaskService service.
 // All implementations must embed UnimplementedTaskServiceServer
 // for forward compatibility
 type TaskServiceServer interface {
 	TaskStages(context.Context, *TaskReqMessage) (*TaskStagesResponse, error)
 	MemberProjectList(context.Context, *TaskReqMessage) (*MemberProjectResponse, error)
+	TaskList(context.Context, *TaskReqMessage) (*TaskListResponse, error)
+	SaveTask(context.Context, *TaskReqMessage) (*TaskMessage, error)
+	TaskSort(context.Context, *TaskReqMessage) (*TaskSortResponse, error)
+	MyTaskList(context.Context, *TaskReqMessage) (*MyTaskListResponse, error)
 	mustEmbedUnimplementedTaskServiceServer()
 }
 
@@ -70,6 +114,18 @@ func (UnimplementedTaskServiceServer) TaskStages(context.Context, *TaskReqMessag
 }
 func (UnimplementedTaskServiceServer) MemberProjectList(context.Context, *TaskReqMessage) (*MemberProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MemberProjectList not implemented")
+}
+func (UnimplementedTaskServiceServer) TaskList(context.Context, *TaskReqMessage) (*TaskListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TaskList not implemented")
+}
+func (UnimplementedTaskServiceServer) SaveTask(context.Context, *TaskReqMessage) (*TaskMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveTask not implemented")
+}
+func (UnimplementedTaskServiceServer) TaskSort(context.Context, *TaskReqMessage) (*TaskSortResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TaskSort not implemented")
+}
+func (UnimplementedTaskServiceServer) MyTaskList(context.Context, *TaskReqMessage) (*MyTaskListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MyTaskList not implemented")
 }
 func (UnimplementedTaskServiceServer) mustEmbedUnimplementedTaskServiceServer() {}
 
@@ -120,6 +176,78 @@ func _TaskService_MemberProjectList_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskService_TaskList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskReqMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).TaskList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/task.TaskService/TaskList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).TaskList(ctx, req.(*TaskReqMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TaskService_SaveTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskReqMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).SaveTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/task.TaskService/SaveTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).SaveTask(ctx, req.(*TaskReqMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TaskService_TaskSort_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskReqMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).TaskSort(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/task.TaskService/TaskSort",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).TaskSort(ctx, req.(*TaskReqMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TaskService_MyTaskList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskReqMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).MyTaskList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/task.TaskService/MyTaskList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).MyTaskList(ctx, req.(*TaskReqMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaskService_ServiceDesc is the grpc.ServiceDesc for TaskService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +262,22 @@ var TaskService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MemberProjectList",
 			Handler:    _TaskService_MemberProjectList_Handler,
+		},
+		{
+			MethodName: "TaskList",
+			Handler:    _TaskService_TaskList_Handler,
+		},
+		{
+			MethodName: "SaveTask",
+			Handler:    _TaskService_SaveTask_Handler,
+		},
+		{
+			MethodName: "TaskSort",
+			Handler:    _TaskService_TaskSort_Handler,
+		},
+		{
+			MethodName: "MyTaskList",
+			Handler:    _TaskService_MyTaskList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

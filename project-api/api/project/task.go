@@ -104,3 +104,31 @@ func (t *HandlerTask) memberProjectList(c *gin.Context) {
 		"page":  page.Page,
 	}))
 }
+
+// taskList 任务列表
+func (t *HandlerTask) taskList(c *gin.Context) {
+	result := &common.Result{}
+	stageCode := c.PostForm("stageCode")
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	list, err := rpc.TaskServiceClient.TaskList(ctx, &task.TaskReqMessage{StageCode: stageCode, MemberId: c.GetInt64("memberId")})
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		c.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	var taskDisplayList []*param.TaskDisplay
+	copier.Copy(&taskDisplayList, list.List)
+	if taskDisplayList == nil {
+		taskDisplayList = []*param.TaskDisplay{}
+	}
+	//返回给前端的数据 一定不能是null
+	for _, v := range taskDisplayList {
+		if v.Tags == nil {
+			v.Tags = []int{}
+		}
+		if v.ChildCount == nil {
+			v.ChildCount = []int{}
+		}
+	}
+	c.JSON(http.StatusOK, result.Success(taskDisplayList))
+}

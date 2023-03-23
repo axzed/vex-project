@@ -28,6 +28,7 @@ type TaskService struct {
 	projectTemplateRepo    repo.ProjectTemplateRepo
 	taskStagesTemplateRepo repo.TaskStagesTemplateRepo
 	taskStagesRepo         repo.TaskStagesRepo
+	taskRepo               repo.TaskRepo
 }
 
 // NewTaskService 初始化服务
@@ -40,6 +41,7 @@ func NewTaskService() *TaskService {
 		projectTemplateRepo:    dao.NewProjectTemplateDao(),
 		taskStagesTemplateRepo: dao.NewTaskStagesTemplateDao(),
 		taskStagesRepo:         dao.NewTaskStagesDao(),
+		taskRepo:               dao.NewTaskDao(),
 	}
 }
 
@@ -122,4 +124,63 @@ func (t *TaskService) MemberProjectList(ctx context.Context, msg *task.TaskReqMe
 		list = append(list, mpm)
 	}
 	return &task.MemberProjectResponse{List: list, Total: total}, nil
+}
+
+// TaskList 获取任务步骤列表
+func (t *TaskService) TaskList(ctx context.Context, msg *task.TaskReqMessage) (*task.TaskListResponse, error) {
+	stageCode := encrypts.DecryptNoErr(msg.StageCode)
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	taskList, err := t.taskRepo.FindTaskByStageCode(c, int(stageCode))
+	if err != nil {
+		zap.L().Error("project task TaskList FindTaskByStageCode error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	// 将数据库数据转换为display的数据
+	var taskDisplayList []*mtask.TaskDisplay
+	var mIds []int64
+	for _, v := range taskList {
+		display := v.ToTaskDisplay()
+		if v.Private == 1 {
+			//代表隐私模式
+			taskMember, err := t.taskRepo.FindTaskMemberByTaskId(ctx, v.Id, msg.MemberId)
+			if err != nil {
+				zap.L().Error("project task TaskList taskRepo.FindTaskMemberByTaskId error", zap.Error(err))
+				return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+			}
+			if taskMember != nil {
+				display.CanRead = model.CanRead
+			} else {
+				display.CanRead = model.NoCanRead
+			}
+		}
+		taskDisplayList = append(taskDisplayList, display)
+		mIds = append(mIds, v.AssignTo)
+	}
+	if mIds == nil || len(mIds) <= 0 {
+		return &task.TaskListResponse{List: nil}, nil
+	}
+	// in ()
+	messageList, err := rpc.LoginServiceClient.FindMemInfoByIds(ctx, &login.UserMessage{MIds: mIds})
+	if err != nil {
+		zap.L().Error("project task TaskList LoginServiceClient.FindMemInfoByIds error", zap.Error(err))
+		return nil, err
+	}
+
+	// 拼接处理返回请求
+	memberMap := make(map[int64]*login.MemberMessage)
+	for _, v := range messageList.List {
+		memberMap[v.Id] = v
+	}
+	for _, v := range taskDisplayList {
+		message := memberMap[encrypts.DecryptNoErr(v.AssignTo)]
+		e := mtask.Executor{
+			Name:   message.Name,
+			Avatar: message.Avatar,
+		}
+		v.Executor = e
+	}
+	var taskMessageList []*task.TaskMessage
+	copier.Copy(&taskMessageList, taskDisplayList)
+	return &task.TaskListResponse{List: taskMessageList}, nil
 }
