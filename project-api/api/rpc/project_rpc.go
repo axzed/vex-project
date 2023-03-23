@@ -5,6 +5,7 @@ import (
 	"github.com/axzed/project-common/discovery"
 	"github.com/axzed/project-common/logs"
 	"github.com/axzed/project-grpc/project"
+	"github.com/axzed/project-grpc/task"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
@@ -12,6 +13,7 @@ import (
 )
 
 var ProjectServiceClient project.ProjectServiceClient
+var TaskServiceClient task.TaskServiceClient
 
 // InitProjectRpcClient 初始化grpc的客户端连接
 func InitProjectRpcClient() {
@@ -22,4 +24,5 @@ func InitProjectRpcClient() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	ProjectServiceClient = project.NewProjectServiceClient(conn)
+	TaskServiceClient = task.NewTaskServiceClient(conn)
 }
