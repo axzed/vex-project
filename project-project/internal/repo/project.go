@@ -18,6 +18,7 @@ type ProjectRepo interface {
 	SaveProjectCollect(ctx context.Context, pc *mproject.CollectionProject) error
 	DeleteProjectCollect(ctx context.Context, memberId int64, projectCode int64) error
 	UpdateProject(ctx context.Context, proj *mproject.Project) error
+	FindProjectMemberByPid(ctx context.Context, projectCode int64) (list []*mproject.ProjectMember, total int64, err error)
 }
 
 type ProjectTemplateRepo interface {

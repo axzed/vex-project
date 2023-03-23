@@ -12,6 +12,18 @@ type ProjectDao struct {
 	conn *gorm.GormConn
 }
 
+// FindProjectByMemId 根据用户id查询项目
+func (p *ProjectDao) FindProjectMemberByPid(ctx context.Context, projectCode int64) (list []*mproject.ProjectMember, total int64, err error) {
+	session := p.conn.Session(ctx)
+	err = session.Model(&mproject.ProjectMember{}).
+		Where("project_code=?", projectCode).
+		Find(&list).Error
+	err = session.Model(&mproject.ProjectMember{}).
+		Where("project_code=?", projectCode).
+		Count(&total).Error
+	return
+}
+
 // UpdateProject 更新项目具体信息
 func (p *ProjectDao) UpdateProject(ctx context.Context, proj *mproject.Project) error {
 	return p.conn.Session(ctx).Updates(&proj).Error

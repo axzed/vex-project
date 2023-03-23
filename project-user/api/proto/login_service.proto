@@ -53,6 +53,11 @@ message MemberMessage {
   string organizationCode = 15;
   string avatar = 16;
 }
+
+message MemberMessageList {
+  repeated MemberMessage list = 1;
+}
+
 message OrganizationMessage {
   int64 id = 1;
   string name = 2;
@@ -78,10 +83,13 @@ message TokenMessage{
 // 我的组织列表rpc message
 message UserMessage{
   int64 memId = 1;
+  repeated int64 mIds = 2;
 }
 message OrgListResponse{
   repeated OrganizationMessage organizationList = 1;
 }
+
+
 
 // LoginService is the service for login.
 // 定义服务
@@ -92,4 +100,5 @@ service LoginService {
   rpc TokenVerify(LoginMessage) returns (LoginResponse) {}
   rpc MyOrgList(UserMessage) returns (OrgListResponse) {}
   rpc FindMemberInfoById(UserMessage) returns (MemberMessage) {}
+  rpc FindMemInfoByIds(UserMessage) returns (MemberMessageList) {}
 }

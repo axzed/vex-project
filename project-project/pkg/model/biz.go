@@ -32,3 +32,8 @@ const (
 	NoCollect = iota
 	Collected
 )
+
+const (
+	NoOwner = iota
+	Owner
+)
