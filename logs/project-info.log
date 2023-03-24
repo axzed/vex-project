@@ -195,3 +195,6 @@
 {"level":"ERROR","time":"2023-03-24T14:33:23.122+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
 {"level":"INFO","time":"2023-03-24T14:33:49.844+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
 {"level":"INFO","time":"2023-03-24T14:34:11.779+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"INFO","time":"2023-03-24T15:25:31.848+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"INFO","time":"2023-03-24T15:25:51.995+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"INFO","time":"2023-03-24T15:26:08.986+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
