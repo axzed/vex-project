@@ -164,3 +164,27 @@ func (t *HandlerTask) saveTask(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, result.Success(td))
 }
+
+// taskSort 任务排序 (移动任务)
+func (t *HandlerTask) taskSort(c *gin.Context) {
+	// 1.获取参数 校验参数的合法性
+	result := &common.Result{}
+	var req *param.TaskSortReq
+	c.ShouldBind(&req)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	// 2.构造rpc请求参数
+	msg := &task.TaskReqMessage{
+		PreTaskCode:  req.PreTaskCode,
+		NextTaskCode: req.NextTaskCode,
+		ToStageCode:  req.ToStageCode,
+	}
+	// 3.调用rpc服务
+	_, err := rpc.TaskServiceClient.TaskSort(ctx, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		c.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	// 4.返回结果
+	c.JSON(http.StatusOK, result.Success([]int{}))
+}

@@ -199,3 +199,17 @@
 {"level":"ERROR","time":"2023-03-24T10:24:42.561+0800","caller":"login.service.v1/login_service.go:237","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
 {"level":"ERROR","time":"2023-03-24T10:24:54.314+0800","caller":"login.service.v1/login_service.go:237","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
 {"level":"INFO","time":"2023-03-24T10:25:00.260+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-24T11:19:49.063+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-24T11:19:57.325+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"ERROR","time":"2023-03-24T12:34:42.123+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T12:34:42.283+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:16.970+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:18.099+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:19.874+0800","caller":"discovery/resolver.go:104","msg":"sync failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:20.119+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:21.303+0800","caller":"discovery/resolver.go:104","msg":"sync failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:21.657+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:21.920+0800","caller":"discovery/resolver.go:104","msg":"sync failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-24T14:33:23.122+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"INFO","time":"2023-03-24T14:33:49.844+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-24T14:34:11.779+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}

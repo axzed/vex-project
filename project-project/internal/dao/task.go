@@ -48,34 +48,62 @@ func (t *TaskDao) SaveTaskMember(ctx context.Context, conn conn.DbConn, tm *mtas
 	return err
 }
 
+// FindTaskById 根据任务id查询任务
 func (t *TaskDao) FindTaskById(ctx context.Context, taskCode int64) (ts *mtask.Task, err error) {
-	//TODO implement me
-	panic("implement me")
+	session := t.conn.Session(ctx)
+	err = session.Where("id=?", taskCode).Find(&ts).Error
+	return
 }
 
+// UpdateTaskSort 更新任务排序
 func (t *TaskDao) UpdateTaskSort(ctx context.Context, conn conn.DbConn, ts *mtask.Task) error {
-	//TODO implement me
-	panic("implement me")
+	t.conn = conn.(*gorm.GormConn)
+	err := t.conn.Tx(ctx).
+		Where("id=?", ts.Id).
+		Select("sort", "stage_code").
+		Updates(&ts).
+		Error
+	return err
 }
 
 func (t *TaskDao) FindTaskByStageCodeLtSort(ctx context.Context, stageCode int, sort int) (ts *mtask.Task, err error) {
-	//TODO implement me
-	panic("implement me")
+	session := t.conn.Session(ctx)
+	err = session.Where("stage_code=? and sort < ?", stageCode, sort).Order("sort desc").Limit(1).Find(&ts).Error
+	if err == gorm2.ErrRecordNotFound {
+		return nil, nil
+	}
+	return
 }
 
-func (t *TaskDao) FindTaskByAssignTo(ctx context.Context, memberId int64, done int, page int64, size int64) ([]*mtask.Task, int64, error) {
-	//TODO implement me
-	panic("implement me")
+func (t *TaskDao) FindTaskByAssignTo(ctx context.Context, memberId int64, done int, page int64, size int64) (tsList []*mtask.Task, total int64, err error) {
+	session := t.conn.Session(ctx)
+	offset := (page - 1) * size
+	err = session.Model(&mtask.Task{}).Where("assign_to=? and deleted=0 and done=?", memberId, done).Limit(int(size)).Offset(int(offset)).Find(&tsList).Error
+	err = session.Model(&mtask.Task{}).Where("assign_to=? and deleted=0 and done=?", memberId, done).Count(&total).Error
+	return
 }
 
 func (t *TaskDao) FindTaskByMemberCode(ctx context.Context, memberId int64, done int, page int64, size int64) (tList []*mtask.Task, total int64, err error) {
-	//TODO implement me
-	panic("implement me")
+	session := t.conn.Session(ctx)
+	offset := (page - 1) * size
+	sql := "select a.* from ms_task a,ms_task_member b where a.id=b.task_code and member_code=? and a.deleted=0 and a.done=? limit ?,?"
+	raw := session.Model(&mtask.Task{}).Raw(sql, memberId, done, offset, size)
+	err = raw.Scan(&tList).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	sqlCount := "select count(*) from ms_task a,ms_task_member b where a.id=b.task_code and member_code=? and a.deleted=0 and a.done=?"
+	rawCount := session.Model(&mtask.Task{}).Raw(sqlCount, memberId, done)
+	err = rawCount.Scan(&total).Error
+	return
 }
 
 func (t *TaskDao) FindTaskByCreateBy(ctx context.Context, memberId int64, done int, page int64, size int64) (tList []*mtask.Task, total int64, err error) {
-	//TODO implement me
-	panic("implement me")
+	session := t.conn.Session(ctx)
+	offset := (page - 1) * size
+	err = session.Model(&mtask.Task{}).Where("create_by=? and deleted=0 and done=?", memberId, done).Limit(int(size)).Offset(int(offset)).Find(&tList).Error
+	err = session.Model(&mtask.Task{}).Where("create_by=? and deleted=0 and done=?", memberId, done).Count(&total).Error
+	return
 }
 
 // FindTaskMemberByTaskId 根据任务id查询任务成员

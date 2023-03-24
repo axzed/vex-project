@@ -51,6 +51,8 @@ type Executor struct {
 	Avatar string `json:"avatar"`
 	Code   string `json:"code"`
 }
+
+// TaskSaveReq 保存任务参数
 type TaskSaveReq struct {
 	Name        string `form:"name"`
 	StageCode   string `form:"stage_code"`
@@ -58,11 +60,13 @@ type TaskSaveReq struct {
 	AssignTo    string `form:"assign_to"`
 }
 
+// TaskSortReq 保存排序任务参数
 type TaskSortReq struct {
 	PreTaskCode  string `form:"preTaskCode"`
 	NextTaskCode string `form:"nextTaskCode"`
 	ToStageCode  string `form:"toStageCode"`
 }
+
 type MyTaskReq struct {
 	Page     int64 `form:"page"`
 	PageSize int64 `form:"pageSize"`
