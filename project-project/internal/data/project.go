@@ -168,3 +168,11 @@ func (pt ProjectTemplate) Convert(taskStages []*TaskStagesOnlyName) *ProjectTemp
 	}
 	return pta
 }
+
+func ToProjectTemplateIds(pts []ProjectTemplate) []int {
+	var ids []int
+	for _, v := range pts {
+		ids = append(ids, v.Id)
+	}
+	return ids
+}

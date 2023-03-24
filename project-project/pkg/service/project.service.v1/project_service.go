@@ -10,7 +10,6 @@ import (
 	"github.com/axzed/project-project/internal/dao"
 	"github.com/axzed/project-project/internal/data"
 	"github.com/axzed/project-project/internal/data/menu"
-	"github.com/axzed/project-project/internal/data/mproject"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
@@ -164,7 +163,7 @@ func (p *ProjectService) FindProjectTemplate(ctx context.Context, msg *project.P
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
 	// 2. 模型转换 拿到模板id列表去任务步骤模板表进行查询
-	tsts, err := p.taskStagesTemplateRepo.FindInProTemIds(ctx, mproject.ToProjectTemplateIds(pts))
+	tsts, err := p.taskStagesTemplateRepo.FindInProTemIds(ctx, data.ToProjectTemplateIds(pts))
 	if err != nil {
 		zap.L().Error("FindProjectTemplate FindInProTemIds error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
