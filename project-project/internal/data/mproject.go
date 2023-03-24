@@ -1,9 +1,8 @@
-package mproject
+package data
 
 import (
 	"github.com/axzed/project-common/encrypts"
 	"github.com/axzed/project-common/tms"
-	"github.com/axzed/project-project/internal/data/mtask"
 	"github.com/axzed/project-project/pkg/model"
 )
 
@@ -14,7 +13,7 @@ type Project struct {
 	Description        string
 	AccessControlType  int
 	WhiteList          string
-	Sort              int
+	Sort               int
 	Deleted            int
 	TemplateCode       int
 	Schedule           float64
@@ -36,6 +35,27 @@ type Project struct {
 
 func (*Project) TableName() string {
 	return "vex_project"
+}
+
+func (m *Project) GetAccessControlType() string {
+	if m.AccessControlType == 0 {
+		return "open"
+	}
+	if m.AccessControlType == 1 {
+		return "private"
+	}
+	if m.AccessControlType == 2 {
+		return "custom"
+	}
+	return ""
+}
+
+func ToProjectMap(list []*Project) map[int64]*Project {
+	m := make(map[int64]*Project, len(list))
+	for _, v := range list {
+		m[v.Id] = v
+	}
+	return m
 }
 
 type ProjectMember struct {
@@ -125,12 +145,11 @@ type ProjectTemplateAll struct {
 	Cover            string
 	MemberCode       string
 	IsSystem         int
-	TaskStages       []*mtask.TaskStagesOnlyName
-	Code 			 string
+	TaskStages       []*TaskStagesOnlyName
+	Code             string
 }
 
-
-func (pt ProjectTemplate) Convert(taskStages []*mtask.TaskStagesOnlyName) *ProjectTemplateAll {
+func (pt ProjectTemplate) Convert(taskStages []*TaskStagesOnlyName) *ProjectTemplateAll {
 	organizationCode, _ := encrypts.EncryptInt64(pt.OrganizationCode, model.AESKey)
 	memberCode, _ := encrypts.EncryptInt64(pt.MemberCode, model.AESKey)
 	code, _ := encrypts.EncryptInt64(int64(pt.Id), model.AESKey)
@@ -148,11 +167,4 @@ func (pt ProjectTemplate) Convert(taskStages []*mtask.TaskStagesOnlyName) *Proje
 		Code:             code,
 	}
 	return pta
-}
-func ToProjectTemplateIds(pts []ProjectTemplate) []int {
-	var ids []int
-	for _, v := range pts {
-		ids = append(ids, v.Id)
-	}
-	return ids
 }

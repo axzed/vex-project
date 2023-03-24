@@ -188,3 +188,46 @@ func (t *HandlerTask) taskSort(c *gin.Context) {
 	// 4.返回结果
 	c.JSON(http.StatusOK, result.Success([]int{}))
 }
+
+// myTaskList 我的任务列表
+func (t *HandlerTask) myTaskList(c *gin.Context) {
+	// 1.获取参数 校验参数的合法性
+	result := &common.Result{}
+	var req *param.MyTaskReq
+	c.ShouldBind(&req)
+	memberId := c.GetInt64("memberId")
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	// 2.构造rpc请求参数
+	msg := &task.TaskReqMessage{
+		MemberId: memberId,
+		TaskType: int32(req.TaskType),
+		Type:     int32(req.Type),
+		Page:     req.Page,
+		PageSize: req.PageSize,
+	}
+	// 3.调用rpc服务
+	myTaskListResponse, err := rpc.TaskServiceClient.MyTaskList(ctx, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		c.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	// 4.构造返回结果
+	var myTaskList []*param.MyTaskDisplay
+	copier.Copy(&myTaskList, myTaskListResponse.List)
+	if myTaskList == nil {
+		myTaskList = []*param.MyTaskDisplay{}
+	}
+	// 将项目信息放入到任务信息需要的地方中
+	for _, v := range myTaskList {
+		v.ProjectInfo = param.ProjectInfo{
+			Name: v.ProjectName,
+			Code: v.ProjectCode,
+		}
+	}
+	// 5.返回结果
+	c.JSON(http.StatusOK, result.Success(gin.H{
+		"list":  myTaskList,
+		"total": myTaskListResponse.Total,
+	}))
+}

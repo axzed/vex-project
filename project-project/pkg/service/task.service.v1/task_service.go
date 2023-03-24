@@ -8,8 +8,7 @@ import (
 	"github.com/axzed/project-grpc/task"
 	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-project/internal/dao"
-	"github.com/axzed/project-project/internal/data/mproject"
-	"github.com/axzed/project-project/internal/data/mtask"
+	"github.com/axzed/project-project/internal/data"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
@@ -65,7 +64,7 @@ func (t *TaskService) TaskStages(ctx context.Context, msg *task.TaskReqMessage) 
 	if tsMessages == nil {
 		return &task.TaskStagesResponse{List: tsMessages, Total: 0}, nil
 	}
-	stagesMap := mtask.ToTaskStagesMap(stages)
+	stagesMap := data.ToTaskStagesMap(stages)
 	// 循环赋值
 	for _, v := range tsMessages {
 		taskStages := stagesMap[int(v.Id)]
@@ -93,7 +92,7 @@ func (t *TaskService) MemberProjectList(ctx context.Context, msg *task.TaskReqMe
 		return &task.MemberProjectResponse{List: nil, Total: 0}, nil
 	}
 	var mIds []int64
-	pmMap := make(map[int64]*mproject.ProjectMember)
+	pmMap := make(map[int64]*data.ProjectMember)
 	for _, v := range projectMembers {
 		mIds = append(mIds, v.MemberCode)
 		pmMap[v.MemberCode] = v
@@ -138,7 +137,7 @@ func (t *TaskService) TaskList(ctx context.Context, msg *task.TaskReqMessage) (*
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
 	// 将数据库数据转换为display的数据
-	var taskDisplayList []*mtask.TaskDisplay
+	var taskDisplayList []*data.TaskDisplay
 	var mIds []int64
 	for _, v := range taskList {
 		display := v.ToTaskDisplay()
@@ -175,7 +174,7 @@ func (t *TaskService) TaskList(ctx context.Context, msg *task.TaskReqMessage) (*
 	}
 	for _, v := range taskDisplayList {
 		message := memberMap[encrypts.DecryptNoErr(v.AssignTo)]
-		e := mtask.Executor{
+		e := data.Executor{
 			Name:   message.Name,
 			Avatar: message.Avatar,
 		}
@@ -239,7 +238,7 @@ func (t *TaskService) SaveTask(ctx context.Context, msg *task.TaskReqMessage) (*
 	assignTo := encrypts.DecryptNoErr(msg.AssignTo)
 
 	// 处理保存任务需要的数据 (构建任务)
-	ts := &mtask.Task{
+	ts := &data.Task{
 		Name:        msg.Name,
 		CreateTime:  time.Now().UnixMilli(),
 		CreateBy:    msg.MemberId,
@@ -263,7 +262,7 @@ func (t *TaskService) SaveTask(ctx context.Context, msg *task.TaskReqMessage) (*
 		}
 
 		// 构造当前创建任务的成员数据
-		tm := &mtask.TaskMember{
+		tm := &data.TaskMember{
 			MemberCode: assignTo,
 			TaskCode:   ts.Id,
 			JoinTime:   time.Now().UnixMilli(),
@@ -293,7 +292,7 @@ func (t *TaskService) SaveTask(ctx context.Context, msg *task.TaskReqMessage) (*
 		return nil, err
 	}
 	// 将当前任务成员信息赋值给当前任务的Executor详情
-	display.Executor = mtask.Executor{
+	display.Executor = data.Executor{
 		Name:   member.Name,
 		Avatar: member.Avatar,
 		Code:   member.Code,
@@ -408,4 +407,76 @@ func (t *TaskService) resetSort(stageCode int64) error {
 		return nil
 	})
 
+}
+
+// MyTaskList 我的任务列表
+func (t *TaskService) MyTaskList(ctx context.Context, msg *task.TaskReqMessage) (*task.MyTaskListResponse, error) {
+	var tsList []*data.Task
+	var err error
+	var total int64
+	if msg.TaskType == 1 {
+		//我执行的
+		tsList, total, err = t.taskRepo.FindTaskByAssignTo(ctx, msg.MemberId, int(msg.Type), msg.Page, msg.PageSize)
+		if err != nil {
+			zap.L().Error("project task MyTaskList taskRepo.FindTaskByAssignTo error", zap.Error(err))
+			return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+	}
+	if msg.TaskType == 2 {
+		//我参与的
+		tsList, total, err = t.taskRepo.FindTaskByMemberCode(ctx, msg.MemberId, int(msg.Type), msg.Page, msg.PageSize)
+		if err != nil {
+			zap.L().Error("project task MyTaskList taskRepo.FindTaskByMemberCode error", zap.Error(err))
+			return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+	}
+	if msg.TaskType == 3 {
+		//我创建的
+		tsList, total, err = t.taskRepo.FindTaskByCreateBy(ctx, msg.MemberId, int(msg.Type), msg.Page, msg.PageSize)
+		if err != nil {
+			zap.L().Error("project task MyTaskList taskRepo.FindTaskByCreateBy error", zap.Error(err))
+			return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+	}
+	// 如果没有任务,则直接返回
+	if tsList == nil || len(tsList) <= 0 {
+		return &task.MyTaskListResponse{List: nil, Total: 0}, nil
+	}
+
+	/*************** 获取项目信息,成员信息 ***************/
+
+	// 获取项目信息
+	var pids []int64
+	var mids []int64
+	for _, v := range tsList {
+		pids = append(pids, v.ProjectCode)
+		mids = append(mids, v.AssignTo)
+	}
+	pList, err := t.projectRepo.FindProjectByIds(ctx, pids)
+	projectMap := data.ToProjectMap(pList)
+
+	// 获取成员信息
+	mList, err := rpc.LoginServiceClient.FindMemInfoByIds(ctx, &login.UserMessage{
+		MIds: mids,
+	})
+	mMap := make(map[int64]*login.MemberMessage)
+	for _, v := range mList.List {
+		mMap[v.Id] = v
+	}
+
+	// 转换 task 为 MyTaskDisplay 用于返回前端展示
+	var mtdList []*data.MyTaskDisplay
+	for _, v := range tsList {
+		memberMessage := mMap[v.AssignTo]
+		name := memberMessage.Name
+		avatar := memberMessage.Avatar
+		mtd := v.ToMyTaskDisplay(projectMap[v.ProjectCode], name, avatar)
+		mtdList = append(mtdList, mtd)
+	}
+
+	// 构造返回值
+	var myMsgs []*task.MyTaskMessage
+	copier.Copy(&myMsgs, mtdList)
+	// 返回
+	return &task.MyTaskListResponse{List: myMsgs, Total: total}, nil
 }

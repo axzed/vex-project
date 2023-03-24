@@ -8,9 +8,9 @@ import (
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-project/internal/dao"
+	"github.com/axzed/project-project/internal/data"
 	"github.com/axzed/project-project/internal/data/menu"
 	"github.com/axzed/project-project/internal/data/mproject"
-	"github.com/axzed/project-project/internal/data/mtask"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
@@ -68,7 +68,7 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 	memberId := msg.MemberId
 	page := msg.Page
 	pageSize := msg.PageSize
-	var pms []*mproject.ProAndMember
+	var pms []*data.ProAndMember
 	var total int64
 	var err error
 	// 通过SelectBy参数判断调用哪个服务
@@ -97,7 +97,7 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 			return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 		}
 		// 将收藏的项目放入map中 cmap[项目id] = 项目
-		var cMap = make(map[int64]*mproject.ProAndMember)
+		var cMap = make(map[int64]*data.ProAndMember)
 		// 遍历收藏的项目
 		for _, v := range collectPms {
 			// v.Id 为项目id (collectPms)
@@ -129,7 +129,7 @@ func (p *ProjectService) FindProjectByMemId(ctx context.Context, msg *project.Pr
 		} else {
 			v.Code, _ = encrypts.EncryptInt64(v.ProjectCode, model.AESKey)
 		}
-		pam := mproject.ToMap(pms)[v.Id]
+		pam := data.ToMap(pms)[v.Id]
 		v.AccessControlType = pam.GetAccessControlType()
 		v.OrganizationCode, _ = encrypts.EncryptInt64(pam.OrganizationCode, model.AESKey)
 		v.JoinTime = tms.FormatByMill(pam.JoinTime)
@@ -146,7 +146,7 @@ func (p *ProjectService) FindProjectTemplate(ctx context.Context, msg *project.P
 	organizationCode, _ := strconv.ParseInt(organizationCodeStr, 10, 64)
 	page := msg.Page
 	pageSize := msg.PageSize
-	var pts []mproject.ProjectTemplate
+	var pts []data.ProjectTemplate
 	var total int64
 	var err error
 	// 1. 根据viewType去查询项目模板表 得到List
@@ -169,9 +169,9 @@ func (p *ProjectService) FindProjectTemplate(ctx context.Context, msg *project.P
 		zap.L().Error("FindProjectTemplate FindInProTemIds error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
-	var ptas []*mproject.ProjectTemplateAll
+	var ptas []*data.ProjectTemplateAll
 	for _, v := range pts {
-		ptas = append(ptas, v.Convert(mtask.CovertProjectMap(tsts)[v.Id]))
+		ptas = append(ptas, v.Convert(data.CovertProjectMap(tsts)[v.Id]))
 	}
 	// 3. 组装数据
 	var pmMsgs []*project.ProjectTemplateMessage
@@ -196,7 +196,7 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
 
-	pr := &mproject.Project{
+	pr := &data.Project{
 		Name:              msg.Name,
 		Description:       msg.Description,
 		TemplateCode:      int(templateCode),
@@ -217,7 +217,7 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 			zap.L().Error("SaveProject SaveProject error", zap.Error(err))
 			return errs.ConvertToGrpcError(model.ErrDBFail)
 		}
-		pm := &mproject.ProjectMember{
+		pm := &data.ProjectMember{
 			ProjectCode: pr.Id,
 			MemberCode:  msg.MemberId,
 			JoinTime:    time.Now().UnixMilli(),
@@ -234,7 +234,7 @@ func (p *ProjectService) SaveProject(ctx context.Context, msg *project.ProjectRp
 
 		// 3.生成任务的步骤并存入表中
 		for index, v := range stageTemplateList {
-			taskStage := &mtask.TaskStages{
+			taskStage := &data.TaskStages{
 				Name:        v.Name,
 				ProjectCode: pr.Id,
 				Sort:        index + 1,
@@ -341,7 +341,7 @@ func (p *ProjectService) UpdateCollectProject(ctx context.Context, msg *project.
 	defer cancel()
 	var err error
 	if "collect" == msg.CollectType {
-		pc := &mproject.CollectionProject{
+		pc := &data.CollectionProject{
 			ProjectCode: projectCode,
 			MemberCode:  msg.MemberId,
 			CreateTime:  time.Now().UnixMilli(),
@@ -367,7 +367,7 @@ func (p *ProjectService) UpdateProject(ctx context.Context, msg *project.UpdateP
 	c, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	// 构造update项目实体用于和dao打交道
-	proj := &mproject.Project{
+	proj := &data.Project{
 		Id:                 projectCode,
 		Name:               msg.Name,
 		Description:        msg.Description,

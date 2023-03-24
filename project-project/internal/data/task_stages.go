@@ -1,4 +1,4 @@
-package mtask
+package data
 
 // TaskStages 任务阶段
 type TaskStages struct {
