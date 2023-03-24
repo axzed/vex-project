@@ -10,6 +10,7 @@ import (
 	"github.com/axzed/project-project/internal/dao"
 	"github.com/axzed/project-project/internal/data/mproject"
 	"github.com/axzed/project-project/internal/data/mtask"
+	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
 	"github.com/axzed/project-project/internal/rpc"
@@ -160,7 +161,7 @@ func (t *TaskService) TaskList(ctx context.Context, msg *task.TaskReqMessage) (*
 	if mIds == nil || len(mIds) <= 0 {
 		return &task.TaskListResponse{List: nil}, nil
 	}
-	// in ()
+	// 拿上用户id列表 去请求用户信息
 	messageList, err := rpc.LoginServiceClient.FindMemInfoByIds(ctx, &login.UserMessage{MIds: mIds})
 	if err != nil {
 		zap.L().Error("project task TaskList LoginServiceClient.FindMemInfoByIds error", zap.Error(err))
@@ -183,4 +184,122 @@ func (t *TaskService) TaskList(ctx context.Context, msg *task.TaskReqMessage) (*
 	var taskMessageList []*task.TaskMessage
 	copier.Copy(&taskMessageList, taskDisplayList)
 	return &task.TaskListResponse{List: taskMessageList}, nil
+}
+
+// SaveTask 保存任务
+func (t *TaskService) SaveTask(ctx context.Context, msg *task.TaskReqMessage) (*task.TaskMessage, error) {
+	// 获取并校验gRPC参数
+	if msg.Name == "" {
+		return nil, errs.ConvertToGrpcError(model.TaskNameNotNull)
+	}
+	stageCode := encrypts.DecryptNoErr(msg.StageCode)
+
+	// 获取任务步骤
+	taskStages, err := t.taskStagesRepo.FindById(ctx, int(stageCode))
+	if err != nil {
+		zap.L().Error("project task SaveTask taskStagesRepo.FindById error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if taskStages == nil { // 若通过任务步骤id查询出来的任务步骤为空, 则返回空错误
+		return nil, errs.ConvertToGrpcError(model.TaskStagesNotNull)
+	}
+
+	// 通过projectCode获取对应项目 检查项目是否存在
+	projectCode := encrypts.DecryptNoErr(msg.ProjectCode)
+	project, err := t.projectRepo.FindProjectById(ctx, projectCode)
+	if err != nil {
+		zap.L().Error("project task SaveTask projectRepo.FindProjectById error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if project == nil || project.Deleted == model.Deleted { // project为空或者project已删除 -> 项目就不存在
+		return nil, errs.ConvertToGrpcError(model.ProjectAlreadyDeleted)
+	}
+
+	// 获取任务最大id -> 标识任务id递增 -> 新增任务id+1
+	maxIdNum, err := t.taskRepo.FindTaskMaxIdNum(ctx, projectCode)
+	if err != nil {
+		zap.L().Error("project task SaveTask taskRepo.FindTaskMaxIdNum error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if maxIdNum == nil { // 数据库查出来的最大id为空 -> 说明数据库中没有任务 -> 任务id从0开始 (消除null异常)
+		a := 0
+		maxIdNum = &a
+	}
+
+	// 获取任务最大sort -> 标识任务sort递增 -> 新增任务sort+1 -> 用于任务排序
+	maxSort, err := t.taskRepo.FindTaskSort(ctx, projectCode, stageCode)
+	if err != nil {
+		zap.L().Error("project task SaveTask taskRepo.FindTaskSort error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if maxSort == nil {
+		a := 0
+		maxSort = &a
+	}
+	assignTo := encrypts.DecryptNoErr(msg.AssignTo)
+
+	// 处理保存任务需要的数据 (构建任务)
+	ts := &mtask.Task{
+		Name:        msg.Name,
+		CreateTime:  time.Now().UnixMilli(),
+		CreateBy:    msg.MemberId,
+		AssignTo:    assignTo,
+		ProjectCode: projectCode,
+		StageCode:   int(stageCode),
+		IdNum:       *maxIdNum + 1,
+		Private:     project.OpenTaskPrivate,
+		Sort:        *maxSort + 65536,
+		BeginTime:   time.Now().UnixMilli(),
+		EndTime:     time.Now().Add(2 * 24 * time.Hour).UnixMilli(),
+	}
+
+	// 开启事务 保存任务
+	err = t.transaction.Action(func(conn conn.DbConn) error {
+		// 保存任务
+		err = t.taskRepo.SaveTask(ctx, conn, ts)
+		if err != nil {
+			zap.L().Error("project task SaveTask taskRepo.SaveTask error", zap.Error(err))
+			return errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+
+		// 构造当前创建任务的成员数据
+		tm := &mtask.TaskMember{
+			MemberCode: assignTo,
+			TaskCode:   ts.Id,
+			JoinTime:   time.Now().UnixMilli(),
+			IsOwner:    model.Owner,
+		}
+		if assignTo == msg.MemberId {
+			tm.IsExecutor = model.Executor
+		}
+
+		// 保存任务成员
+		err = t.taskRepo.SaveTaskMember(ctx, conn, tm)
+		if err != nil {
+			zap.L().Error("project task SaveTask taskRepo.SaveTaskMember error", zap.Error(err))
+			return errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// 将任务详情转换为前端需要的数据
+	display := ts.ToTaskDisplay()
+	// 通过成员id获取成员信息
+	member, err := rpc.LoginServiceClient.FindMemberInfoById(ctx, &login.UserMessage{MemId: assignTo})
+	if err != nil {
+		return nil, err
+	}
+	// 将当前任务成员信息赋值给当前任务的Executor详情
+	display.Executor = mtask.Executor{
+		Name:   member.Name,
+		Avatar: member.Avatar,
+		Code:   member.Code,
+	}
+	tm := &task.TaskMessage{}
+	copier.Copy(tm, display)
+	// 返回任务详情
+	return tm, nil
 }

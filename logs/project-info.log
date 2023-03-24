@@ -178,3 +178,6 @@
 {"level":"INFO","time":"2023-03-23T12:54:34.951+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
 {"level":"INFO","time":"2023-03-23T13:40:19.495+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
 {"level":"INFO","time":"2023-03-23T13:41:17.872+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"ERROR","time":"2023-03-24T10:24:42.561+0800","caller":"login.service.v1/login_service.go:237","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"ERROR","time":"2023-03-24T10:24:54.314+0800","caller":"login.service.v1/login_service.go:237","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"INFO","time":"2023-03-24T10:25:00.260+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}

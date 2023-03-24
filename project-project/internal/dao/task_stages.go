@@ -11,6 +11,12 @@ type TaskStagesDao struct {
 	conn *gorm.GormConn
 }
 
+// FindById 通过任务步骤id获取任务步骤
+func (t *TaskStagesDao) FindById(ctx context.Context, id int) (ts *mtask.TaskStages, err error) {
+	err = t.conn.Session(ctx).Where("id=?", id).Find(&ts).Error
+	return
+}
+
 // FindStagesByProjectId 根据项目id(projectCode)查询任务阶段
 func (t *TaskStagesDao) FindStagesByProjectId(ctx context.Context, projectCode int64, page int64, pageSize int64) (list []*mtask.TaskStages, total int64, err error) {
 	session := t.conn.Session(ctx)

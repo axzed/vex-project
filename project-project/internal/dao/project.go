@@ -6,13 +6,30 @@ import (
 	"github.com/axzed/project-project/internal/data/mproject"
 	"github.com/axzed/project-project/internal/database/gorm"
 	"github.com/axzed/project-project/internal/database/interface/conn"
+	gorm2 "gorm.io/gorm"
 )
 
 type ProjectDao struct {
 	conn *gorm.GormConn
 }
 
-// FindProjectByMemId 根据用户id查询项目
+// FindProjectById 通过id查询对应项目
+func (p *ProjectDao) FindProjectById(ctx context.Context, projectCode int64) (pj *mproject.Project, err error) {
+	err = p.conn.Session(ctx).Where("id=?", projectCode).Find(&pj).Error
+	if err == gorm2.ErrRecordNotFound {
+		return nil, nil
+	}
+	return
+}
+
+// FindProjectByIds 通过id查询对应项目 (此处id是pids)
+func (p *ProjectDao) FindProjectByIds(ctx context.Context, pids []int64) (list []*mproject.Project, err error) {
+	session := p.conn.Session(ctx)
+	err = session.Model(&mproject.Project{}).Where("id in (?)", pids).Find(&list).Error
+	return
+}
+
+// FindProjectMemberByPid 根据用户id查询项目
 func (p *ProjectDao) FindProjectMemberByPid(ctx context.Context, projectCode int64) (list []*mproject.ProjectMember, total int64, err error) {
 	session := p.conn.Session(ctx)
 	err = session.Model(&mproject.ProjectMember{}).

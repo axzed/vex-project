@@ -132,3 +132,35 @@ func (t *HandlerTask) taskList(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, result.Success(taskDisplayList))
 }
+
+// saveTask 保存任务(每个任务步骤中的任务详情)
+func (t *HandlerTask) saveTask(c *gin.Context) {
+	result := &common.Result{}
+	var req *param.TaskSaveReq
+	c.ShouldBind(&req)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	msg := &task.TaskReqMessage{
+		ProjectCode: req.ProjectCode,
+		Name:        req.Name,
+		StageCode:   req.StageCode,
+		AssignTo:    req.AssignTo,
+		MemberId:    c.GetInt64("memberId"),
+	}
+	taskMessage, err := rpc.TaskServiceClient.SaveTask(ctx, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		c.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	td := &param.TaskDisplay{}
+	copier.Copy(td, taskMessage)
+	if td != nil {
+		if td.Tags == nil {
+			td.Tags = []int{}
+		}
+		if td.ChildCount == nil {
+			td.ChildCount = []int{}
+		}
+	}
+	c.JSON(http.StatusOK, result.Success(td))
+}
