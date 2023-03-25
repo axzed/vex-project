@@ -203,7 +203,8 @@ func (ls *LoginService) Login(ctx context.Context, msg *login.LoginMessage) (*lo
 	memIdStr := strconv.FormatInt(mem.Id, 10)
 	exp := time.Duration(config.AppConf.JwtConfig.AccessExp*3600*24) * time.Second
 	rExp := time.Duration(config.AppConf.JwtConfig.RefreshExp*3600*24) * time.Second
-	token := jwts.CreateToken(memIdStr, exp, config.AppConf.JwtConfig.AccessSecret, rExp, config.AppConf.JwtConfig.RefreshSecret)
+	token := jwts.CreateToken(memIdStr, exp, config.AppConf.JwtConfig.AccessSecret, rExp, config.AppConf.JwtConfig.RefreshSecret, msg.Ip)
+	// 可选: 给token加密 增加安全性
 	tokenList := &login.TokenMessage{
 		AccessToken:    token.AccessToken,
 		RefreshToken:   token.RefreshToken,
@@ -232,7 +233,7 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 		// 去掉bearer
 		token = strings.ReplaceAll(token, "bearer ", "")
 	}
-	parseToken, err := jwts.ParseToken(token, config.AppConf.JwtConfig.AccessSecret)
+	parseToken, err := jwts.ParseToken(token, config.AppConf.JwtConfig.AccessSecret, msg.Ip)
 	if err != nil {
 		zap.L().Error("Login TokenVerify ParseToken error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)

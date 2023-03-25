@@ -71,6 +71,15 @@ func (h *HandlerUser) register(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp.Success(""))
 }
 
+// GetIp 获取客户端ip
+func GetIp(c *gin.Context) string {
+	ip := c.ClientIP()
+	if ip == "::1" {
+		ip = "127.0.0.1"
+	}
+	return ip
+}
+
 // login 登录
 func (h *HandlerUser) login(ctx *gin.Context) {
 	resp := &common.Result{}
@@ -89,6 +98,7 @@ func (h *HandlerUser) login(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, resp.Fail(http.StatusBadRequest, "copy参数失败"))
 		return
 	}
+	msg.Ip = GetIp(ctx)
 	loginResp, err := rpc.LoginServiceClient.Login(c, msg)
 	if err != nil {
 		// 解析grpc中的status错误
