@@ -219,3 +219,23 @@
 {"level":"INFO","time":"2023-03-24T16:01:27.361+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
 {"level":"ERROR","time":"2023-03-24T16:01:34.420+0800","caller":"task.service.v1/task_service.go:429","msg":"project task MyTaskList taskRepo.FindTaskByMemberCode error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
 {"level":"ERROR","time":"2023-03-24T16:01:36.678+0800","caller":"task.service.v1/task_service.go:429","msg":"project task MyTaskList taskRepo.FindTaskByMemberCode error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
+{"level":"ERROR","time":"2023-03-25T13:14:10.135+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-25T13:14:11.139+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"INFO","time":"2023-03-25T18:54:22.874+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-25T21:08:40.122+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"ERROR","time":"2023-03-26T09:42:37.495+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:37.500+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:37.500+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:42.110+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:42.120+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:42.120+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"INFO","time":"2023-03-26T09:42:49.389+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-26T19:05:20.358+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-26T19:08:47.140+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"INFO","time":"2023-03-26T19:08:47.141+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 7 ms"}
+{"level":"INFO","time":"2023-03-26T19:08:47.146+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:08:47.146+0800","caller":"middleware/log_time.go:16","msg":"/project/project/getLogBySelfProject 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:08:47.147+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:08:47.157+0800","caller":"middleware/log_time.go:16","msg":"/project/events/myList 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:08:47.170+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 24 ms"}
+{"level":"INFO","time":"2023-03-26T19:08:47.174+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 28 ms"}

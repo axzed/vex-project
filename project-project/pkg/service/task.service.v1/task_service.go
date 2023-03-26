@@ -409,7 +409,7 @@ func (t *TaskService) resetSort(stageCode int64) error {
 
 }
 
-// MyTaskList 我的任务列表
+// MyTaskList (首页展示)我的任务列表
 func (t *TaskService) MyTaskList(ctx context.Context, msg *task.TaskReqMessage) (*task.MyTaskListResponse, error) {
 	var tsList []*data.Task
 	var err error
@@ -452,14 +452,28 @@ func (t *TaskService) MyTaskList(ctx context.Context, msg *task.TaskReqMessage) 
 		pids = append(pids, v.ProjectCode)
 		mids = append(mids, v.AssignTo)
 	}
-	pList, err := t.projectRepo.FindProjectByIds(ctx, pids)
+	// 1. 获取项目信息 1 和获取成员信息无关联性 -> 可并发执行 -> go + channel
+	pListChan := make(chan []*data.Project)
+	defer close(pListChan)
+	mListChan := make(chan *login.MemberMessageList)
+	defer close(mListChan)
+	go func() {
+		pList, _ := t.projectRepo.FindProjectByIds(ctx, pids)
+		pListChan <- pList
+	}()
+	go func() {
+		mList, _ := rpc.LoginServiceClient.FindMemInfoByIds(ctx, &login.UserMessage{
+			//2.  1,2这两个请求无关联性  go+channel
+			MIds: mids,
+		})
+		mListChan <- mList
+	}()
+	// 阻塞等待两个任务完成
+	pList := <-pListChan
 	projectMap := data.ToProjectMap(pList)
-
-	// 获取成员信息
-	mList, err := rpc.LoginServiceClient.FindMemInfoByIds(ctx, &login.UserMessage{
-		MIds: mids,
-	})
+	mList := <-mListChan
 	mMap := make(map[int64]*login.MemberMessage)
+	// 使用map存储成员信息
 	for _, v := range mList.List {
 		mMap[v.Id] = v
 	}
@@ -479,4 +493,68 @@ func (t *TaskService) MyTaskList(ctx context.Context, msg *task.TaskReqMessage) 
 	copier.Copy(&myMsgs, mtdList)
 	// 返回
 	return &task.MyTaskListResponse{List: myMsgs, Total: total}, nil
+}
+
+// ReadTask 读取任务详情(点击任务卡片 -> 展示详情)
+func (t *TaskService) ReadTask(ctx context.Context, msg *task.TaskReqMessage) (*task.TaskMessage, error) {
+	// 根据taskCode查询任务详情 根据任务查询项目详情 根据任务查询任务步骤详情 查询任务的执行者的成员详情
+	taskCode := encrypts.DecryptNoErr(msg.TaskCode)
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	// 根据任务id(taskCode) 查询任务详情
+	taskInfo, err := t.taskRepo.FindTaskById(c, taskCode)
+	if err != nil {
+		zap.L().Error("project task ReadTask taskRepo FindTaskById error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	if taskInfo == nil {
+		return &task.TaskMessage{}, nil
+	}
+
+	// 转换为前端需要的数据结构
+	display := taskInfo.ToTaskDisplay()
+	if taskInfo.Private == 1 {
+		// 代表隐私模式
+		taskMember, err := t.taskRepo.FindTaskMemberByTaskId(ctx, taskInfo.Id, msg.MemberId)
+		if err != nil {
+			zap.L().Error("project task TaskList taskRepo.FindTaskMemberByTaskId error", zap.Error(err))
+			return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+		}
+		if taskMember != nil {
+			display.CanRead = model.CanRead
+		} else {
+			display.CanRead = model.NoCanRead
+		}
+	}
+
+	// 找到对应项目
+	pj, err := t.projectRepo.FindProjectById(c, taskInfo.ProjectCode)
+	display.ProjectName = pj.Name
+
+	// 找到对应任务步骤
+	taskStages, err := t.taskStagesRepo.FindById(c, taskInfo.StageCode)
+	display.StageName = taskStages.Name
+
+	// 找到对应任务执行者的成员信息
+	memberMessage, err := rpc.LoginServiceClient.FindMemberInfoById(ctx, &login.UserMessage{MemId: taskInfo.AssignTo})
+	if err != nil {
+		zap.L().Error("project task TaskList LoginServiceClient.FindMemInfoById error", zap.Error(err))
+		return nil, err
+	}
+
+	// 构造执行者信息
+	e := data.Executor{
+		Name:   memberMessage.Name,
+		Avatar: memberMessage.Avatar,
+	}
+	// 赋值给前端的数据结构 display
+	display.Executor = e
+
+	// 构造返回值
+	var taskMessage = &task.TaskMessage{}
+	copier.Copy(taskMessage, display)
+
+	// 返回
+	return taskMessage, nil
 }

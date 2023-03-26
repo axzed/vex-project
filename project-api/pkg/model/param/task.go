@@ -44,6 +44,8 @@ type TaskDisplay struct {
 	Stared        int      `json:"stared"`
 	Tags          []int    `json:"tags"`
 	ChildCount    []int    `json:"childCount"`
+	ProjectName   string   `json:"projectName"`
+	StageName     string   `json:"stageName"`
 }
 
 type Executor struct {

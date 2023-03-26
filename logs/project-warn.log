@@ -106,3 +106,9 @@
 {"level":"ERROR","time":"2023-03-24T16:01:36.678+0800","caller":"task.service.v1/task_service.go:429","msg":"project task MyTaskList taskRepo.FindTaskByMemberCode error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
 {"level":"ERROR","time":"2023-03-25T13:14:10.135+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
 {"level":"ERROR","time":"2023-03-25T13:14:11.139+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-03-26T09:42:37.495+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:37.500+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:37.500+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:42.110+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:42.120+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T09:42:42.120+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}

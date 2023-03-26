@@ -238,6 +238,7 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 		zap.L().Error("Login TokenVerify ParseToken error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
 	}
+
 	// 从缓存中查询
 	memJson, err := ls.cache.Get(context.Background(), model.Member+"::"+parseToken)
 	if err != nil {
@@ -249,6 +250,7 @@ func (ls *LoginService) TokenVerify(ctx context.Context, msg *login.LoginMessage
 		zap.L().Error("TokenVerify cache get member expire", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrNotLogin)
 	}
+
 	memberById := &data.Member{}
 	json.Unmarshal([]byte(memJson), memberById)
 	memMessage := &login.MemberMessage{}

@@ -231,3 +231,34 @@ func (t *HandlerTask) myTaskList(c *gin.Context) {
 		"total": myTaskListResponse.Total,
 	}))
 }
+
+// readTask 读取任务详情(点击任务卡片 -> 展示详情)
+func (t *HandlerTask) readTask(c *gin.Context) {
+	result := &common.Result{}
+	taskCode := c.PostForm("taskCode")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	msg := &task.TaskReqMessage{
+		TaskCode: taskCode,
+		MemberId: c.GetInt64("memberId"),
+	}
+	taskMessage, err := rpc.TaskServiceClient.ReadTask(ctx, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		c.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+
+	td := &param.TaskDisplay{}
+	copier.Copy(td, taskMessage)
+	if td != nil {
+		if td.Tags == nil {
+			td.Tags = []int{}
+		}
+		if td.ChildCount == nil {
+			td.ChildCount = []int{}
+		}
+	}
+
+	c.JSON(200, result.Success(td))
+}
