@@ -112,3 +112,6 @@
 {"level":"ERROR","time":"2023-03-26T09:42:42.110+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
 {"level":"ERROR","time":"2023-03-26T09:42:42.120+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
 {"level":"ERROR","time":"2023-03-26T09:42:42.120+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"ip不合法"}
+{"level":"ERROR","time":"2023-03-26T20:01:52.213+0800","caller":"task.service.v1/task_service.go:421","msg":"project task MyTaskList taskRepo.FindTaskByAssignTo error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
+{"level":"ERROR","time":"2023-03-26T20:01:56.014+0800","caller":"task.service.v1/task_service.go:429","msg":"project task MyTaskList taskRepo.FindTaskByMemberCode error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
+{"level":"ERROR","time":"2023-03-26T20:01:57.558+0800","caller":"task.service.v1/task_service.go:421","msg":"project task MyTaskList taskRepo.FindTaskByAssignTo error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}

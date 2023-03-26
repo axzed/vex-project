@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-type MsTaskStagesTemplate struct {
+type VexTaskStagesTemplate struct {
 	Id                  int
 	Name                string
 	ProjectTemplateCode int
@@ -14,8 +14,8 @@ type MsTaskStagesTemplate struct {
 	Sort                int
 }
 
-func (*MsTaskStagesTemplate) TableName() string {
-	return "ms_task_stages_template"
+func (*VexTaskStagesTemplate) TableName() string {
+	return "vex_task_stages_template"
 }
 
 type TaskStagesOnlyName struct {
@@ -23,7 +23,7 @@ type TaskStagesOnlyName struct {
 }
 
 //CovertProjectMap 模板id->任务步骤列表
-func CovertProjectMap(tsts []MsTaskStagesTemplate) map[int][]*TaskStagesOnlyName {
+func CovertProjectMap(tsts []VexTaskStagesTemplate) map[int][]*TaskStagesOnlyName {
 	var tss = make(map[int][]*TaskStagesOnlyName)
 	for _, v := range tsts {
 		ts := &TaskStagesOnlyName{}
@@ -69,7 +69,7 @@ type Task struct {
 }
 
 func (*Task) TableName() string {
-	return "ms_task"
+	return "vex_task"
 }
 
 type TaskMember struct {
@@ -82,7 +82,7 @@ type TaskMember struct {
 }
 
 func (*TaskMember) TableName() string {
-	return "ms_task_member"
+	return "vex_task_member"
 }
 
 const (

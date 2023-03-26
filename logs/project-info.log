@@ -221,3 +221,21 @@
 {"level":"INFO","time":"2023-03-26T19:08:47.157+0800","caller":"middleware/log_time.go:16","msg":"/project/events/myList 用时 0 ms"}
 {"level":"INFO","time":"2023-03-26T19:08:47.170+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 24 ms"}
 {"level":"INFO","time":"2023-03-26T19:08:47.174+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 28 ms"}
+{"level":"INFO","time":"2023-03-26T19:26:33.126+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:26:33.127+0800","caller":"middleware/log_time.go:16","msg":"/project/project/getLogBySelfProject 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:26:33.127+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:26:33.136+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-26T19:26:33.137+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 17 ms"}
+{"level":"INFO","time":"2023-03-26T19:26:33.147+0800","caller":"middleware/log_time.go:16","msg":"/project/events/myList 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T19:26:33.155+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 29 ms"}
+{"level":"INFO","time":"2023-03-26T19:26:33.169+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 43 ms"}
+{"level":"INFO","time":"2023-03-26T20:01:52.156+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T20:01:52.161+0800","caller":"middleware/log_time.go:16","msg":"/project/project/getLogBySelfProject 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T20:01:52.162+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T20:01:52.171+0800","caller":"middleware/log_time.go:16","msg":"/project/events/myList 用时 0 ms"}
+{"level":"INFO","time":"2023-03-26T20:01:52.187+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-03-26T20:01:52.188+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 40 ms"}
+{"level":"ERROR","time":"2023-03-26T20:01:52.213+0800","caller":"task.service.v1/task_service.go:421","msg":"project task MyTaskList taskRepo.FindTaskByAssignTo error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
+{"level":"INFO","time":"2023-03-26T20:01:52.219+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 59 ms"}
+{"level":"ERROR","time":"2023-03-26T20:01:56.014+0800","caller":"task.service.v1/task_service.go:429","msg":"project task MyTaskList taskRepo.FindTaskByMemberCode error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
+{"level":"ERROR","time":"2023-03-26T20:01:57.558+0800","caller":"task.service.v1/task_service.go:421","msg":"project task MyTaskList taskRepo.FindTaskByAssignTo error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
