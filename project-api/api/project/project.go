@@ -260,3 +260,28 @@ func (p *HandlerProject) editProject(ctx *gin.Context) {
 	// 返回响应
 	ctx.JSON(http.StatusOK, result.Success([]int{}))
 }
+
+// getLogBySelfProject 获取自己的项目日志
+func (p *HandlerProject) getLogBySelfProject(c *gin.Context) {
+	result := &common.Result{}
+	var page = &model.Page{}
+	page.Bind(c)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	msg := &project.ProjectRpcMessage{
+		MemberId: c.GetInt64("memberId"),
+		Page:     page.Page,
+		PageSize: page.PageSize,
+	}
+	projectLogResponse, err := rpc.ProjectServiceClient.GetLogBySelfProject(ctx, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		c.JSON(http.StatusOK, result.Fail(code, msg))
+	}
+	var list []*model.ProjectLog
+	copier.Copy(&list, projectLogResponse.List)
+	if list == nil {
+		list = []*model.ProjectLog{}
+	}
+	c.JSON(http.StatusOK, result.Success(list))
+}

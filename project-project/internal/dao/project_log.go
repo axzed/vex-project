@@ -10,7 +10,7 @@ type ProjectLogDao struct {
 	conn *gorm.GormConn
 }
 
-// FindLogByMemberCode 根据用户id查询日志
+// FindLogByMemberCode 根据用户id查询日志 -> 用于首页动态列表展示项目log
 func (p *ProjectLogDao) FindLogByMemberCode(ctx context.Context, memberId int64, page int64, size int64) (list []*data.ProjectLog, total int64, err error) {
 	session := p.conn.Session(ctx)
 	offset := (page - 1) * size

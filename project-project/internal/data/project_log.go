@@ -67,6 +67,7 @@ type IndexProjectLogDisplay struct {
 	TaskName     string
 }
 
+// ToIndexDisplay 首页展示的数据转换
 func (l *ProjectLog) ToIndexDisplay() *IndexProjectLogDisplay {
 	pd := &IndexProjectLogDisplay{}
 	copier.Copy(pd, l)

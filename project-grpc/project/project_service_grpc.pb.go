@@ -30,6 +30,7 @@ type ProjectServiceClient interface {
 	UpdateDeletedProject(ctx context.Context, in *ProjectRpcMessage, opts ...grpc.CallOption) (*DeletedProjectResponse, error)
 	UpdateCollectProject(ctx context.Context, in *ProjectRpcMessage, opts ...grpc.CallOption) (*CollectProjectResponse, error)
 	UpdateProject(ctx context.Context, in *UpdateProjectMessage, opts ...grpc.CallOption) (*UpdateProjectResponse, error)
+	GetLogBySelfProject(ctx context.Context, in *ProjectRpcMessage, opts ...grpc.CallOption) (*ProjectLogResponse, error)
 }
 
 type projectServiceClient struct {
@@ -112,6 +113,15 @@ func (c *projectServiceClient) UpdateProject(ctx context.Context, in *UpdateProj
 	return out, nil
 }
 
+func (c *projectServiceClient) GetLogBySelfProject(ctx context.Context, in *ProjectRpcMessage, opts ...grpc.CallOption) (*ProjectLogResponse, error) {
+	out := new(ProjectLogResponse)
+	err := c.cc.Invoke(ctx, "/project.ProjectService/GetLogBySelfProject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProjectServiceServer is the server API for ProjectService service.
 // All implementations must embed UnimplementedProjectServiceServer
 // for forward compatibility
@@ -124,6 +134,7 @@ type ProjectServiceServer interface {
 	UpdateDeletedProject(context.Context, *ProjectRpcMessage) (*DeletedProjectResponse, error)
 	UpdateCollectProject(context.Context, *ProjectRpcMessage) (*CollectProjectResponse, error)
 	UpdateProject(context.Context, *UpdateProjectMessage) (*UpdateProjectResponse, error)
+	GetLogBySelfProject(context.Context, *ProjectRpcMessage) (*ProjectLogResponse, error)
 	mustEmbedUnimplementedProjectServiceServer()
 }
 
@@ -154,6 +165,9 @@ func (UnimplementedProjectServiceServer) UpdateCollectProject(context.Context, *
 }
 func (UnimplementedProjectServiceServer) UpdateProject(context.Context, *UpdateProjectMessage) (*UpdateProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProject not implemented")
+}
+func (UnimplementedProjectServiceServer) GetLogBySelfProject(context.Context, *ProjectRpcMessage) (*ProjectLogResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLogBySelfProject not implemented")
 }
 func (UnimplementedProjectServiceServer) mustEmbedUnimplementedProjectServiceServer() {}
 
@@ -312,6 +326,24 @@ func _ProjectService_UpdateProject_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProjectService_GetLogBySelfProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectRpcMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServiceServer).GetLogBySelfProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/project.ProjectService/GetLogBySelfProject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServiceServer).GetLogBySelfProject(ctx, req.(*ProjectRpcMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProjectService_ServiceDesc is the grpc.ServiceDesc for ProjectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -350,6 +382,10 @@ var ProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProject",
 			Handler:    _ProjectService_UpdateProject_Handler,
+		},
+		{
+			MethodName: "GetLogBySelfProject",
+			Handler:    _ProjectService_GetLogBySelfProject_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
