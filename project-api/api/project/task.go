@@ -381,6 +381,7 @@ func (t *HandlerTask) saveTaskWorkTime(c *gin.Context) {
 	c.JSON(http.StatusOK, result.Success([]int{}))
 }
 
+// uploadFiles 上传文件 (分片上传)
 func (t *HandlerTask) uploadFiles(c *gin.Context) {
 	result := &common.Result{}
 	req := model.UploadFileReq{}
@@ -413,6 +414,7 @@ func (t *HandlerTask) uploadFiles(c *gin.Context) {
 			os.MkdirAll(path, os.ModePerm)
 		}
 		fileName := path + "/" + req.Identifier
+		// 打开文件 -> 读取文件 -> 写入文件 -> 关闭文件 (追加分片文件)
 		openFile, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
 		if err != nil {
 			c.JSON(http.StatusOK, result.Fail(-999, err.Error()))
@@ -424,18 +426,25 @@ func (t *HandlerTask) uploadFiles(c *gin.Context) {
 			return
 		}
 		defer open.Close()
+		// buf 是一个缓冲区 用来存储每次读取的分片数据
 		buf := make([]byte, req.CurrentChunkSize)
+		// 读取分片数据
 		open.Read(buf)
+		// 写入open文件
 		openFile.Write(buf)
+		// 关闭文件
 		openFile.Close()
 		key = fileName
+		// 分片上传完毕
 		if req.TotalChunks == req.ChunkNumber {
 			//最后一个分片了
 			newPath := path + "/" + req.Filename
 			key = newPath
+			// 重命名文件
 			os.Rename(fileName, newPath)
 		}
 	}
+
 	//调用服务 存入file表
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -452,7 +461,9 @@ func (t *HandlerTask) uploadFiles(c *gin.Context) {
 		FileType:         file["file"][0].Header.Get("Content-Type"),
 		MemberId:         c.GetInt64("memberId"),
 	}
+	// 分片上传完毕
 	if req.TotalChunks == req.ChunkNumber {
+		// 分片保存
 		_, err := rpc.TaskServiceClient.SaveTaskFile(ctx, msg)
 		if err != nil {
 			code, msg := errs.ParseGrpcError(err)
