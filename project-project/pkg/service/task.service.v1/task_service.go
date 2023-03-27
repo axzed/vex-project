@@ -558,3 +558,50 @@ func (t *TaskService) ReadTask(ctx context.Context, msg *task.TaskReqMessage) (*
 	// 返回
 	return taskMessage, nil
 }
+
+// ListTaskMember 任务成员列表rpc服务
+func (t *TaskService) ListTaskMember(ctx context.Context, msg *task.TaskReqMessage) (*task.TaskMemberList, error) {
+	//查询 task member表 根据memberCode去查询用户信息
+	taskCode := encrypts.DecryptNoErr(msg.TaskCode)
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	// 根据任务id(taskCode) 查询任务成员列表
+	taskMemberPage, total, err := t.taskRepo.FindTaskMemberPage(c, taskCode, msg.Page, msg.PageSize)
+	if err != nil {
+		zap.L().Error("project task TaskList taskRepo.FindTaskMemberPage error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+
+	// 根据任务成员列表的memberCode查询用户信息
+	var mids []int64
+	for _, v := range taskMemberPage {
+		mids = append(mids, v.MemberCode)
+	}
+
+	// 根据任务成员列表的memberCode查询用户信息
+	messageList, err := rpc.LoginServiceClient.FindMemInfoByIds(ctx, &login.UserMessage{MIds: mids})
+	mMap := make(map[int64]*login.MemberMessage, len(messageList.List))
+	// 构造map
+	for _, v := range messageList.List {
+		mMap[v.Id] = v
+	}
+
+	// 构造返回值
+	var taskMemeberMemssages []*task.TaskMemberMessage
+	// 遍历构造返回值
+	for _, v := range taskMemberPage {
+		tm := &task.TaskMemberMessage{}
+		tm.Code = encrypts.EncryptNoErr(v.MemberCode)
+		tm.Id = v.Id
+		message := mMap[v.MemberCode]
+		tm.Name = message.Name
+		tm.Avatar = message.Avatar
+		tm.IsExecutor = int32(v.IsExecutor)
+		tm.IsOwner = int32(v.IsOwner)
+		taskMemeberMemssages = append(taskMemeberMemssages, tm)
+	}
+
+	// 返回
+	return &task.TaskMemberList{List: taskMemeberMemssages, Total: total}, nil
+}

@@ -12,6 +12,27 @@ type TaskDao struct {
 	conn *gorm.GormConn
 }
 
+// FindTaskMemberPage 查询任务成员列表
+func (t *TaskDao) FindTaskMemberPage(ctx context.Context, taskCode int64, page int64, size int64) (list []*data.TaskMember, total int64, err error) {
+	session := t.conn.Session(ctx)
+	offset := (page - 1) * size
+	err = session.Model(&data.TaskMember{}).
+		Where("task_code=?", taskCode).
+		Limit(int(size)).Offset(int(offset)).
+		Find(&list).Error
+	err = session.Model(&data.TaskMember{}).
+		Where("task_code=?", taskCode).
+		Count(&total).Error
+	return
+}
+
+// FindTaskByIds 根据id列表查询任务
+func (t *TaskDao) FindTaskByIds(background context.Context, taskIdList []int64) (list []*data.Task, err error) {
+	session := t.conn.Session(background)
+	err = session.Model(&data.Task{}).Where("id in (?)", taskIdList).Find(&list).Error
+	return
+}
+
 // FindTaskMaxIdNum 查询当前任务最大id
 // 注意这里可能会查出来null，所以要用指针
 func (t *TaskDao) FindTaskMaxIdNum(ctx context.Context, projectCode int64) (v *int, err error) {

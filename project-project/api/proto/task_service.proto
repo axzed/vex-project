@@ -100,9 +100,11 @@ message ExecutorMessage {
   string Avatar = 2;
   string code = 3;
 }
+
 message TaskListResponse{
   repeated TaskMessage list = 1;
 }
+
 message TaskSortResponse{}
 
 message MyTaskMessage{
@@ -155,10 +157,12 @@ message MyTaskMessage{
   ExecutorMessage executor = 47;
   string projectName = 48;
 }
+
 message MyTaskListResponse{
   repeated MyTaskMessage list = 1;
   int64  total = 2;
 }
+
 message TaskMemberMessage{
   int64 id = 1;
   string name = 2;
