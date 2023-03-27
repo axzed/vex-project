@@ -480,6 +480,7 @@ func (t *HandlerTask) uploadFiles(c *gin.Context) {
 	}))
 }
 
+// TaskSources 任务关联文件API
 func (t *HandlerTask) taskSources(c *gin.Context) {
 	result := &common.Result{}
 	taskCode := c.PostForm("taskCode")
