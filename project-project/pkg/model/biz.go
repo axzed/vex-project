@@ -47,3 +47,8 @@ const (
 	NoCanRead = iota
 	CanRead
 )
+
+const (
+	NoComment = iota
+	Comment
+)

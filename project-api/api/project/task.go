@@ -499,23 +499,27 @@ func (t *HandlerTask) taskSources(c *gin.Context) {
 	c.JSON(http.StatusOK, result.Success(slList))
 }
 
+// createComment 创建任务评论
 func (t *HandlerTask) createComment(c *gin.Context) {
 	result := &common.Result{}
 	req := model.CommentReq{}
 	c.ShouldBind(&req)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+
 	msg := &task.TaskReqMessage{
 		TaskCode:       req.TaskCode,
 		CommentContent: req.Comment,
 		Mentions:       req.Mentions,
 		MemberId:       c.GetInt64("memberId"),
 	}
+
 	_, err := rpc.TaskServiceClient.CreateComment(ctx, msg)
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
 		c.JSON(http.StatusOK, result.Fail(code, msg))
 	}
+
 	c.JSON(http.StatusOK, result.Success(true))
 }
 
