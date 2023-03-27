@@ -298,6 +298,7 @@ func (t *HandlerTask) listTaskMember(c *gin.Context) {
 	}))
 }
 
+// taskLog 任务日志 -> 任务详情页任务动态
 func (t *HandlerTask) taskLog(c *gin.Context) {
 	result := &common.Result{}
 	var req *model.TaskLogReq
