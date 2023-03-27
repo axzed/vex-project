@@ -750,3 +750,21 @@ func (t *TaskService) TaskWorkTimeList(ctx context.Context, msg *task.TaskReqMes
 	copier.Copy(&l, displayList)
 	return &task.TaskWorkTimeResponse{List: l, Total: int64(len(l))}, nil
 }
+
+// SaveTaskWorkTime 保存任务工时rpc服务
+func (t *TaskService) SaveTaskWorkTime(ctx context.Context, msg *task.TaskReqMessage) (*task.SaveTaskWorkTimeResponse, error) {
+	tmt := &data.TaskWorkTime{}
+	tmt.BeginTime = msg.BeginTime
+	tmt.Num = int(msg.Num)
+	tmt.Content = msg.Content
+	tmt.TaskCode = encrypts.DecryptNoErr(msg.TaskCode)
+	tmt.MemberCode = msg.MemberId
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	err := t.taskWorkTimeRepo.Save(c, tmt)
+	if err != nil {
+		zap.L().Error("project task SaveTaskWorkTime taskWorkTimeRepo.Save error", zap.Error(err))
+		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+	}
+	return &task.SaveTaskWorkTimeResponse{}, nil
+}
