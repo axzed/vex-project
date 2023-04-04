@@ -529,3 +529,22 @@
 {"level":"INFO","time":"2023-04-04T18:13:32.603+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 49 ms"}
 {"level":"INFO","time":"2023-04-04T18:13:32.608+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 57 ms"}
 {"level":"INFO","time":"2023-04-04T18:13:32.611+0800","caller":"middleware/log_time.go:16","msg":"/project/project/getLogBySelfProject 用时 50 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:01.474+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:01.475+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:01.482+0800","caller":"middleware/log_time.go:16","msg":"/project/events/myList 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:01.515+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-04-04T19:34:01.516+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 51 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:01.535+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 61 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:01.538+0800","caller":"middleware/log_time.go:16","msg":"/project/project/getLogBySelfProject 用时 64 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:01.547+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 73 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:11.212+0800","caller":"middleware/log_time.go:16","msg":"/debug/pprof/ 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:11.822+0800","caller":"middleware/log_time.go:16","msg":"/favicon.ico 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:24.655+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:24.660+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"INFO","time":"2023-04-04T19:34:24.661+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 9 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:24.668+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:24.675+0800","caller":"middleware/log_time.go:16","msg":"/project/events/myList 用时 0 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:24.700+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 45 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:24.710+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 43 ms"}
+{"level":"INFO","time":"2023-04-04T19:34:24.721+0800","caller":"middleware/log_time.go:16","msg":"/project/project/getLogBySelfProject 用时 54 ms"}
+{"level":"INFO","time":"2023-04-04T19:35:45.724+0800","caller":"middleware/log_time.go:16","msg":"/debug/pprof/allocs?debug=1 用时 3 ms"}
