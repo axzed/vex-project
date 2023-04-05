@@ -27,6 +27,7 @@ func NewTaskWorkTimeDomain() *TaskWorkTimeDomain {
 func (d *TaskWorkTimeDomain) TaskWorkTimeList(taskCode int64) ([]*data.TaskWorkTimeDisplay, *errs.BError) {
 	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+
 	var list []*data.TaskWorkTime
 	var err error
 	list, err = d.taskWorkTimeRepo.FindWorkTimeList(c, taskCode)
@@ -37,11 +38,13 @@ func (d *TaskWorkTimeDomain) TaskWorkTimeList(taskCode int64) ([]*data.TaskWorkT
 	if len(list) == 0 {
 		return []*data.TaskWorkTimeDisplay{}, nil
 	}
+
 	var displayList []*data.TaskWorkTimeDisplay
 	var mIdList []int64
 	for _, v := range list {
 		mIdList = append(mIdList, v.MemberCode)
 	}
+
 	_, mMap, err := d.userRpcDomain.MemberList(mIdList)
 	if err != nil {
 		return nil, errs.ToBError(err)
@@ -57,5 +60,6 @@ func (d *TaskWorkTimeDomain) TaskWorkTimeList(taskCode int64) ([]*data.TaskWorkT
 		display.Member = m
 		displayList = append(displayList, display)
 	}
+
 	return displayList, nil
 }

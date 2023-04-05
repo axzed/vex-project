@@ -121,3 +121,6 @@
 {"level":"ERROR","time":"2023-04-04T18:13:24.421+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
 {"level":"ERROR","time":"2023-04-04T18:13:24.421+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
 {"level":"ERROR","time":"2023-04-04T18:13:24.424+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"ERROR","time":"2023-04-05T13:00:47.033+0800","caller":"domain/task_work_time.go:35","msg":"project task TaskWorkTimeList taskWorkTimeRepo.FindWorkTimeList error","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-04-05T13:00:47.034+0800","caller":"task.service.v1/task_service.go:147","msg":"project task TaskList FindTaskByStageCode error","error":"context deadline exceeded"}
+{"level":"ERROR","time":"2023-04-05T13:00:52.714+0800","caller":"discovery/discovery.go:118","msg":"register failed","error":"etcdserver: requested lease not found"}
