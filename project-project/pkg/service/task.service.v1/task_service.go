@@ -11,6 +11,7 @@ import (
 	"github.com/axzed/project-project/internal/data"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
+	"github.com/axzed/project-project/internal/domain"
 	"github.com/axzed/project-project/internal/repo"
 	"github.com/axzed/project-project/internal/rpc"
 	"github.com/axzed/project-project/pkg/model"
@@ -33,6 +34,7 @@ type TaskService struct {
 	taskWorkTimeRepo       repo.TaskWorkTimeRepo
 	fileRepo               repo.FileRepo
 	sourceLinkRepo         repo.SourceLinkRepo
+	taskWorkTimeDomain     *domain.TaskWorkTimeDomain
 }
 
 // NewTaskService 初始化服务
@@ -50,6 +52,7 @@ func NewTaskService() *TaskService {
 		taskWorkTimeRepo:       dao.NewTaskWorkTimeDao(),
 		fileRepo:               dao.NewFileDao(),
 		sourceLinkRepo:         dao.NewSourceLinkDao(),
+		taskWorkTimeDomain:     domain.NewTaskWorkTimeDomain(),
 	}
 }
 
@@ -707,51 +710,13 @@ func (t *TaskService) TaskLog(ctx context.Context, msg *task.TaskReqMessage) (*t
 // TaskWorkTimeList 任务工时列表rpc服务
 func (t *TaskService) TaskWorkTimeList(ctx context.Context, msg *task.TaskReqMessage) (*task.TaskWorkTimeResponse, error) {
 	taskCode := encrypts.DecryptNoErr(msg.TaskCode)
-	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-
-	var list []*data.TaskWorkTime
-	var err error
-	// 查询任务工时列表
-	list, err = t.taskWorkTimeRepo.FindWorkTimeList(c, taskCode)
+	// 抽取到 domain
+	list, err := t.taskWorkTimeDomain.TaskWorkTimeList(taskCode)
 	if err != nil {
-		zap.L().Error("project task TaskWorkTimeList taskWorkTimeRepo.FindWorkTimeList error", zap.Error(err))
-		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
+		return nil, errs.ConvertToGrpcError(err)
 	}
-	// 如果没有数据直接返回
-	if len(list) == 0 {
-		return &task.TaskWorkTimeResponse{}, nil
-	}
-
-	var displayList []*data.TaskWorkTimeDisplay
-	var mIdList []int64
-	for _, v := range list {
-		mIdList = append(mIdList, v.MemberCode)
-	}
-
-	// 根据任务成员列表的memberCode查询用户信息
-	messageList, err := rpc.LoginServiceClient.FindMemInfoByIds(c, &login.UserMessage{MIds: mIdList})
-	mMap := make(map[int64]*login.MemberMessage)
-	for _, v := range messageList.List {
-		mMap[v.Id] = v
-	}
-
-	// 遍历构造返回值
-	for _, v := range list {
-		display := v.ToDisplay()
-		message := mMap[v.MemberCode]
-		m := data.Member{}
-		m.Name = message.Name
-		m.Id = message.Id
-		m.Avatar = message.Avatar
-		m.Code = message.Code
-		display.Member = m
-		displayList = append(displayList, display)
-	}
-
-	// 返回
 	var l []*task.TaskWorkTime
-	copier.Copy(&l, displayList)
+	copier.Copy(&l, list)
 	return &task.TaskWorkTimeResponse{List: l, Total: int64(len(l))}, nil
 }
 
