@@ -115,3 +115,9 @@
 {"level":"ERROR","time":"2023-03-26T20:01:52.213+0800","caller":"task.service.v1/task_service.go:421","msg":"project task MyTaskList taskRepo.FindTaskByAssignTo error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
 {"level":"ERROR","time":"2023-03-26T20:01:56.014+0800","caller":"task.service.v1/task_service.go:429","msg":"project task MyTaskList taskRepo.FindTaskByMemberCode error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
 {"level":"ERROR","time":"2023-03-26T20:01:57.558+0800","caller":"task.service.v1/task_service.go:421","msg":"project task MyTaskList taskRepo.FindTaskByAssignTo error","error":"Error 1146 (42S02): Table 'vexproject.ms_task' doesn't exist"}
+{"level":"ERROR","time":"2023-04-04T18:13:15.277+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"ERROR","time":"2023-04-04T18:13:15.277+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"ERROR","time":"2023-04-04T18:13:15.277+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"ERROR","time":"2023-04-04T18:13:24.421+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"ERROR","time":"2023-04-04T18:13:24.421+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
+{"level":"ERROR","time":"2023-04-04T18:13:24.424+0800","caller":"login.service.v1/login_service.go:238","msg":"Login TokenVerify ParseToken error","error":"token has invalid claims: token is expired"}
