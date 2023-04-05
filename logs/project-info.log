@@ -613,3 +613,4 @@
 {"level":"INFO","time":"2023-04-05T09:44:24.612+0800","caller":"middleware/log_time.go:16","msg":"/debug/pprof/ 用时 0 ms"}
 {"level":"INFO","time":"2023-04-05T09:44:25.212+0800","caller":"middleware/log_time.go:16","msg":"/favicon.ico 用时 0 ms"}
 {"level":"INFO","time":"2023-04-05T09:44:29.249+0800","caller":"middleware/log_time.go:16","msg":"/debug/pprof/goroutine?debug=1 用时 2 ms"}
+{"level":"INFO","time":"2023-04-05T10:31:34.554+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 0 ms"}
