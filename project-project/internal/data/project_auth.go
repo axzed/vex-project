@@ -20,7 +20,7 @@ type ProjectAuth struct {
 }
 
 func (*ProjectAuth) TableName() string {
-	return "ms_project_auth"
+	return "vex_project_auth"
 }
 
 func (a *ProjectAuth) ToDisplay() *ProjectAuthDisplay {

@@ -26,7 +26,7 @@ type MemberAccount struct {
 }
 
 func (*MemberAccount) TableName() string {
-	return "ms_member_account"
+	return "vex_member_account"
 }
 
 func (a *MemberAccount) ToDisplay() *MemberAccountDisplay {

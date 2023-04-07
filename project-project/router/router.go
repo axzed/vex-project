@@ -3,11 +3,17 @@ package router
 import (
 	"github.com/axzed/project-common/discovery"
 	"github.com/axzed/project-common/logs"
+	"github.com/axzed/project-grpc/account"
+	"github.com/axzed/project-grpc/auth"
+	"github.com/axzed/project-grpc/department"
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-grpc/task"
 	"github.com/axzed/project-project/config"
 	"github.com/axzed/project-project/internal/interceptor"
 	"github.com/axzed/project-project/internal/rpc"
+	account_service_v1 "github.com/axzed/project-project/pkg/service/account.service.v1"
+	auth_service_v1 "github.com/axzed/project-project/pkg/service/auth.service.v1"
+	department_service_v1 "github.com/axzed/project-project/pkg/service/department.service.v1"
 	project_service_v1 "github.com/axzed/project-project/pkg/service/project.service.v1"
 	task_service_v1 "github.com/axzed/project-project/pkg/service/task.service.v1"
 	"github.com/gin-gonic/gin"
@@ -70,6 +76,9 @@ func RegisterGrpc() *grpc.Server {
 		RegisterFunc: func(g *grpc.Server) {
 			project.RegisterProjectServiceServer(g, project_service_v1.NewProjectService()) // 注册项目服务
 			task.RegisterTaskServiceServer(g, task_service_v1.NewTaskService())             // 注册任务服务
+			account.RegisterAccountServiceServer(g, account_service_v1.New())
+			department.RegisterDepartmentServiceServer(g, department_service_v1.New())
+			auth.RegisterAuthServiceServer(g, auth_service_v1.New())
 		}}
 	s := grpc.NewServer(interceptor.New().Cache())
 	c.RegisterFunc(s)

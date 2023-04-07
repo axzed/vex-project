@@ -17,13 +17,15 @@ type HandlerAccount struct {
 }
 
 func (a *HandlerAccount) account(c *gin.Context) {
-	//接收请求参数  一些参数的校验 可以放在api这里
+
+	// 接收请求参数  一些参数的校验 可以放在api这里
 	result := &common.Result{}
 	var req *model.AccountReq
 	_ = c.ShouldBind(&req)
 	memberId := c.GetInt64("memberId")
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+
 	//调用project模块 查询账户列表
 	msg := &account.AccountReqMessage{
 		MemberId:         memberId,
@@ -38,7 +40,8 @@ func (a *HandlerAccount) account(c *gin.Context) {
 		code, msg := errs.ParseGrpcError(err)
 		c.JSON(http.StatusOK, result.Fail(code, msg))
 	}
-	//返回数据
+
+	// 返回数据
 	var list []*model.MemberAccount
 	copier.Copy(&list, response.AccountList)
 	if list == nil {
