@@ -937,3 +937,7 @@
 {"level":"INFO","time":"2023-04-08T18:21:41.200+0800","caller":"middleware/log_time.go:16","msg":"/project/menu/menu 用时 0 ms"}
 {"level":"INFO","time":"2023-04-08T18:21:43.686+0800","caller":"middleware/log_time.go:16","msg":"/project/auth 用时 13 ms"}
 {"level":"INFO","time":"2023-04-08T18:22:08.675+0800","caller":"middleware/log_time.go:16","msg":"/project/menu/menu 用时 0 ms"}
+{"level":"INFO","time":"2023-04-08T18:45:46.486+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-04-08T18:45:46.514+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-04-08T18:45:46.515+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 29 ms"}
+{"level":"INFO","time":"2023-04-08T18:45:46.526+0800","caller":"middleware/log_time.go:16","msg":"/project/menu/menu 用时 40 ms"}

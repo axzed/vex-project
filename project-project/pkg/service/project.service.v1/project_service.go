@@ -11,6 +11,7 @@ import (
 	"github.com/axzed/project-project/internal/data"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
+	"github.com/axzed/project-project/internal/domain"
 	"github.com/axzed/project-project/internal/repo"
 	"github.com/axzed/project-project/internal/rpc"
 	"github.com/axzed/project-project/pkg/model"
@@ -33,6 +34,7 @@ type ProjectService struct {
 	taskStagesRepo         repo.TaskStagesRepo
 	projectLogRepo         repo.ProjectLogRepo
 	taskRepo               repo.TaskRepo
+	nodeDomain             *domain.ProjectNodeDomain
 }
 
 // NewProjectService 初始化页面展示服务
@@ -48,6 +50,7 @@ func NewProjectService() *ProjectService {
 		taskStagesRepo:         dao.NewTaskStagesDao(),
 		projectLogRepo:         dao.NewProjectLogDao(),
 		taskRepo:               dao.NewTaskDao(),
+		nodeDomain:             domain.NewProjectNodeDomain(),
 	}
 }
 
@@ -459,4 +462,15 @@ func (ps *ProjectService) GetLogBySelfProject(ctx context.Context, msg *project.
 	var msgList []*project.ProjectLogMessage
 	copier.Copy(&msgList, list)
 	return &project.ProjectLogResponse{List: msgList, Total: total}, nil
+}
+
+// NodeList 访问节点rpc服务
+func (ps *ProjectService) NodeList(ctx context.Context, msg *project.ProjectRpcMessage) (*project.ProjectNodeResponseMessage, error) {
+	list, err := ps.nodeDomain.TreeList()
+	if err != nil {
+		return nil, errs.ConvertToGrpcError(err)
+	}
+	var nodes []*project.ProjectNodeMessage
+	copier.Copy(&nodes, list)
+	return &project.ProjectNodeResponseMessage{Nodes: nodes}, nil
 }

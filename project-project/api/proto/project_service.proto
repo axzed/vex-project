@@ -191,6 +191,27 @@ message ProjectLogResponse{
   int64 total = 2;
 }
 
+message ProjectNodeMessage{
+  int64 id = 1;
+  string node = 2;
+  string title = 3;
+  string pnode = 4;
+  int32 isLogin = 5;
+  int32 isMenu = 6;
+  int32 isAuth = 7;
+  repeated ProjectNodeMessage children = 8;
+}
+
+message ProjectNodeResponseMessage {
+  repeated ProjectNodeMessage nodes = 1;
+}
+
+message FindProjectByMemberIdResponse{
+  ProjectMessage project = 1;
+  bool isMember = 2;
+  bool isOwner = 3;
+}
+
 service ProjectService {
   rpc Index(IndexMessage) returns (IndexResponse) {}
   rpc FindProjectByMemId(ProjectRpcMessage) returns (MyProjectResponse){}
@@ -201,4 +222,6 @@ service ProjectService {
   rpc UpdateCollectProject(ProjectRpcMessage) returns (CollectProjectResponse){}
   rpc UpdateProject(UpdateProjectMessage) returns (UpdateProjectResponse){}
   rpc GetLogBySelfProject(ProjectRpcMessage) returns (ProjectLogResponse){}
+  rpc NodeList(ProjectRpcMessage) returns (ProjectNodeResponseMessage){}
+  rpc FindProjectByMemberId(ProjectRpcMessage) returns (FindProjectByMemberIdResponse){}
 }
