@@ -1,4 +1,4 @@
-package menu
+package data
 
 import "github.com/jinzhu/copier"
 

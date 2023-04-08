@@ -6,6 +6,7 @@ import (
 	"github.com/axzed/project-grpc/account"
 	"github.com/axzed/project-grpc/auth"
 	"github.com/axzed/project-grpc/department"
+	"github.com/axzed/project-grpc/menu"
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-grpc/task"
 	"github.com/axzed/project-project/config"
@@ -14,6 +15,7 @@ import (
 	account_service_v1 "github.com/axzed/project-project/pkg/service/account.service.v1"
 	auth_service_v1 "github.com/axzed/project-project/pkg/service/auth.service.v1"
 	department_service_v1 "github.com/axzed/project-project/pkg/service/department.service.v1"
+	menu_service_v1 "github.com/axzed/project-project/pkg/service/menu.service.v1"
 	project_service_v1 "github.com/axzed/project-project/pkg/service/project.service.v1"
 	task_service_v1 "github.com/axzed/project-project/pkg/service/task.service.v1"
 	"github.com/gin-gonic/gin"
@@ -52,12 +54,6 @@ func Register(ro ...Router) {
 
 // InitRouter 路由初始
 func InitRouter(r *gin.Engine) {
-	// 方式一需要在当前函数下注册路由
-	//rg := New()
-	//// 注册用户模块路由
-	//rg.Route(&user.RouterUser{}, r)
-
-	// 方式二可以在每次添加新的路由接口时, 在对应的路由接口文件中注册路由
 	// 遍历routers切片, 调用Route方法
 	for _, ro := range routers {
 		ro.Route(r)
@@ -79,6 +75,7 @@ func RegisterGrpc() *grpc.Server {
 			account.RegisterAccountServiceServer(g, account_service_v1.New())
 			department.RegisterDepartmentServiceServer(g, department_service_v1.New())
 			auth.RegisterAuthServiceServer(g, auth_service_v1.New())
+			menu.RegisterMenuServiceServer(g, menu_service_v1.New())
 		}}
 	s := grpc.NewServer(interceptor.New().Cache())
 	c.RegisterFunc(s)

@@ -9,7 +9,6 @@ import (
 	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-project/internal/dao"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/data/menu"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/axzed/project-project/internal/database/interface/transaction"
 	"github.com/axzed/project-project/internal/repo"
@@ -59,7 +58,7 @@ func (p *ProjectService) Index(context.Context, *project.IndexMessage) (*project
 		zap.L().Error("Show Index db error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
-	childs := menu.CovertChild(menus)
+	childs := data.CovertChild(menus)
 	var menuMessages []*project.MenuMessage
 	copier.Copy(&menuMessages, childs)
 	return &project.IndexResponse{Menus: menuMessages}, nil

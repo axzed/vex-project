@@ -2,7 +2,7 @@ package dao
 
 import (
 	"context"
-	"github.com/axzed/project-project/internal/data/menu"
+	"github.com/axzed/project-project/internal/data"
 	"github.com/axzed/project-project/internal/database/gorm"
 )
 
@@ -12,8 +12,8 @@ type MenuDao struct {
 }
 
 // FindMenus 查询菜单
-func (m *MenuDao) FindMenus(ctx context.Context) ([]*menu.ProjectMenu, error) {
-	var menus []*menu.ProjectMenu
+func (m *MenuDao) FindMenus(ctx context.Context) ([]*data.ProjectMenu, error) {
+	var menus []*data.ProjectMenu
 	err := m.conn.Session(ctx).Order("pid, sort asc, id asc").Find(&menus).Error
 	return menus, err
 }

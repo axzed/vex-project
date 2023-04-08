@@ -7,6 +7,7 @@ import (
 	"github.com/axzed/project-grpc/account"
 	"github.com/axzed/project-grpc/auth"
 	"github.com/axzed/project-grpc/department"
+	"github.com/axzed/project-grpc/menu"
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-grpc/task"
 	"google.golang.org/grpc"
@@ -20,6 +21,7 @@ var TaskServiceClient task.TaskServiceClient
 var AccountServiceClient account.AccountServiceClient
 var DepartmentServiceClient department.DepartmentServiceClient
 var AuthServiceClient auth.AuthServiceClient
+var MenuServiceClient menu.MenuServiceClient
 
 // InitProjectRpcClient 初始化grpc的客户端连接
 func InitProjectRpcClient() {
@@ -35,4 +37,5 @@ func InitProjectRpcClient() {
 	AccountServiceClient = account.NewAccountServiceClient(conn)
 	DepartmentServiceClient = department.NewDepartmentServiceClient(conn)
 	AuthServiceClient = auth.NewAuthServiceClient(conn)
+	MenuServiceClient = menu.NewMenuServiceClient(conn)
 }
