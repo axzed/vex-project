@@ -26,6 +26,7 @@ func New() *DepartmentService {
 		departmentDomain: domain.NewDepartmentDomain(),
 	}
 }
+
 func (d *DepartmentService) List(ctx context.Context, msg *department.DepartmentReqMessage) (*department.ListDepartmentMessage, error) {
 	organizationCode := encrypts.DecryptNoErr(msg.OrganizationCode)
 	var parentDepartmentCode int64
