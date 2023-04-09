@@ -7,7 +7,11 @@ message AuthReqMessage {
   string organizationCode = 2;
   int64 page = 3;
   int64 pageSize = 4;
+  string action = 5;
+  int64 authId = 6;
+  repeated string nodes = 7;
 }
+
 message ProjectAuth{
   int64 id = 1;
   string OrganizationCode = 2;
@@ -22,11 +26,36 @@ message ProjectAuth{
   int32 CanDelete = 11;
 }
 
-
 message ListAuthMessage{
   repeated ProjectAuth list = 1;
   int64  total = 2;
 }
+
+message ProjectNodeMessage{
+  int64 id = 1;
+  string node = 2;
+  string title = 3;
+  string pnode = 4;
+  int32 isLogin = 5;
+  int32 isMenu = 6;
+  int32 isAuth = 7;
+  bool checked = 8;
+  string key = 9;
+  repeated ProjectNodeMessage children = 10;
+}
+
+message ApplyResponse {
+  repeated ProjectNodeMessage list = 1;
+  repeated string checkedList = 2;
+}
+
+message AuthNodesResponse {
+  repeated string list = 1;
+}
+
+
 service AuthService {
   rpc AuthList(AuthReqMessage) returns(ListAuthMessage){}
+  rpc Apply(AuthReqMessage) returns(ApplyResponse){}
+  rpc AuthNodesByMemberId(AuthReqMessage) returns(AuthNodesResponse){}
 }

@@ -13,3 +13,9 @@ type ProjectAuth struct {
 	Type             string `json:"type"`
 	CanDelete        int    `json:"canDelete"`
 }
+
+type ProjectAuthReq struct {
+	Action string `form:"action"`
+	Id     int64  `form:"id"`
+	Nodes  string `form:"nodes"`
+}

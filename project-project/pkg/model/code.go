@@ -20,4 +20,5 @@ var (
 	// 系统错误码
 	ErrRedisFail = errs.NewError(999, "redis操作失败")
 	ErrDBFail    = errs.NewError(998, "数据库操作失败")
+	ParamsError  = errs.NewError(401, "参数错误")
 )

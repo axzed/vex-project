@@ -923,3 +923,32 @@
 {"level":"INFO","time":"2023-04-08T18:45:46.514+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
 {"level":"INFO","time":"2023-04-08T18:45:46.515+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 29 ms"}
 {"level":"INFO","time":"2023-04-08T18:45:46.526+0800","caller":"middleware/log_time.go:16","msg":"/project/menu/menu 用时 40 ms"}
+{"level":"INFO","time":"2023-04-08T19:26:48.737+0800","caller":"middleware/log_time.go:16","msg":"/project/node 用时 60 ms"}
+{"level":"INFO","time":"2023-04-08T19:27:28.038+0800","caller":"middleware/log_time.go:16","msg":"/project/index/uploadAvatar 用时 0 ms"}
+{"level":"INFO","time":"2023-04-08T19:27:38.836+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-04-08T19:27:38.855+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-04-08T19:27:38.856+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 20 ms"}
+{"level":"INFO","time":"2023-04-08T19:27:53.304+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 29 ms"}
+{"level":"INFO","time":"2023-04-08T19:27:54.469+0800","caller":"middleware/log_time.go:16","msg":"/project/auth 用时 13 ms"}
+{"level":"INFO","time":"2023-04-09T17:52:47.100+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-04-09T17:52:47.113+0800","caller":"middleware/log_time.go:16","msg":"/project/events/myList 用时 0 ms"}
+{"level":"INFO","time":"2023-04-09T17:52:47.166+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-04-09T17:52:47.171+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 71 ms"}
+{"level":"INFO","time":"2023-04-09T17:52:47.214+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 113 ms"}
+{"level":"INFO","time":"2023-04-09T17:52:47.220+0800","caller":"middleware/log_time.go:16","msg":"/project/task/selfList 用时 119 ms"}
+{"level":"INFO","time":"2023-04-09T17:52:47.237+0800","caller":"middleware/log_time.go:16","msg":"/project/project/getLogBySelfProject 用时 136 ms"}
+{"level":"INFO","time":"2023-04-09T17:52:47.257+0800","caller":"middleware/log_time.go:16","msg":"/project/project/selfList 用时 156 ms"}
+{"level":"INFO","time":"2023-04-09T17:56:25.175+0800","caller":"middleware/log_time.go:16","msg":"/project/menu/menu 用时 40 ms"}
+{"level":"INFO","time":"2023-04-09T17:56:27.706+0800","caller":"middleware/log_time.go:16","msg":"/project/auth 用时 12 ms"}
+{"level":"INFO","time":"2023-04-09T17:56:42.081+0800","caller":"middleware/log_time.go:16","msg":"/project/auth/add 用时 0 ms"}
+{"level":"INFO","time":"2023-04-09T18:33:31.404+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-04-09T18:33:31.429+0800","caller":"middleware/log_time.go:16","msg":"/project/auth 用时 25 ms"}
+{"level":"INFO","time":"2023-04-09T18:33:31.433+0800","caller":"interceptor/cache.go:65","msg":"/login.LoginService/MyOrgList 放入缓存"}
+{"level":"INFO","time":"2023-04-09T18:33:31.434+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 30 ms"}
+{"level":"INFO","time":"2023-04-09T18:33:59.582+0800","caller":"middleware/log_time.go:16","msg":"/project/account 用时 20 ms"}
+{"level":"INFO","time":"2023-04-09T18:34:02.628+0800","caller":"middleware/log_time.go:16","msg":"/project/auth 用时 20 ms"}
+{"level":"INFO","time":"2023-04-09T18:35:54.842+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}
+{"level":"INFO","time":"2023-04-09T18:35:54.848+0800","caller":"interceptor/cache.go:58","msg":"/login.LoginService/MyOrgList 从缓存中获取"}
+{"level":"INFO","time":"2023-04-09T18:35:54.849+0800","caller":"middleware/log_time.go:16","msg":"/project/organization/_getOrgList 用时 7 ms"}
+{"level":"INFO","time":"2023-04-09T18:35:54.855+0800","caller":"middleware/log_time.go:16","msg":"/project/auth 用时 13 ms"}
+{"level":"INFO","time":"2023-04-09T18:39:11.529+0800","caller":"middleware/log_time.go:16","msg":"/project/notify/noReads 用时 0 ms"}

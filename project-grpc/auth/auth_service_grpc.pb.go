@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	AuthList(ctx context.Context, in *AuthReqMessage, opts ...grpc.CallOption) (*ListAuthMessage, error)
+	Apply(ctx context.Context, in *AuthReqMessage, opts ...grpc.CallOption) (*ApplyResponse, error)
+	AuthNodesByMemberId(ctx context.Context, in *AuthReqMessage, opts ...grpc.CallOption) (*AuthNodesResponse, error)
 }
 
 type authServiceClient struct {
@@ -42,11 +44,31 @@ func (c *authServiceClient) AuthList(ctx context.Context, in *AuthReqMessage, op
 	return out, nil
 }
 
+func (c *authServiceClient) Apply(ctx context.Context, in *AuthReqMessage, opts ...grpc.CallOption) (*ApplyResponse, error) {
+	out := new(ApplyResponse)
+	err := c.cc.Invoke(ctx, "/auth.AuthService/Apply", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) AuthNodesByMemberId(ctx context.Context, in *AuthReqMessage, opts ...grpc.CallOption) (*AuthNodesResponse, error) {
+	out := new(AuthNodesResponse)
+	err := c.cc.Invoke(ctx, "/auth.AuthService/AuthNodesByMemberId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
 type AuthServiceServer interface {
 	AuthList(context.Context, *AuthReqMessage) (*ListAuthMessage, error)
+	Apply(context.Context, *AuthReqMessage) (*ApplyResponse, error)
+	AuthNodesByMemberId(context.Context, *AuthReqMessage) (*AuthNodesResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -56,6 +78,12 @@ type UnimplementedAuthServiceServer struct {
 
 func (UnimplementedAuthServiceServer) AuthList(context.Context, *AuthReqMessage) (*ListAuthMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthList not implemented")
+}
+func (UnimplementedAuthServiceServer) Apply(context.Context, *AuthReqMessage) (*ApplyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Apply not implemented")
+}
+func (UnimplementedAuthServiceServer) AuthNodesByMemberId(context.Context, *AuthReqMessage) (*AuthNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthNodesByMemberId not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -88,6 +116,42 @@ func _AuthService_AuthList_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_Apply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthReqMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Apply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.AuthService/Apply",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Apply(ctx, req.(*AuthReqMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_AuthNodesByMemberId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthReqMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).AuthNodesByMemberId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.AuthService/AuthNodesByMemberId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).AuthNodesByMemberId(ctx, req.(*AuthReqMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +162,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthList",
 			Handler:    _AuthService_AuthList_Handler,
+		},
+		{
+			MethodName: "Apply",
+			Handler:    _AuthService_Apply_Handler,
+		},
+		{
+			MethodName: "AuthNodesByMemberId",
+			Handler:    _AuthService_AuthNodesByMemberId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

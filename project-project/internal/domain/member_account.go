@@ -18,6 +18,7 @@ type AccountDomain struct {
 	departmentDomain *DepartmentDomain
 }
 
+// AccountList 获取成员账号列表
 func (d *AccountDomain) AccountList(
 	organizationCode string,
 	memberId int64,
@@ -61,6 +62,15 @@ func (d *AccountDomain) AccountList(
 		dList = append(dList, display)
 	}
 	return dList, total, nil
+}
+
+// FindAccount 根据成员id获取账号信息
+func (d *AccountDomain) FindAccount(memberId int64) (*data.MemberAccount, *errs.BError) {
+	account, err := d.accountRepo.FindByMemberId(context.Background(), memberId)
+	if err != nil {
+		return nil, model.ErrAccountOrPwd
+	}
+	return account, nil
 }
 
 func NewAccountDomain() *AccountDomain {
