@@ -86,6 +86,7 @@ func (a *HandlerAuth) GetAuthNodes(c *gin.Context) ([]string, error) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
+	// 根据memberId查询当前用户授权的节点列表有哪些
 	response, err := rpc.AuthServiceClient.AuthNodesByMemberId(ctx, msg)
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
