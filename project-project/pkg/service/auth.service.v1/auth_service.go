@@ -42,6 +42,7 @@ func (a *AuthService) AuthList(ctx context.Context, msg *auth.AuthReqMessage) (*
 
 // Apply 保存权限节点rpc服务
 func (a *AuthService) Apply(ctx context.Context, msg *auth.AuthReqMessage) (*auth.ApplyResponse, error) {
+	// 根据Action字段判断是获取列表还是保存
 	if msg.Action == "getnode" {
 		//获取列表
 		list, checkedList, err := a.projectAuthDomain.AllNodeAndAuth(msg.AuthId)
