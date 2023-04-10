@@ -77,6 +77,7 @@ message ProjectRpcMessage{
   string projectCode = 12;
   bool deleted = 13;
   string collectType = 14;
+  string taskCode = 15;
 }
 
 message ProjectTemplateMessage{

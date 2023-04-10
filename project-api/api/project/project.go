@@ -302,3 +302,24 @@ func (p *HandlerProject) nodeList(c *gin.Context) {
 		"nodes": list,
 	}))
 }
+
+func (p *HandlerProject) FindProjectByMemberId(memberId int64, projectCode string, taskCode string) (*param.Project, bool, bool, *errs.BError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	msg := &project.ProjectRpcMessage{
+		MemberId:    memberId,
+		ProjectCode: projectCode,
+		TaskCode:    taskCode,
+	}
+	projectResponse, err := rpc.ProjectServiceClient.FindProjectByMemberId(ctx, msg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		return nil, false, false, errs.NewError(errs.ErrorCode(code), msg)
+	}
+	if projectResponse.Project == nil {
+		return nil, false, false, nil
+	}
+	pr := &param.Project{}
+	copier.Copy(pr, projectResponse.Project)
+	return pr, true, projectResponse.IsOwner, nil
+}

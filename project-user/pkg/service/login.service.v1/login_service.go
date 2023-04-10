@@ -155,6 +155,8 @@ func (ls *LoginService) Register(ctx context.Context, msg *login.RegisterMessage
 		return nil
 	})
 
+	// TODO 生成一个账户存储到 "vex_member_account" 表中
+
 	// 5.返回结果
 	return &login.RegisterResponse{}, nil
 }

@@ -35,6 +35,7 @@ type ProjectService struct {
 	projectLogRepo         repo.ProjectLogRepo
 	taskRepo               repo.TaskRepo
 	nodeDomain             *domain.ProjectNodeDomain
+	taskDomain             *domain.TaskDomain
 }
 
 // NewProjectService 初始化页面展示服务
@@ -51,6 +52,7 @@ func NewProjectService() *ProjectService {
 		projectLogRepo:         dao.NewProjectLogDao(),
 		taskRepo:               dao.NewTaskDao(),
 		nodeDomain:             domain.NewProjectNodeDomain(),
+		taskDomain:             domain.NewTaskDomain(),
 	}
 }
 
@@ -291,6 +293,10 @@ func (p *ProjectService) FindProjectDetail(ctx context.Context, msg *project.Pro
 		zap.L().Error("FindProjectDetail FindProjectByPIdAndMemId error", zap.Error(err))
 		return nil, errs.ConvertToGrpcError(model.ErrDBFail)
 	}
+	// 项目不存在
+	if projectAndMember == nil {
+		return nil, errs.ConvertToGrpcError(model.ParamsError)
+	}
 	ownerId := projectAndMember.IsOwner
 	// 从user rpc 中通过id获取用户信息
 	member, err := rpc.LoginServiceClient.FindMemberInfoById(c, &login.UserMessage{MemId: ownerId})
@@ -473,4 +479,63 @@ func (ps *ProjectService) NodeList(ctx context.Context, msg *project.ProjectRpcM
 	var nodes []*project.ProjectNodeMessage
 	copier.Copy(&nodes, list)
 	return &project.ProjectNodeResponseMessage{Nodes: nodes}, nil
+}
+
+// FindProjectByMemberId 根据成员id查询项目 (结合项目鉴权)
+func (ps *ProjectService) FindProjectByMemberId(ctx context.Context, msg *project.ProjectRpcMessage) (*project.FindProjectByMemberIdResponse, error) {
+	isProjectCode := false
+	var projectId int64
+	if msg.ProjectCode != "" {
+		projectId = encrypts.DecryptNoErr(msg.ProjectCode)
+		isProjectCode = true
+	}
+	isTaskCode := false
+	var taskId int64
+	if msg.TaskCode != "" {
+		taskId = encrypts.DecryptNoErr(msg.TaskCode)
+		isTaskCode = true
+	}
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	if !isProjectCode && isTaskCode {
+		projectCode, ok, bError := ps.taskDomain.FindProjectIdByTaskId(taskId)
+		if bError != nil {
+			return nil, bError
+		}
+		if !ok {
+			return &project.FindProjectByMemberIdResponse{
+				Project:  nil,
+				IsOwner:  false,
+				IsMember: false,
+			}, nil
+		}
+		projectId = projectCode
+		isProjectCode = true
+	}
+	if isProjectCode {
+		//根据projectid和memberid查询
+		pm, err := ps.projectRepo.FindProjectByPIdAndMemId(c, projectId, msg.MemberId)
+		if err != nil {
+			return nil, model.ErrDBFail
+		}
+		if pm == nil {
+			return &project.FindProjectByMemberIdResponse{
+				Project:  nil,
+				IsOwner:  false,
+				IsMember: false,
+			}, nil
+		}
+		projectMessage := &project.ProjectMessage{}
+		copier.Copy(projectMessage, pm)
+		isOwner := false
+		if pm.IsOwner == 1 {
+			isOwner = true
+		}
+		return &project.FindProjectByMemberIdResponse{
+			Project:  projectMessage,
+			IsOwner:  isOwner,
+			IsMember: true,
+		}, nil
+	}
+	return &project.FindProjectByMemberIdResponse{}, nil
 }

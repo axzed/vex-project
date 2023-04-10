@@ -28,9 +28,11 @@ func (*RouterProject) Route(r *gin.Engine) {
 	// 路由注册
 	// TokenVerify()中间件 用于验证token
 	// Auth()中间件 用于验证权限 检验用户是否有权限访问该接口
+	// ProjectAuth()中间件 用于验证项目权限 检验用户是否有权限访问该项目
 	group := r.Group("/project")
 	group.Use(middleware.TokenVerify())
 	group.Use(Auth())
+	group.Use(ProjectAuth())
 	group.POST("/index", h.index)
 	group.POST("/project", h.myProjectList)
 	group.POST("/project/selfList", h.myProjectList)
