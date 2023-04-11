@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type ProjectTemplateDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindProjectTemplateSystem find system project template
@@ -72,6 +72,6 @@ func (p *ProjectTemplateDao) FindProjectTemplateAll(ctx context.Context, organiz
 
 func NewProjectTemplateDao() *ProjectTemplateDao {
 	return &ProjectTemplateDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

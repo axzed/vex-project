@@ -3,12 +3,12 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 	gorm2 "gorm.io/gorm"
 )
 
 type DepartmentDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 func (d *DepartmentDao) Save(dpm *data.Department) error {
@@ -50,6 +50,6 @@ func (d *DepartmentDao) FindDepartmentById(ctx context.Context, id int64) (dt *d
 
 func NewDepartmentDao() *DepartmentDao {
 	return &DepartmentDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

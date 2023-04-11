@@ -3,14 +3,14 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-user/internal/data"
-	"github.com/axzed/project-user/internal/database/gorm"
+	"github.com/axzed/project-user/internal/database/gorms"
 	"github.com/axzed/project-user/internal/database/interface/conn"
 )
 
 // OrganizationDao 组织dao
 type OrganizationDao struct {
 	// 组织dao依赖gorm连接
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 func (o *OrganizationDao) FindOrganizationByMemberId(ctx context.Context, id int64) ([]*data.Organization, error) {
@@ -22,7 +22,7 @@ func (o *OrganizationDao) FindOrganizationByMemberId(ctx context.Context, id int
 // NewOrganizationDao 创建组织dao实例
 func NewOrganizationDao() *OrganizationDao {
 	return &OrganizationDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }
 
@@ -35,6 +35,6 @@ func (o *OrganizationDao) FindOrganizationByMemId(ctx context.Context, memId int
 
 // SaveOrganization 保存组织
 func (o *OrganizationDao) SaveOrganization(conn conn.DbConn, ctx context.Context, org *data.Organization) error {
-	o.conn = conn.(*gorm.GormConn)
+	o.conn = conn.(*gorms.GormConn)
 	return o.conn.Tx(ctx).Create(org).Error
 }

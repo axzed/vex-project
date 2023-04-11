@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type SourceLinkDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // Save 保存文件
@@ -24,6 +24,6 @@ func (s *SourceLinkDao) FindByTaskCode(ctx context.Context, taskCode int64) (lis
 
 func NewSourceLinkDao() *SourceLinkDao {
 	return &SourceLinkDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

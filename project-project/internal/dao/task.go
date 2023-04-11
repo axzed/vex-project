@@ -3,13 +3,13 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	gorm2 "gorm.io/gorm"
 )
 
 type TaskDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindTaskMemberPage 查询任务成员列表
@@ -57,14 +57,14 @@ func (t *TaskDao) FindTaskSort(ctx context.Context, projectCode int64, stageCode
 
 // SaveTask 保存任务
 func (t *TaskDao) SaveTask(ctx context.Context, conn conn.DbConn, ts *data.Task) error {
-	t.conn = conn.(*gorm.GormConn) // 事务经典操作 将事务连接传递给dao的conn
+	t.conn = conn.(*gorms.GormConn) // 事务经典操作 将事务连接传递给dao的conn
 	err := t.conn.Tx(ctx).Save(&ts).Error
 	return err
 }
 
 // SaveTaskMember 保存创建当前任务成员
 func (t *TaskDao) SaveTaskMember(ctx context.Context, conn conn.DbConn, tm *data.TaskMember) error {
-	t.conn = conn.(*gorm.GormConn)
+	t.conn = conn.(*gorms.GormConn)
 	err := t.conn.Tx(ctx).Save(&tm).Error
 	return err
 }
@@ -78,7 +78,7 @@ func (t *TaskDao) FindTaskById(ctx context.Context, taskCode int64) (ts *data.Ta
 
 // UpdateTaskSort 更新任务排序
 func (t *TaskDao) UpdateTaskSort(ctx context.Context, conn conn.DbConn, ts *data.Task) error {
-	t.conn = conn.(*gorm.GormConn)
+	t.conn = conn.(*gorms.GormConn)
 	err := t.conn.Tx(ctx).
 		Where("id=?", ts.Id).
 		Select("sort", "stage_code").
@@ -152,6 +152,6 @@ func (t *TaskDao) FindTaskByStageCode(ctx context.Context, stageCode int) (list 
 
 func NewTaskDao() *TaskDao {
 	return &TaskDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

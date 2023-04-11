@@ -3,12 +3,12 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 	gorm2 "gorm.io/gorm"
 )
 
 type MemberAccountDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindByMemberId 根据memberId查询
@@ -36,6 +36,6 @@ func (m *MemberAccountDao) FindList(ctx context.Context, condition string, organ
 
 func NewMemberAccountDao() *MemberAccountDao {
 	return &MemberAccountDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

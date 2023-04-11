@@ -3,14 +3,14 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-user/internal/data"
-	"github.com/axzed/project-user/internal/database/gorm"
+	"github.com/axzed/project-user/internal/database/gorms"
 	"github.com/axzed/project-user/internal/database/interface/conn"
 	gorm2 "gorm.io/gorm"
 )
 
 // MemberDao 成员dao
 type MemberDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 func (m *MemberDao) FindMemberByIds(background context.Context, ids []int64) (list []*data.Member, err error) {
@@ -40,13 +40,13 @@ func (m *MemberDao) FindMember(ctx context.Context, account string, pwd string) 
 
 // NewMemberDao 创建成员dao实例
 func NewMemberDao() *MemberDao {
-	return &MemberDao{conn: gorm.NewGormConn()}
+	return &MemberDao{conn: gorms.NewGormConn()}
 }
 
 // SaveMember 保存成员
 func (m *MemberDao) SaveMember(conn conn.DbConn, ctx context.Context, mem *data.Member) error {
 	// conn.(*gorm.GormConn) 外部事务conn转换为gorm conn
-	m.conn = conn.(*gorm.GormConn)
+	m.conn = conn.(*gorms.GormConn)
 	return m.conn.Tx(ctx).Create(mem).Error
 }
 

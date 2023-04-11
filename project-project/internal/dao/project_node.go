@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type ProjectNodeDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindAll 查询所有访问节点
@@ -19,6 +19,6 @@ func (m *ProjectNodeDao) FindAll(ctx context.Context) (pms []*data.ProjectNode, 
 
 func NewProjectNodeDao() *ProjectNodeDao {
 	return &ProjectNodeDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

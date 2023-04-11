@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	gorm2 "gorm.io/gorm"
 )
 
 type ProjectDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindProjectById 通过id查询对应项目
@@ -101,13 +101,13 @@ func (p *ProjectDao) FindProjectByPIdAndMemId(ctx context.Context, projectCode i
 
 // SaveProject 保存项目
 func (p *ProjectDao) SaveProject(conn conn.DbConn, ctx context.Context, pr *data.Project) error {
-	p.conn = conn.(*gorm.GormConn)
+	p.conn = conn.(*gorms.GormConn)
 	return p.conn.Tx(ctx).Save(&pr).Error
 }
 
 // SaveProjectMember 保存项目成员
 func (p *ProjectDao) SaveProjectMember(conn conn.DbConn, ctx context.Context, pm *data.ProjectMember) error {
-	p.conn = conn.(*gorm.GormConn)
+	p.conn = conn.(*gorms.GormConn)
 	return p.conn.Tx(ctx).Save(&pm).Error
 }
 
@@ -140,6 +140,6 @@ func (p *ProjectDao) FindProjectByMemId(ctx context.Context, memId int64, condit
 
 func NewProjectDao() *ProjectDao {
 	return &ProjectDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

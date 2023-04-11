@@ -2,7 +2,7 @@ package dao
 
 import (
 	"github.com/axzed/project-common/errs"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 	"github.com/pkg/errors"
 )
@@ -36,6 +36,6 @@ func (t TransactionImpl) Action(f func(conn conn.DbConn) error) error {
 // NewTransactionImpl 创建事务实例
 func NewTransactionImpl() *TransactionImpl {
 	return &TransactionImpl{
-		conn: gorm.NewTransaction(),
+		conn: gorms.NewTransaction(),
 	}
 }

@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type ProjectLogDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindLogByMemberCode 根据用户id查询日志 -> 用于首页动态列表展示项目log
@@ -60,6 +60,6 @@ func (p *ProjectLogDao) FindLogByTaskCodePage(ctx context.Context, taskCode int6
 
 func NewProjectLogDao() *ProjectLogDao {
 	return &ProjectLogDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

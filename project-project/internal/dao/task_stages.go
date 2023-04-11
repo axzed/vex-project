@@ -3,12 +3,12 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 )
 
 type TaskStagesDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindById 通过任务步骤id获取任务步骤
@@ -36,13 +36,13 @@ func (t *TaskStagesDao) FindStagesByProjectId(ctx context.Context, projectCode i
 // SaveTaskStages 保存任务阶段
 func (t *TaskStagesDao) SaveTaskStages(ctx context.Context, conn conn.DbConn, ts *data.TaskStages) error {
 	// 事务经典操作
-	t.conn = conn.(*gorm.GormConn)
+	t.conn = conn.(*gorms.GormConn)
 	err := t.conn.Tx(ctx).Save(&ts).Error
 	return err
 }
 
 func NewTaskStagesDao() *TaskStagesDao {
 	return &TaskStagesDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

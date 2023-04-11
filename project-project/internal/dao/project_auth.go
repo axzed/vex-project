@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type ProjectAuthDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 func (p *ProjectAuthDao) FindAuthListPage(ctx context.Context, orgCode int64, page int64, pageSize int64) (list []*data.ProjectAuth, total int64, err error) {
@@ -31,6 +31,6 @@ func (p *ProjectAuthDao) FindAuthList(ctx context.Context, orgCode int64) (list 
 
 func NewProjectAuthDao() *ProjectAuthDao {
 	return &ProjectAuthDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type FileDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindByIds 根据id列表查询文件
@@ -25,6 +25,6 @@ func (f *FileDao) Save(ctx context.Context, file *data.File) error {
 
 func NewFileDao() *FileDao {
 	return &FileDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

@@ -3,12 +3,12 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 	"github.com/axzed/project-project/internal/database/interface/conn"
 )
 
 type ProjectAuthNodeDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindNodeStringList 获取权限节点列表
@@ -20,7 +20,7 @@ func (p *ProjectAuthNodeDao) FindNodeStringList(ctx context.Context, authId int6
 
 // DeleteByAuthId 根据权限id删除
 func (p *ProjectAuthNodeDao) DeleteByAuthId(ctx context.Context, conn conn.DbConn, authId int64) error {
-	p.conn = conn.(*gorm.GormConn)
+	p.conn = conn.(*gorms.GormConn)
 	tx := p.conn.Tx(ctx)
 	err := tx.Where("auth=?", authId).Delete(&data.ProjectAuthNode{}).Error
 	return err
@@ -28,7 +28,7 @@ func (p *ProjectAuthNodeDao) DeleteByAuthId(ctx context.Context, conn conn.DbCon
 
 // Save 保存权限节点
 func (p *ProjectAuthNodeDao) Save(ctx context.Context, conn conn.DbConn, authId int64, nodes []string) error {
-	p.conn = conn.(*gorm.GormConn)
+	p.conn = conn.(*gorms.GormConn)
 	tx := p.conn.Tx(ctx)
 	var list []*data.ProjectAuthNode
 	for _, v := range nodes {
@@ -44,6 +44,6 @@ func (p *ProjectAuthNodeDao) Save(ctx context.Context, conn conn.DbConn, authId 
 
 func NewProjectAuthNodeDao() *ProjectAuthNodeDao {
 	return &ProjectAuthNodeDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

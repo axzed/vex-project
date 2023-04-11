@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type TaskStagesTemplateDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // FindByProjectTemplateId 根据项目模板id查找任务阶段模板
@@ -37,6 +37,6 @@ func (t *TaskStagesTemplateDao) FindInProTemIds(ctx context.Context, ids []int) 
 
 func NewTaskStagesTemplateDao() *TaskStagesTemplateDao {
 	return &TaskStagesTemplateDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }

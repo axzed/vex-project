@@ -3,11 +3,11 @@ package dao
 import (
 	"context"
 	"github.com/axzed/project-project/internal/data"
-	"github.com/axzed/project-project/internal/database/gorm"
+	"github.com/axzed/project-project/internal/database/gorms"
 )
 
 type TaskWorkTimeDao struct {
-	conn *gorm.GormConn
+	conn *gorms.GormConn
 }
 
 // Save 保存任务工时
@@ -26,6 +26,6 @@ func (t *TaskWorkTimeDao) FindWorkTimeList(ctx context.Context, taskCode int64) 
 
 func NewTaskWorkTimeDao() *TaskWorkTimeDao {
 	return &TaskWorkTimeDao{
-		conn: gorm.NewGormConn(),
+		conn: gorms.NewGormConn(),
 	}
 }
