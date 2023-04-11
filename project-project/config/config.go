@@ -1,8 +1,10 @@
 package config
 
 import (
+	"bytes"
 	"github.com/axzed/project-common/logs"
 	"github.com/go-redis/redis/v8"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -26,27 +28,65 @@ type Config struct {
 func NewConfig() *Config {
 	v := viper.New()
 	conf := &Config{viper: v}
-	workDir, _ := os.Getwd()
-	conf.viper.SetConfigName("app")
-	conf.viper.SetConfigType("yaml")
-	conf.viper.AddConfigPath(workDir + "/config")
-
-	err := conf.viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln(err)
-		return nil
+	// 先从 nacos 读取配置 如果读不到 再到本地读
+	// 构造 nacos 客户端
+	nacosClient := InitNacosClient()
+	// 读取 nacos 的配置
+	configYaml, err2 := nacosClient.confClient.GetConfig(vo.ConfigParam{
+		DataId: "app.yaml",
+		Group:  nacosClient.group,
+	})
+	if err2 != nil {
+		log.Fatalln(err2)
 	}
-	// 初始化子配置
-	conf.InitServerConfig()
-	conf.InitZapLog()
-	conf.InitRedisOptions()
-	conf.InitGrpcConfig()
-	conf.InitEtcdConfig()
-	conf.InitMysqlConfig()
-	conf.InitJwtConfig()
-	conf.InitDbConfig()
-	// 返回配置好的全局配置
+	// 实时监听 nacos 的配置
+	err2 = nacosClient.confClient.ListenConfig(vo.ConfigParam{
+		DataId: "app.yaml",
+		Group:  nacosClient.group,
+		OnChange: func(namespace, group, dataId, data string) {
+			log.Printf("load nacos config changed %s \n", data)
+			err := conf.viper.ReadConfig(bytes.NewBuffer([]byte(data)))
+			if err != nil {
+				log.Printf("load nacos config changed err : %s \n", err.Error())
+			}
+			//所有的配置应该重新读取
+			conf.ReLoadAllConfig()
+		},
+	})
+	if err2 != nil {
+		log.Fatalln(err2)
+	}
+	// 在外面统一设置配置文件格式
+	conf.viper.SetConfigType("yaml")
+	if configYaml != "" { // 读取 nacos 的配置
+		err := conf.viper.ReadConfig(bytes.NewBuffer([]byte(configYaml)))
+		if err != nil {
+			log.Fatalln(err)
+		}
+		log.Printf("load nacos config: %s \n", "success")
+	} else { // 读取本地配置
+		workDir, _ := os.Getwd()
+		conf.viper.SetConfigName("app")
+		conf.viper.AddConfigPath(workDir + "/config")
+		err := conf.viper.ReadInConfig()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
+	conf.ReLoadAllConfig()
 	return conf
+}
+
+// ReLoadAllConfig 重新加载所有配置
+func (c *Config) ReLoadAllConfig() {
+	c.InitServerConfig()
+	c.InitZapLog()
+	c.InitRedisOptions()
+	c.InitGrpcConfig()
+	c.InitEtcdConfig()
+	c.InitMysqlConfig()
+	c.InitJwtConfig()
+	c.InitDbConfig()
 }
 
 // ServerConfig 服务配置

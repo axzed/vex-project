@@ -51,3 +51,19 @@ services:
     ports:
       - 8080:8080
       - 8881:8881
+  Nacos:
+    container_name: nacos-standalone
+    image: nacos/nacos-server:v2.2.0
+    restart: always
+    environment:
+      - MODE=standalone
+      - JVM_XMS=512m
+      - JVM_MAX=512m
+      - JVM_XMN=256m
+    privileged: true
+    volumes:
+      - ${NACOS_DIR}/data:/home/nacos/data
+    ports:
+      - 8848:8848
+      - 9848:9848
+      - 9849:9849
