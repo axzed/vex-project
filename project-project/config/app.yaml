@@ -27,6 +27,28 @@ mysql:
   host: 127.0.0.1
   port: 3309
   db: vexproject
+db:
+  separation: true
+  master:
+    name: master
+    username: root
+    password: root
+    host: 127.0.0.1
+    port: 3309
+    db: vexproject
+  slave:
+    - username: root
+      password: root
+      host: 127.0.0.1
+      port: 3309
+      db: vexproject_slave1
+      name: slave1
+    - username: root
+      password: root
+      host: 127.0.0.1
+      port: 3309
+      db: vexproject_slave1
+      name: slave2
 jwt:
   accessExp: 7
   refreshExp: 14

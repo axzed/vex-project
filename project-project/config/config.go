@@ -19,6 +19,7 @@ type Config struct {
 	EtcdConfig  *EtcdConfig
 	MysqlConfig *MysqlConfig
 	JwtConfig   *JwtConfig
+	DbConfig    DbConfig
 }
 
 // NewConfig 初始化配置
@@ -43,6 +44,7 @@ func NewConfig() *Config {
 	conf.InitEtcdConfig()
 	conf.InitMysqlConfig()
 	conf.InitJwtConfig()
+	conf.InitDbConfig()
 	// 返回配置好的全局配置
 	return conf
 }
@@ -73,6 +75,13 @@ type MysqlConfig struct {
 	Host     string `mapstructure:"host"`
 	Port     int    `mapstructure:"port"`
 	Db       string `mapstructure:"db"`
+}
+
+// DbConfig 读写分离db配置
+type DbConfig struct {
+	Master     MysqlConfig
+	Slave      []MysqlConfig
+	Separation bool
 }
 
 // JwtConfig jwt配置
@@ -159,4 +168,25 @@ func (c *Config) InitMysqlConfig() {
 	mc.Port = c.viper.GetInt("mysql.port")
 	mc.Db = c.viper.GetString("mysql.db")
 	c.MysqlConfig = mc
+}
+
+// InitDbConfig 初始化db配置 (配置读写分离)
+func (c *Config) InitDbConfig() {
+	mc := DbConfig{}
+	mc.Separation = c.viper.GetBool("db.separation")
+	var slaves []MysqlConfig
+	err := c.viper.UnmarshalKey("db.slave", &slaves)
+	if err != nil {
+		panic(err)
+	}
+	master := MysqlConfig{
+		Username: c.viper.GetString("db.master.username"),
+		Password: c.viper.GetString("db.master.password"),
+		Host:     c.viper.GetString("db.master.host"),
+		Port:     c.viper.GetInt("db.master.port"),
+		Db:       c.viper.GetString("db.master.db"),
+	}
+	mc.Master = master
+	mc.Slave = slaves
+	c.DbConfig = mc
 }

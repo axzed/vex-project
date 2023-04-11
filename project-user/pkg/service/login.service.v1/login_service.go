@@ -156,7 +156,7 @@ func (ls *LoginService) Register(ctx context.Context, msg *login.RegisterMessage
 	})
 
 	// TODO 生成一个账户存储到 "vex_member_account" 表中
-
+	//生成一个账户，账户的授权角色是成员，新生成一个角色（如果没有），同时将此角色的授权 node 生成
 	// 5.返回结果
 	return &login.RegisterResponse{}, nil
 }
