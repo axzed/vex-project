@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/axzed/project-project/internal/database/gorms"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

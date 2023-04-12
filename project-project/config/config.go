@@ -87,6 +87,9 @@ func (c *Config) ReLoadAllConfig() {
 	c.InitMysqlConfig()
 	c.InitJwtConfig()
 	c.InitDbConfig()
+	// 重新创建数据库连接客户端
+	c.ReConnRedis()
+	c.ReConnMysql()
 }
 
 // ServerConfig 服务配置

@@ -1,6 +1,6 @@
 server:
-  name: "project-user"
-  addr: "0.0.0.0:8080"
+  name: "project-project"
+  addr: "0.0.0.0:8081"
 zap:
   DebugFileName: "/logs/debug.log/project-debug.log"
   InfoFileName: "/logs/info.log/project-info.log"
@@ -14,8 +14,8 @@ redis:
   password: ""
   db: 0
 grpc:
-  name: "user"
-  addr: "0.0.0.0:8881"
+  name: "project"
+  addr: "0.0.0.0:8882"
   version: "1.0.0"
   weight: 2
 etcd:
