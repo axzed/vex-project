@@ -6,17 +6,32 @@ import (
 	"github.com/axzed/project-api/api/middleware"
 	"github.com/axzed/project-api/config"
 	"github.com/axzed/project-api/router"
+	"github.com/axzed/project-api/tracing"
 	common "github.com/axzed/project-common"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	"log"
 	"net/http"
 	"time"
 )
 
 func main() {
 	r := gin.Default()
+	// 获取 jaeger trace provider
+	tp, tpErr := tracing.JaegerTraceProvider()
+	if tpErr != nil {
+		log.Fatal(tpErr)
+	}
+	// 设置全局的 trace provider
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	// 调用接口响应中间件
 	r.Use(middleware.RequestLog())
+	// gin中间件 otelgin.Middleware("project-api") 为服务名称
+	r.Use(otelgin.Middleware("project-api"))
 	// 静态文件 上传文件
 	r.StaticFS("/upload", http.Dir("upload"))
 	// 路由初始化;

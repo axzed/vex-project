@@ -10,6 +10,7 @@ import (
 	"github.com/axzed/project-grpc/menu"
 	"github.com/axzed/project-grpc/project"
 	"github.com/axzed/project-grpc/task"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
@@ -28,7 +29,10 @@ func InitProjectRpcClient() {
 	etcdRegister := discovery.NewResolver(config.AppConf.EtcdConfig.Addrs, logs.LG)
 	resolver.Register(etcdRegister)
 
-	conn, err := grpc.Dial("etcd:///project", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("etcd:///project",
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()), // 为 jaeger 加上grpc客户端支持
+	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

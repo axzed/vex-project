@@ -5,9 +5,10 @@ import (
 	"github.com/axzed/project-common/logs"
 	"github.com/axzed/project-grpc/user/login"
 	"github.com/axzed/project-user/config"
-	"github.com/axzed/project-user/internal/interceptor"
 	login_service_v1 "github.com/axzed/project-user/pkg/service/login.service.v1"
 	"github.com/gin-gonic/gin"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
 	"log"
@@ -68,9 +69,13 @@ func RegisterGrpc() *grpc.Server {
 			login.RegisterLoginServiceServer(g, login_service_v1.NewLoginService())
 		}}
 	// 注册拦截器
-	cacheInterceptor := interceptor.New()
+	//cacheInterceptor := interceptor.New()
 	// 注册服务 cacheInterceptor.Cache() 为grpc.ServerOption类型 用来作为grpc.NewServer的参数
-	s := grpc.NewServer(cacheInterceptor.Cache())
+	//s := grpc.NewServer(cacheInterceptor.Cache())
+	s := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+		otelgrpc.UnaryServerInterceptor(),
+		//interceptor.New().CacheInterceptor(),
+	)))
 	c.RegisterFunc(s)
 	lis, err := net.Listen("tcp", config.AppConf.GC.Addr)
 	if err != nil {

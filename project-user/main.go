@@ -5,11 +5,23 @@ import (
 	_ "github.com/axzed/project-user/api"
 	"github.com/axzed/project-user/config"
 	"github.com/axzed/project-user/router"
+	"github.com/axzed/project-user/tracing"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	"log"
 )
 
 func main() {
 	r := gin.Default()
+	// 获取 jaeger trace provider
+	tp, tpErr := tracing.JaegerTraceProvider()
+	if tpErr != nil {
+		log.Fatal(tpErr)
+	}
+	// 设置全局的 trace provider
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	// 路由初始化
 	router.InitRouter(r)
 	// grpc初始化
