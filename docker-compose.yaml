@@ -45,12 +45,7 @@ services:
     ports:
       - ${ETCD_PORT}:2379
       - 2380:2380
-  Project-User:
-    container_name: project-user
-    image: project-user:latest
-    ports:
-      - 8080:8080
-      - 8881:8881
+#
   Nacos:
     container_name: nacos-standalone
     image: nacos/nacos-server:v2.2.0
@@ -60,9 +55,17 @@ services:
       - JVM_XMS=512m
       - JVM_MAX=512m
       - JVM_XMN=256m
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_DB_NAME=nacos
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=root
     privileged: true
     volumes:
       - ${NACOS_DIR}/data:/home/nacos/data
+      - ${NACOS_DIR}/logs:/home/nacos/logs
+      - nacos-conf:/home/nacos/conf
     ports:
       - 8848:8848
       - 9848:9848
@@ -89,3 +92,17 @@ services:
       - 14268:14268
       - 14269:14269
       - 9411:9411
+
+#  Project-User:
+#    container_name: project-user
+#    image: project-user:latest
+#    ports:
+#      - 8080:8080
+#      - 8881:8881
+volumes:
+  nacos-conf:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: '${NACOS_DIR}/conf'
+      o: 'bind'
